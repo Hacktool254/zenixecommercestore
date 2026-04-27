@@ -4,6 +4,7 @@ import { BottomNav } from "@/components/layout/BottomNav";
 import { WhatsAppFAB } from "@/components/shared/WhatsAppFAB";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { FluidCursor } from "@/components/shared/cursors/FluidCursor";
+import { ComparisonBar } from "@/components/shared/ComparisonBar";
 
 export default function StoreLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,6 +16,7 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
       <BottomNav />
       <WhatsAppFAB />
       <CartDrawer />
+      <ComparisonBar />
     </>
   );
 }
