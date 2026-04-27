@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import { Providers } from "./providers";
+import { Toaster } from "sonner";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -53,6 +54,16 @@ export default async function RootLayout({
       >
         <body className="bg-bg-base text-text-primary flex min-h-full flex-col">
           <Providers>{children}</Providers>
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              style: {
+                background: "#0d1117",
+                border: "1px solid #1e2435",
+                color: "#ffffff",
+              },
+            }}
+          />
         </body>
       </html>
     </ConvexAuthNextjsServerProvider>

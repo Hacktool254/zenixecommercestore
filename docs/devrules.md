@@ -110,7 +110,7 @@
 ### 2.6 Seed Data
 
 - [x] Create `convex/seed.ts` — seed 15 sample products across all categories with placeholder images
-- [ ] Run seed script to populate dev database
+- [x] Run seed script to populate dev database
 
 ---
 
@@ -118,9 +118,9 @@
 
 ### 3.1 Root Layout
 
-- [ ] `app/layout.tsx` — wrap with `ConvexClientProvider`, `TanStackQueryProvider`, `Toaster` (Sonner)
-- [ ] Add font variables to html element
-- [ ] Set dark background color on body
+- [x] `app/layout.tsx` — wrap with `ConvexClientProvider`, `TanStackQueryProvider`, `Toaster` (Sonner)
+- [x] Add font variables to html element
+- [x] Set dark background color on body
 
 ### 3.2 Header Component
 
