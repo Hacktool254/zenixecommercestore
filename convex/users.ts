@@ -22,3 +22,12 @@ export const updateProfile = mutation({
     await ctx.db.patch(userId, args);
   },
 });
+
+export const updateAvatar = mutation({
+  args: { image: v.string() },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    await ctx.db.patch(userId, { image: args.image });
+  },
+});
