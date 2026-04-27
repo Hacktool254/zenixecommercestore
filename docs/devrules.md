@@ -124,11 +124,11 @@
 
 ### 3.2 Header Component
 
-- [ ] `components/layout/Header.tsx` — logo, nav links, search icon, account icon, cart icon with item count
-- [ ] Sticky positioning with `backdrop-filter: blur(12px)` and semi-transparent bg
-- [ ] Cart item count badge on cart icon (from Zustand cart store)
-- [ ] Active link highlighting
-- [ ] Responsive: hide nav links on mobile, show hamburger
+- [x] `components/layout/Header.tsx` — logo, nav links, search icon, account icon, cart icon with item count
+- [x] Sticky positioning with `backdrop-filter: blur(12px)` and semi-transparent bg
+- [x] Cart item count badge on cart icon (from Zustand cart store)
+- [x] Active link highlighting
+- [x] Responsive: hide nav links on mobile, show hamburger
 
 ### 3.3 Mobile Bottom Navigation
 
