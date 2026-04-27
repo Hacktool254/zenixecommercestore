@@ -5,7 +5,8 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 export const getAllProducts = query({
   args: {
     category: v.optional(v.string()),
-    condition: v.optional(v.union(v.literal("brand-new"), v.literal("ex-uk"))),
+    condition: v.optional(v.union(v.literal("brand-new"), v.literal("ex-uk"), v.literal("ex-usa"))),
+    brand: v.optional(v.string()),
     minPrice: v.optional(v.number()),
     maxPrice: v.optional(v.number()),
     inStockOnly: v.optional(v.boolean()),
@@ -24,6 +25,9 @@ export const getAllProducts = query({
     }
     if (args.condition) {
       products = products.filter((p) => p.condition === args.condition);
+    }
+    if (args.brand) {
+      products = products.filter((p) => p.brand === args.brand);
     }
     if (args.minPrice !== undefined) {
       products = products.filter((p) => p.price >= args.minPrice!);
@@ -145,7 +149,8 @@ export const createProduct = mutation({
     slug: v.string(),
     description: v.string(),
     category: v.string(),
-    condition: v.union(v.literal("brand-new"), v.literal("ex-uk")),
+    brand: v.optional(v.string()),
+    condition: v.union(v.literal("brand-new"), v.literal("ex-uk"), v.literal("ex-usa")),
     price: v.number(),
     compareAtPrice: v.optional(v.number()),
     images: v.array(v.string()),
@@ -179,7 +184,8 @@ export const updateProduct = mutation({
     slug: v.optional(v.string()),
     description: v.optional(v.string()),
     category: v.optional(v.string()),
-    condition: v.optional(v.union(v.literal("brand-new"), v.literal("ex-uk"))),
+    brand: v.optional(v.string()),
+    condition: v.optional(v.union(v.literal("brand-new"), v.literal("ex-uk"), v.literal("ex-usa"))),
     price: v.optional(v.number()),
     compareAtPrice: v.optional(v.number()),
     images: v.optional(v.array(v.string())),

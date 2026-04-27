@@ -13,15 +13,20 @@ import {
   Plug,
   ShoppingBag,
   Monitor,
+  Watch,
+  Tablet,
 } from "lucide-react";
 
 const CATEGORIES = [
   { label: "iPhones", href: "/shop/iphones", icon: Smartphone, color: "#a8d5e2" },
+  { label: "Samsung", href: "/shop/samsung", icon: Smartphone, color: "#1e88e5" },
+  { label: "iPad", href: "/shop/ipad", icon: Tablet, color: "#a78bfa" },
+  { label: "Mac", href: "/shop/mac", icon: Monitor, color: "#cbd5e1" },
+  { label: "Wearables", href: "/shop/wearables", icon: Watch, color: "#34d399" },
+  { label: "Audio", href: "/shop/audio", icon: Headphones, color: "#f87171" },
   { label: "Televisions", href: "/shop/televisions", icon: Tv, color: "#f5a623" },
-  { label: "Audio", href: "/shop/audio", icon: Headphones, color: "#a78bfa" },
   { label: "Gaming", href: "/shop/gaming", icon: Gamepad2, color: "#f87171" },
   { label: "Starlink", href: "/shop/connectivity", icon: Wifi, color: "#38bdf8" },
-  { label: "Mac", href: "/shop/mac", icon: Monitor, color: "#cbd5e1" },
   { label: "Power", href: "/shop/power", icon: Plug, color: "#22c55e" },
   { label: "Accessories", href: "/shop/accessories", icon: ShoppingBag, color: "#fb923c" },
 ];

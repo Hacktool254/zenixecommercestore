@@ -77,6 +77,11 @@ export function ProductCard({ product, showHotBadge }: Props) {
               Ex UK
             </span>
           )}
+          {product.condition === "ex-usa" && (
+            <span className="rounded-md bg-[#a78bfa]/15 px-2 py-0.5 text-[10px] font-semibold text-[#a78bfa]">
+              Ex USA
+            </span>
+          )}
           {product.isNewArrival && !showHotBadge && (
             <span className="rounded-md bg-[#22c55e]/15 px-2 py-0.5 text-[10px] font-semibold text-[#22c55e]">
               New
@@ -128,9 +133,10 @@ export function ProductCard({ product, showHotBadge }: Props) {
               className="text-base font-bold text-[#f5a623]"
               style={{ fontFamily: "var(--font-space-grotesk)" }}
             >
-              KES {product.price.toLocaleString()}
+              {product.variants && product.variants.length > 1 ? "From " : ""}KES{" "}
+              {product.price.toLocaleString()}
             </span>
-            {product.compareAtPrice && (
+            {product.compareAtPrice && !product.variants?.length && (
               <span className="text-xs text-[#8b92a5] line-through">
                 KES {product.compareAtPrice.toLocaleString()}
               </span>

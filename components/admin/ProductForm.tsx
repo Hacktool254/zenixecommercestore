@@ -1,24 +1,28 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { CldUploadWidget } from "next-cloudinary";
-import type { CloudinaryUploadWidgetResults, CloudinaryUploadWidgetInfo } from "next-cloudinary";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import Image from "next/image";
 import { Plus, Trash2, GripVertical, Upload, X } from "lucide-react";
 
 const CATEGORIES = [
   "iphones",
+  "samsung",
+  "ipad",
   "mac",
+  "wearables",
   "audio",
-  "accessories",
-  "tvs",
+  "televisions",
   "gaming",
   "connectivity",
   "power",
+  "accessories",
 ];
 
 const productSchema = z.object({
@@ -29,7 +33,7 @@ const productSchema = z.object({
     .regex(/^[a-z0-9-]+$/, "Lowercase letters, numbers, hyphens only"),
   description: z.string().min(10, "Description required"),
   category: z.string().min(1, "Category required"),
-  condition: z.enum(["brand-new", "ex-uk"]),
+  condition: z.enum(["brand-new", "ex-uk", "ex-usa"]),
   price: z.number().min(1, "Price required"),
   compareAtPrice: z.number().min(0).optional(),
   stock: z.number().min(0, "Stock required"),
@@ -66,6 +70,9 @@ export function ProductForm({ defaultValues, defaultImages = [], onSubmit, submi
   const router = useRouter();
   const [images, setImages] = useState<string[]>(defaultImages);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const generateUploadUrl = useMutation(api.users.generateUploadUrl);
 
   const {
     register,
@@ -97,10 +104,27 @@ export function ProductForm({ defaultValues, defaultImages = [], onSubmit, submi
     }
   }, [nameValue, defaultValues?.slug, setValue]);
 
-  const handleUpload = (result: CloudinaryUploadWidgetResults) => {
-    const info = result.info as CloudinaryUploadWidgetInfo | undefined;
-    if (info?.secure_url) {
-      setImages((prev) => [...prev, info.secure_url]);
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    setUploading(true);
+    try {
+      for (const file of files) {
+        const uploadUrl = await generateUploadUrl();
+        const res = await fetch(uploadUrl, {
+          method: "POST",
+          headers: { "Content-Type": file.type },
+          body: file,
+        });
+        const { storageId } = (await res.json()) as { storageId: string };
+        // Resolve permanent URL via a dedicated helper (reuse updateAvatar pattern)
+        const url = `https://${process.env.NEXT_PUBLIC_CONVEX_URL?.replace("https://", "").replace(".convex.cloud", "")}.convex.cloud/api/storage/${storageId}`;
+        setImages((prev) => [...prev, storageId as Id<"_storage"> as unknown as string]);
+        void url; // URL resolved server-side by updateAvatar; we store the storageId and let the admin page resolve it
+      }
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
@@ -137,22 +161,23 @@ export function ProductForm({ defaultValues, defaultImages = [], onSubmit, submi
               </button>
             </div>
           ))}
-          <CldUploadWidget
-            uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ?? "zenix_products"}
-            onSuccess={handleUpload}
-            options={{ multiple: true, maxFiles: 10 }}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
+            className="hidden"
+            onChange={handleFileChange}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="flex h-24 w-24 flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-[#1e2435] text-[#8b92a5] transition hover:border-[#f5a623]/50 hover:text-[#f5a623] disabled:opacity-50"
           >
-            {({ open }) => (
-              <button
-                type="button"
-                onClick={() => open()}
-                className="flex h-24 w-24 flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-[#1e2435] text-[#8b92a5] transition hover:border-[#f5a623]/50 hover:text-[#f5a623]"
-              >
-                <Upload className="h-5 w-5" />
-                <span className="text-xs">Upload</span>
-              </button>
-            )}
-          </CldUploadWidget>
+            <Upload className="h-5 w-5" />
+            <span className="text-xs">{uploading ? "Uploading…" : "Upload"}</span>
+          </button>
         </div>
       </Section>
 
@@ -192,6 +217,9 @@ export function ProductForm({ defaultValues, defaultImages = [], onSubmit, submi
               </option>
               <option value="ex-uk" className="bg-[#111827]">
                 Ex UK
+              </option>
+              <option value="ex-usa" className="bg-[#111827]">
+                Ex USA
               </option>
             </select>
           </Field>

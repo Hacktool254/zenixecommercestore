@@ -22,7 +22,8 @@ export default defineSchema({
     slug: v.string(),
     description: v.string(),
     category: v.string(),
-    condition: v.union(v.literal("brand-new"), v.literal("ex-uk")),
+    brand: v.optional(v.string()),
+    condition: v.union(v.literal("brand-new"), v.literal("ex-uk"), v.literal("ex-usa")),
     price: v.number(),
     compareAtPrice: v.optional(v.number()),
     images: v.array(v.string()),
@@ -32,9 +33,28 @@ export default defineSchema({
     isFeatured: v.boolean(),
     isHotDeal: v.boolean(),
     isNewArrival: v.boolean(),
+    variants: v.optional(
+      v.array(
+        v.object({
+          storage: v.string(),
+          simType: v.optional(
+            v.union(
+              v.literal("physical-sim"),
+              v.literal("esim"),
+              v.literal("wifi"),
+              v.literal("wifi-5g")
+            )
+          ),
+          color: v.optional(v.string()),
+          price: v.number(),
+          stock: v.number(),
+        })
+      )
+    ),
   })
     .index("slug", ["slug"])
     .index("category", ["category"])
+    .index("brand", ["brand"])
     .index("condition", ["condition"])
     .index("isActive", ["isActive"])
     .index("isHotDeal", ["isHotDeal"])

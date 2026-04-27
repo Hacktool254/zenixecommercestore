@@ -9,17 +9,32 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import type { Product } from "@/types";
 
 const CATEGORY_META: Record<string, { label: string; description: string }> = {
-  iphones: { label: "iPhones", description: "Brand new & Ex UK iPhones — all models, all grades." },
-  mac: { label: "Mac", description: "Apple Mac Mini, MacBook and more." },
+  iphones: {
+    label: "iPhones",
+    description: "Brand new & Ex USA iPhones — iPhone 12 Pro to 17 Pro Max.",
+  },
+  samsung: {
+    label: "Samsung",
+    description: "Galaxy S-series, Z Fold & Z Flip — brand new and Ex UK.",
+  },
+  ipad: { label: "iPad", description: "iPad 10th Gen to iPad Pro M5. Wi-Fi and 5G models." },
+  mac: { label: "Mac", description: "MacBook Air M4/M5, MacBook Pro M5, Mac Mini M4." },
+  wearables: {
+    label: "Wearables",
+    description: "Apple Watch Series 6–11, SE 3, Ultra 2 & Ultra 3.",
+  },
+  audio: { label: "Audio", description: "AirPods 4, AirPods Pro 3, AirPods Max." },
   televisions: { label: "Televisions", description: "Smart TVs — Samsung, LG, Sony and more." },
-  audio: { label: "Audio", description: "Soundbars, headphones, speakers." },
   gaming: { label: "Gaming", description: "PlayStation, gaming chairs and accessories." },
   connectivity: {
     label: "Starlink & Connectivity",
     description: "Starlink kits and routers for Kenya.",
   },
   power: { label: "Power", description: "Power banks, chargers, UPS solutions." },
-  accessories: { label: "Accessories", description: "Apple Pencil, cables, cases and more." },
+  accessories: {
+    label: "Accessories",
+    description: "Apple Pencil, AirTag, Magic Mouse, Keyboard, Apple TV.",
+  },
 };
 
 export default function CategoryClient() {

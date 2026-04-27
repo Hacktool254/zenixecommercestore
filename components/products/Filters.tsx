@@ -8,13 +8,22 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 const CATEGORIES = [
   { value: "", label: "All Categories" },
   { value: "iphones", label: "iPhones" },
+  { value: "samsung", label: "Samsung" },
+  { value: "ipad", label: "iPad" },
   { value: "mac", label: "Mac" },
-  { value: "televisions", label: "Televisions" },
+  { value: "wearables", label: "Wearables" },
   { value: "audio", label: "Audio" },
+  { value: "televisions", label: "Televisions" },
   { value: "gaming", label: "Gaming" },
   { value: "connectivity", label: "Starlink / Connectivity" },
   { value: "power", label: "Power" },
   { value: "accessories", label: "Accessories" },
+];
+
+const BRANDS = [
+  { value: "", label: "All Brands" },
+  { value: "Apple", label: "Apple" },
+  { value: "Samsung", label: "Samsung" },
 ];
 
 const SORT_OPTIONS = [
@@ -51,7 +60,12 @@ function FilterPanel({ onClose }: { onClose?: () => void }) {
   };
 
   const hasFilters =
-    get("category") || get("condition") || get("minPrice") || get("maxPrice") || get("inStock");
+    get("category") ||
+    get("condition") ||
+    get("brand") ||
+    get("minPrice") ||
+    get("maxPrice") ||
+    get("inStock");
 
   return (
     <div className="flex flex-col gap-6">
@@ -98,11 +112,12 @@ function FilterPanel({ onClose }: { onClose?: () => void }) {
         <p className="mb-3 text-xs font-semibold tracking-widest text-[#8b92a5] uppercase">
           Condition
         </p>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {[
             { value: "", label: "All" },
             { value: "brand-new", label: "Brand New" },
             { value: "ex-uk", label: "Ex UK" },
+            { value: "ex-usa", label: "Ex USA" },
           ].map(({ value, label }) => (
             <button
               key={value}
@@ -115,6 +130,29 @@ function FilterPanel({ onClose }: { onClose?: () => void }) {
             >
               {label}
             </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Brand */}
+      <div>
+        <p className="mb-3 text-xs font-semibold tracking-widest text-[#8b92a5] uppercase">Brand</p>
+        <div className="flex flex-col gap-2">
+          {BRANDS.map(({ value, label }) => (
+            <label key={value} className="flex cursor-pointer items-center gap-2.5">
+              <input
+                type="radio"
+                name="brand"
+                checked={get("brand") === value}
+                onChange={() => update("brand", value)}
+                className="accent-[#f5a623]"
+              />
+              <span
+                className={`text-sm ${get("brand") === value ? "text-[#f5a623]" : "text-[#cbd5e1]"}`}
+              >
+                {label}
+              </span>
+            </label>
           ))}
         </div>
       </div>

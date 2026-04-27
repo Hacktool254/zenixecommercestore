@@ -20,6 +20,8 @@ import {
   Plug,
   ShoppingCart,
   Star,
+  Watch,
+  Tablet,
 } from "lucide-react";
 import { cloudinaryUrl } from "@/lib/utils";
 import { useCartStore } from "@/stores/cart.store";
@@ -33,14 +35,30 @@ const CATEGORIES = [
     color: "#a8d5e2",
     glow: "rgba(168,213,226,0.35)",
   },
-  { value: "televisions", label: "TVs", icon: Tv, color: "#f5a623", glow: "rgba(245,166,35,0.35)" },
+  {
+    value: "samsung",
+    label: "Samsung",
+    icon: Smartphone,
+    color: "#1e88e5",
+    glow: "rgba(30,136,229,0.35)",
+  },
+  { value: "ipad", label: "iPad", icon: Tablet, color: "#a78bfa", glow: "rgba(167,139,250,0.35)" },
+  { value: "mac", label: "Mac", icon: Monitor, color: "#cbd5e1", glow: "rgba(203,213,225,0.35)" },
+  {
+    value: "wearables",
+    label: "Wearables",
+    icon: Watch,
+    color: "#34d399",
+    glow: "rgba(52,211,153,0.35)",
+  },
   {
     value: "audio",
     label: "Audio",
     icon: Headphones,
-    color: "#a78bfa",
-    glow: "rgba(167,139,250,0.35)",
+    color: "#f87171",
+    glow: "rgba(248,113,113,0.35)",
   },
+  { value: "televisions", label: "TVs", icon: Tv, color: "#f5a623", glow: "rgba(245,166,35,0.35)" },
   {
     value: "gaming",
     label: "Gaming",
@@ -55,7 +73,6 @@ const CATEGORIES = [
     color: "#38bdf8",
     glow: "rgba(56,189,248,0.35)",
   },
-  { value: "mac", label: "Mac", icon: Monitor, color: "#cbd5e1", glow: "rgba(203,213,225,0.35)" },
   { value: "power", label: "Power", icon: Plug, color: "#22c55e", glow: "rgba(34,197,94,0.35)" },
   {
     value: "accessories",
@@ -357,7 +374,7 @@ export default function OverviewPage() {
             boxShadow: "0 4px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05)",
           }}
         >
-          <div className="grid grid-cols-4 gap-4 sm:grid-cols-8">
+          <div className="grid grid-cols-4 gap-4 sm:grid-cols-6 lg:grid-cols-11">
             {CATEGORIES.map((cat, i) => (
               <CategoryPill key={cat.value} cat={cat} index={i} />
             ))}

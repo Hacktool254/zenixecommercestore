@@ -1,35 +1,35 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { motion } from "framer-motion";
-import {
-  ShoppingCart,
-  Heart,
-  GitCompare,
-  MessageCircle,
-  ChevronLeft,
-  Minus,
-  Plus,
-  Package,
-} from "lucide-react";
+import { ShoppingCart, Heart, GitCompare, MessageCircle, Minus, Plus, Package } from "lucide-react";
 import { useCartStore } from "@/stores/cart.store";
 import { useUIStore } from "@/stores/ui.store";
 import { cloudinaryUrl } from "@/lib/utils";
 import { ProductCard } from "@/components/products/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { Product } from "@/types";
+import type { Product, ProductVariant } from "@/types";
 
 const WHATSAPP_BASE = "https://wa.me/254703659956?text=";
+
+const SIM_LABELS: Record<string, string> = {
+  "physical-sim": "Physical SIM",
+  esim: "eSIM",
+  wifi: "Wi-Fi",
+  "wifi-5g": "Wi-Fi + 5G",
+};
 
 export default function ProductDetailClient() {
   const { slug } = useParams<{ slug: string }>();
   const [activeImage, setActiveImage] = useState(0);
   const [qty, setQty] = useState(1);
+  const [selectedStorage, setSelectedStorage] = useState<string | null>(null);
+  const [selectedSim, setSelectedSim] = useState<string | null>(null);
 
   const product = useQuery(api.products.getProductBySlug, { slug });
   const relatedRaw = useQuery(
@@ -40,6 +40,39 @@ export default function ProductDetailClient() {
 
   const addItem = useCartStore((s) => s.addItem);
   const addToComparison = useUIStore((s) => s.addToComparison);
+
+  const variants = (product?.variants ?? []) as ProductVariant[];
+  const hasVariants = variants.length > 0;
+
+  // Unique storage options across all variants
+  const storageOptions = useMemo(() => [...new Set(variants.map((v) => v.storage))], [variants]);
+
+  // SIM options available for the currently selected storage
+  const simOptions = useMemo(() => {
+    if (!selectedStorage) return [];
+    const sims = variants
+      .filter((v) => v.storage === selectedStorage && v.simType)
+      .map((v) => v.simType as string);
+    return [...new Set(sims)];
+  }, [variants, selectedStorage]);
+
+  // Active variant based on selections
+  const activeVariant: ProductVariant | null = useMemo(() => {
+    if (!hasVariants) return null;
+    if (selectedStorage && selectedSim) {
+      return (
+        variants.find((v) => v.storage === selectedStorage && v.simType === selectedSim) ?? null
+      );
+    }
+    if (selectedStorage && simOptions.length === 0) {
+      return variants.find((v) => v.storage === selectedStorage) ?? null;
+    }
+    return null;
+  }, [variants, selectedStorage, selectedSim, simOptions, hasVariants]);
+
+  // Displayed price + stock — falls back to product-level
+  const displayPrice = activeVariant?.price ?? product?.price ?? 0;
+  const displayStock = activeVariant?.stock ?? product?.stock ?? 0;
 
   if (product === undefined) return <ProductDetailSkeleton />;
   if (product === null)
@@ -59,21 +92,33 @@ export default function ProductDetailClient() {
       ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
       : null;
 
+  const conditionLabel =
+    product.condition === "ex-uk" ? "Ex UK" : product.condition === "ex-usa" ? "Ex USA" : null;
+  const conditionColor =
+    product.condition === "ex-uk" ? "#38bdf8" : product.condition === "ex-usa" ? "#a78bfa" : null;
+
+  const variantLabel = [selectedStorage, selectedSim ? SIM_LABELS[selectedSim] : null]
+    .filter(Boolean)
+    .join(" · ");
+
   const whatsappMsg = encodeURIComponent(
-    `Hi Zenix Electronics, I'd like to enquire about the ${product.name} (KES ${product.price.toLocaleString()}). Is it available?`
+    `Hi Zenix Electronics, I'd like to enquire about the ${product.name}${variantLabel ? ` (${variantLabel})` : ""} at KES ${displayPrice.toLocaleString()}. Is it available?`
   );
 
   const handleAddToCart = () => {
     addItem({
       productId: product._id,
-      name: product.name,
-      price: product.price,
+      name: product.name + (variantLabel ? ` — ${variantLabel}` : ""),
+      price: displayPrice,
       quantity: qty,
       image: product.images[0] ?? "",
       condition: product.condition,
-      stock: product.stock,
+      stock: displayStock,
     });
   };
+
+  const canAddToCart =
+    !hasVariants || (selectedStorage !== null && (simOptions.length === 0 || selectedSim !== null));
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-6">
@@ -107,9 +152,12 @@ export default function ProductDetailClient() {
               sizes="(max-width: 1024px) 100vw, 50vw"
               priority
             />
-            {product.condition === "ex-uk" && (
-              <span className="absolute top-3 left-3 rounded-md bg-[#38bdf8]/15 px-2 py-0.5 text-[10px] font-semibold text-[#38bdf8]">
-                Ex UK
+            {conditionLabel && (
+              <span
+                className="absolute top-3 left-3 rounded-md px-2 py-0.5 text-[10px] font-semibold"
+                style={{ background: `${conditionColor}22`, color: conditionColor! }}
+              >
+                {conditionLabel}
               </span>
             )}
             {discount && (
@@ -141,7 +189,8 @@ export default function ProductDetailClient() {
 
         {/* Product info */}
         <div className="flex flex-col">
-          <p className="mb-2 text-xs font-semibold tracking-widest text-[#f5a623] uppercase">
+          <p className="mb-1 text-xs font-semibold tracking-widest text-[#f5a623] uppercase">
+            {product.brand ? `${product.brand} · ` : ""}
             {product.category}
           </p>
           <h1
@@ -157,27 +206,86 @@ export default function ProductDetailClient() {
               className="text-3xl font-bold text-[#f5a623]"
               style={{ fontFamily: "var(--font-space-grotesk)" }}
             >
-              KES {product.price.toLocaleString()}
+              {hasVariants && !activeVariant ? "From " : ""}KES {displayPrice.toLocaleString()}
             </span>
-            {product.compareAtPrice && (
+            {product.compareAtPrice && !hasVariants && (
               <span className="text-base text-[#8b92a5] line-through">
                 KES {product.compareAtPrice.toLocaleString()}
               </span>
             )}
           </div>
 
+          {/* ── Storage selector ── */}
+          {storageOptions.length > 0 && (
+            <div className="mb-5">
+              <p className="mb-2.5 text-xs font-semibold tracking-widest text-[#8b92a5] uppercase">
+                Storage
+                {selectedStorage && (
+                  <span className="ml-2 font-medium text-white normal-case">{selectedStorage}</span>
+                )}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {storageOptions.map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => {
+                      setSelectedStorage(s);
+                      setSelectedSim(null);
+                    }}
+                    className={`rounded-xl border px-4 py-2 text-sm font-semibold transition-all ${
+                      selectedStorage === s
+                        ? "border-[#f5a623] bg-[#f5a623]/10 text-[#f5a623] shadow-[inset_0_0_0_1px_rgba(245,166,35,0.4)]"
+                        : "border-[#1e2435] text-[#8b92a5] hover:border-[#f5a623]/40 hover:text-white"
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── SIM type selector ── */}
+          {simOptions.length > 0 && (
+            <div className="mb-5">
+              <p className="mb-2.5 text-xs font-semibold tracking-widest text-[#8b92a5] uppercase">
+                Connectivity
+                {selectedSim && (
+                  <span className="ml-2 font-medium text-white normal-case">
+                    {SIM_LABELS[selectedSim]}
+                  </span>
+                )}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {simOptions.map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setSelectedSim(s)}
+                    className={`rounded-xl border px-4 py-2 text-sm font-semibold transition-all ${
+                      selectedSim === s
+                        ? "border-[#f5a623] bg-[#f5a623]/10 text-[#f5a623] shadow-[inset_0_0_0_1px_rgba(245,166,35,0.4)]"
+                        : "border-[#1e2435] text-[#8b92a5] hover:border-[#f5a623]/40 hover:text-white"
+                    }`}
+                  >
+                    {SIM_LABELS[s] ?? s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Stock status */}
           <div className="mb-6 flex items-center gap-2">
             <Package className="h-4 w-4 text-[#8b92a5]" />
-            {product.stock === 0 ? (
+            {displayStock === 0 ? (
               <span className="text-sm font-medium text-[#ef4444]">Out of stock</span>
-            ) : product.stock <= 3 ? (
+            ) : displayStock <= 3 ? (
               <span className="text-sm font-medium text-[#f5a623]">
-                Only {product.stock} left in stock
+                Only {displayStock} left in stock
               </span>
             ) : (
               <span className="text-sm font-medium text-[#22c55e]">
-                In stock ({product.stock} available)
+                In stock ({displayStock} available)
               </span>
             )}
           </div>
@@ -194,8 +302,8 @@ export default function ProductDetailClient() {
               </button>
               <span className="w-10 text-center text-sm font-semibold text-white">{qty}</span>
               <button
-                onClick={() => setQty(Math.min(product.stock, qty + 1))}
-                disabled={product.stock === 0}
+                onClick={() => setQty(Math.min(displayStock, qty + 1))}
+                disabled={displayStock === 0}
                 className="flex h-10 w-10 items-center justify-center text-[#8b92a5] transition-colors hover:text-white disabled:opacity-40"
                 aria-label="Increase quantity"
               >
@@ -205,17 +313,15 @@ export default function ProductDetailClient() {
 
             <button
               onClick={handleAddToCart}
-              disabled={product.stock === 0}
+              disabled={displayStock === 0 || !canAddToCart}
               className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#f5a623] px-6 py-3 text-sm font-semibold text-[#0a0e1a] transition-all hover:bg-[#ff9f1c] hover:shadow-[0_0_20px_rgba(245,166,35,0.35)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ShoppingCart className="h-4 w-4" />
-              Add to Cart
+              {!canAddToCart ? "Select options" : "Add to Cart"}
             </button>
 
             <button
-              onClick={(e) => {
-                e.preventDefault();
-              }}
+              onClick={() => {}}
               className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#1e2435] text-[#8b92a5] transition-colors hover:border-[#f5a623]/40 hover:text-[#f5a623]"
               aria-label="Add to wishlist"
             >
@@ -287,7 +393,6 @@ export default function ProductDetailClient() {
         </div>
       )}
 
-      {/* JSON-LD structured data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -300,9 +405,9 @@ export default function ProductDetailClient() {
             offers: {
               "@type": "Offer",
               priceCurrency: "KES",
-              price: product.price,
+              price: displayPrice,
               availability:
-                product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+                displayStock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
               seller: { "@type": "Organization", name: "Zenix Electronics" },
             },
           }),

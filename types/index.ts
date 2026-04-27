@@ -1,6 +1,14 @@
 import type { Id } from "@/convex/_generated/dataModel";
 
-export type ProductCondition = "brand-new" | "ex-uk";
+export type ProductCondition = "brand-new" | "ex-uk" | "ex-usa";
+
+export interface ProductVariant {
+  storage: string;
+  simType?: "physical-sim" | "esim" | "wifi" | "wifi-5g";
+  color?: string;
+  price: number;
+  stock: number;
+}
 
 export type OrderStatus = "pending" | "processing" | "shipped" | "delivered" | "cancelled";
 
@@ -14,6 +22,7 @@ export interface Product {
   slug: string;
   description: string;
   category: string;
+  brand?: string;
   condition: ProductCondition;
   price: number;
   compareAtPrice?: number;
@@ -24,6 +33,7 @@ export interface Product {
   isFeatured: boolean;
   isHotDeal: boolean;
   isNewArrival: boolean;
+  variants?: ProductVariant[];
 }
 
 export interface CartItem {
