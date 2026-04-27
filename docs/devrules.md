@@ -68,48 +68,48 @@
 
 ### 2.1 Define Schema
 
-- [ ] Write `convex/schema.ts` — all tables: users, products, categories, orders, cartItems, wishlists, addresses
-- [ ] Run `npx convex dev` and verify schema deploys without errors
-- [ ] Define all TypeScript types in `types/index.ts` from Convex schema
+- [x] Write `convex/schema.ts` — all tables: users, products, categories, orders, cartItems, wishlists, addresses
+- [x] Run `npx convex dev` and verify schema deploys without errors
+- [x] Define all TypeScript types in `types/index.ts` from Convex schema
 
 ### 2.2 Product Queries & Mutations
 
-- [ ] `convex/products.ts` — `getAllProducts` query (with optional category/condition filter args)
-- [ ] `convex/products.ts` — `getProductBySlug` query
-- [ ] `convex/products.ts` — `getFeaturedProducts` query
-- [ ] `convex/products.ts` — `getHotDeals` query
-- [ ] `convex/products.ts` — `getNewArrivals` query
-- [ ] `convex/products.ts` — `searchProducts` query (text search on name/description)
-- [ ] `convex/products.ts` — `createProduct` mutation (admin only)
-- [ ] `convex/products.ts` — `updateProduct` mutation (admin only)
-- [ ] `convex/products.ts` — `deleteProduct` mutation (admin only)
-- [ ] `convex/products.ts` — `updateStock` mutation
+- [x] `convex/products.ts` — `getAllProducts` query (with optional category/condition filter args)
+- [x] `convex/products.ts` — `getProductBySlug` query
+- [x] `convex/products.ts` — `getFeaturedProducts` query
+- [x] `convex/products.ts` — `getHotDeals` query
+- [x] `convex/products.ts` — `getNewArrivals` query
+- [x] `convex/products.ts` — `searchProducts` query (text search on name/description)
+- [x] `convex/products.ts` — `createProduct` mutation (admin only)
+- [x] `convex/products.ts` — `updateProduct` mutation (admin only)
+- [x] `convex/products.ts` — `deleteProduct` mutation (admin only)
+- [x] `convex/products.ts` — `updateStock` mutation
 
 ### 2.3 Cart Queries & Mutations
 
-- [ ] `convex/cart.ts` — `getCartItems` query (by userId)
-- [ ] `convex/cart.ts` — `addToCart` mutation
-- [ ] `convex/cart.ts` — `updateCartQuantity` mutation
-- [ ] `convex/cart.ts` — `removeFromCart` mutation
-- [ ] `convex/cart.ts` — `clearCart` mutation (called after successful order)
+- [x] `convex/cart.ts` — `getCartItems` query (by userId)
+- [x] `convex/cart.ts` — `addToCart` mutation
+- [x] `convex/cart.ts` — `updateCartQuantity` mutation
+- [x] `convex/cart.ts` — `removeFromCart` mutation
+- [x] `convex/cart.ts` — `clearCart` mutation (called after successful order)
 
 ### 2.4 Order Queries & Mutations
 
-- [ ] `convex/orders.ts` — `createOrder` mutation
-- [ ] `convex/orders.ts` — `getOrderById` query
-- [ ] `convex/orders.ts` — `getUserOrders` query
-- [ ] `convex/orders.ts` — `getAllOrders` query (admin only)
-- [ ] `convex/orders.ts` — `updateOrderStatus` mutation (admin only)
-- [ ] `convex/orders.ts` — `updatePaymentStatus` mutation (called by Paystack webhook)
+- [x] `convex/orders.ts` — `createOrder` mutation
+- [x] `convex/orders.ts` — `getOrderById` query
+- [x] `convex/orders.ts` — `getUserOrders` query
+- [x] `convex/orders.ts` — `getAllOrders` query (admin only)
+- [x] `convex/orders.ts` — `updateOrderStatus` mutation (admin only)
+- [x] `convex/orders.ts` — `updatePaymentStatus` mutation (called by Paystack webhook)
 
 ### 2.5 Wishlist & Address
 
-- [ ] `convex/wishlists.ts` — `getWishlist`, `addToWishlist`, `removeFromWishlist`
-- [ ] `convex/addresses.ts` — `getUserAddresses`, `addAddress`, `updateAddress`, `deleteAddress`, `setDefaultAddress`
+- [x] `convex/wishlists.ts` — `getWishlist`, `addToWishlist`, `removeFromWishlist`
+- [x] `convex/addresses.ts` — `getUserAddresses`, `addAddress`, `updateAddress`, `deleteAddress`, `setDefaultAddress`
 
 ### 2.6 Seed Data
 
-- [ ] Create `convex/seed.ts` — seed 10-15 sample products across all categories with placeholder images
+- [x] Create `convex/seed.ts` — seed 15 sample products across all categories with placeholder images
 - [ ] Run seed script to populate dev database
 
 ---
