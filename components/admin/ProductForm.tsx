@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { CldUploadWidget } from "next-cloudinary";
+import type { CloudinaryUploadWidgetResults, CloudinaryUploadWidgetInfo } from "next-cloudinary";
 import Image from "next/image";
 import { Plus, Trash2, GripVertical, Upload, X } from "lucide-react";
 
@@ -29,9 +30,9 @@ const productSchema = z.object({
   description: z.string().min(10, "Description required"),
   category: z.string().min(1, "Category required"),
   condition: z.enum(["brand-new", "ex-uk"]),
-  price: z.coerce.number().min(1, "Price required"),
-  compareAtPrice: z.coerce.number().optional(),
-  stock: z.coerce.number().min(0, "Stock required"),
+  price: z.number().min(1, "Price required"),
+  compareAtPrice: z.number().min(0).optional(),
+  stock: z.number().min(0, "Stock required"),
   isActive: z.boolean(),
   isFeatured: z.boolean(),
   isHotDeal: z.boolean(),
@@ -96,9 +97,11 @@ export function ProductForm({ defaultValues, defaultImages = [], onSubmit, submi
     }
   }, [nameValue, defaultValues?.slug, setValue]);
 
-  const handleUpload = (result: { info?: { secure_url?: string } }) => {
-    const url = result.info?.secure_url;
-    if (url) setImages((prev) => [...prev, url]);
+  const handleUpload = (result: CloudinaryUploadWidgetResults) => {
+    const info = result.info as CloudinaryUploadWidgetInfo | undefined;
+    if (info?.secure_url) {
+      setImages((prev) => [...prev, info.secure_url]);
+    }
   };
 
   const removeImage = (i: number) => {
@@ -200,7 +203,7 @@ export function ProductForm({ defaultValues, defaultImages = [], onSubmit, submi
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Field label="Price (KES)" error={errors.price?.message}>
             <input
-              {...register("price")}
+              {...register("price", { valueAsNumber: true })}
               type="number"
               min="0"
               placeholder="45000"
@@ -209,7 +212,7 @@ export function ProductForm({ defaultValues, defaultImages = [], onSubmit, submi
           </Field>
           <Field label="Compare-at Price (KES)" error={errors.compareAtPrice?.message}>
             <input
-              {...register("compareAtPrice")}
+              {...register("compareAtPrice", { valueAsNumber: true })}
               type="number"
               min="0"
               placeholder="55000"
@@ -218,7 +221,7 @@ export function ProductForm({ defaultValues, defaultImages = [], onSubmit, submi
           </Field>
           <Field label="Stock" error={errors.stock?.message}>
             <input
-              {...register("stock")}
+              {...register("stock", { valueAsNumber: true })}
               type="number"
               min="0"
               placeholder="10"

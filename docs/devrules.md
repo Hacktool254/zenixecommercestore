@@ -404,44 +404,44 @@
 
 ### 11.1 Admin Layout
 
-- [ ] `app/admin/layout.tsx` — sidebar navigation + top bar
-- [ ] Sidebar: Dashboard, Products, Orders, Inventory, Back to Store
-- [ ] Admin-only route protection (check user role in middleware)
+- [x] `app/admin/layout.tsx` — sidebar navigation + top bar
+- [x] Sidebar: Dashboard, Products, Orders, Inventory, Back to Store
+- [x] Admin-only route protection (check user role in middleware)
 
 ### 11.2 Dashboard Overview
 
-- [ ] `app/admin/page.tsx` — KPI cards: Total Orders, Total Revenue (KES), Total Products, Low Stock Items
-- [ ] Recent orders table (last 10)
-- [ ] Low stock alert list
+- [x] `app/admin/page.tsx` — KPI cards: Total Orders, Total Revenue (KES), Total Products, Low Stock Items
+- [x] Recent orders table (last 10)
+- [x] Low stock alert list
 
 ### 11.3 Products Management
 
-- [ ] `app/admin/products/page.tsx` — products table with search
-- [ ] Columns: Image, Name, Category, Condition, Price, Stock, Status, Actions
-- [ ] Edit button → `/admin/products/[id]`
-- [ ] Delete button with confirmation dialog
-- [ ] "Add Product" button → `/admin/products/new`
+- [x] `app/admin/products/page.tsx` — products table with search
+- [x] Columns: Image, Name, Category, Condition, Price, Stock, Status, Actions
+- [x] Edit button → `/admin/products/[id]`
+- [x] Delete button with confirmation dialog
+- [x] "Add Product" button → `/admin/products/new`
 
 ### 11.4 Product Form (Add/Edit)
 
-- [ ] `app/admin/products/new/page.tsx` and `app/admin/products/[id]/page.tsx`
-- [ ] Fields: Name, Slug (auto-generated from name), Category, Condition, Price, Compare-at Price, Description, Specs (key-value pairs), Stock, isActive, isFeatured, isHotDeal, isNewArrival
-- [ ] Cloudinary image upload widget (multi-image, reorder, remove)
-- [ ] React Hook Form + Zod validation
-- [ ] Submit → Convex `createProduct` or `updateProduct` mutation
+- [x] `app/admin/products/new/page.tsx` and `app/admin/products/[id]/page.tsx`
+- [x] Fields: Name, Slug (auto-generated from name), Category, Condition, Price, Compare-at Price, Description, Specs (key-value pairs), Stock, isActive, isFeatured, isHotDeal, isNewArrival
+- [x] Cloudinary image upload widget (multi-image, reorder, remove)
+- [x] React Hook Form + Zod validation
+- [x] Submit → Convex `createProduct` or `updateProduct` mutation
 
 ### 11.5 Orders Management
 
-- [ ] `app/admin/orders/page.tsx` — all orders table
-- [ ] Filter by status: All, Pending, Processing, Shipped, Delivered, Cancelled
-- [ ] Click row → order detail modal
-- [ ] Status dropdown to update order status inline
+- [x] `app/admin/orders/page.tsx` — all orders table
+- [x] Filter by status: All, Pending, Processing, Shipped, Delivered, Cancelled
+- [x] Click row → order detail modal
+- [x] Status dropdown to update order status inline
 
 ### 11.6 Inventory
 
-- [ ] `app/admin/inventory/page.tsx` — all products with stock levels
-- [ ] Visual indicator: green (≥10), amber (1-9), red (0 - Out of Stock)
-- [ ] Inline stock update input field per product
+- [x] `app/admin/inventory/page.tsx` — all products with stock levels
+- [x] Visual indicator: green (≥10), amber (1-9), red (0 - Out of Stock)
+- [x] Inline stock update input field per product
 
 ---
 

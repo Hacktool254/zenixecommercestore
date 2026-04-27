@@ -42,3 +42,5 @@ next-env.d.ts
 
 # tools
 .playwright-mcp/
+.claude/
+components.json
