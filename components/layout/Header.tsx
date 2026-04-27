@@ -53,9 +53,9 @@ export function Header() {
             <Image
               src="/logo.png"
               alt="Zenix Electronics"
-              width={120}
+              width={40}
               height={40}
-              className="h-10 w-auto object-contain"
+              className="h-10 w-10 rounded-full object-cover"
               priority
             />
           </Link>
