@@ -2,6 +2,15 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
+export const generateUploadUrl = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    return ctx.storage.generateUploadUrl();
+  },
+});
+
 export const viewer = query({
   args: {},
   handler: async (ctx) => {
@@ -24,10 +33,12 @@ export const updateProfile = mutation({
 });
 
 export const updateAvatar = mutation({
-  args: { image: v.string() },
+  args: { storageId: v.id("_storage") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Unauthorized");
-    await ctx.db.patch(userId, { image: args.image });
+    const url = await ctx.storage.getUrl(args.storageId);
+    if (!url) throw new Error("Failed to get image URL");
+    await ctx.db.patch(userId, { image: url });
   },
 });

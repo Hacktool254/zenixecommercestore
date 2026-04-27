@@ -1,17 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import Image from "next/image";
 import { User, Mail, Phone, MapPin, Shield, Camera, Check, X, Pencil } from "lucide-react";
 import Link from "next/link";
-import { CldUploadWidget } from "next-cloudinary";
-import type { CloudinaryUploadWidgetResults, CloudinaryUploadWidgetInfo } from "next-cloudinary";
-import { cloudinaryUrl } from "@/lib/utils";
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -58,10 +56,13 @@ export default function SettingsPage() {
   const viewer = useQuery(api.users.viewer);
   const updateProfile = useMutation(api.users.updateProfile);
   const updateAvatar = useMutation(api.users.updateAvatar);
+  const generateUploadUrl = useMutation(api.users.generateUploadUrl);
 
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [avatarLoading, setAvatarLoading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
@@ -87,15 +88,27 @@ export default function SettingsPage() {
     }
   };
 
-  const handleAvatarUpload = async (result: CloudinaryUploadWidgetResults) => {
-    const info = result.info as CloudinaryUploadWidgetInfo | undefined;
-    if (info?.secure_url) {
-      setAvatarLoading(true);
-      try {
-        await updateAvatar({ image: info.secure_url });
-      } finally {
-        setAvatarLoading(false);
-      }
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setPreviewUrl(URL.createObjectURL(file));
+    setAvatarLoading(true);
+
+    try {
+      const uploadUrl = await generateUploadUrl();
+      const res = await fetch(uploadUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+      const { storageId } = (await res.json()) as { storageId: string };
+      await updateAvatar({ storageId: storageId as Id<"_storage"> });
+    } catch {
+      setPreviewUrl(null);
+    } finally {
+      setAvatarLoading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
@@ -116,6 +129,8 @@ export default function SettingsPage() {
         .toUpperCase()
     : "U";
 
+  const displayImage = previewUrl ?? viewer?.image ?? null;
+
   return (
     <div className="flex flex-col gap-5">
       {/* Header */}
@@ -135,52 +150,61 @@ export default function SettingsPage() {
           <span className="text-sm font-semibold text-white">Profile Photo</span>
         </div>
         <div className="flex flex-col items-center gap-4 px-5 py-6 sm:flex-row sm:gap-6">
-          {/* Avatar */}
-          <div className="relative shrink-0">
-            <div className="relative h-20 w-20 overflow-hidden rounded-2xl bg-gradient-to-br from-[#f5a623] to-[#ff9f1c] shadow-[0_0_28px_rgba(245,166,35,0.25)]">
-              {viewer?.image ? (
-                <Image
-                  src={cloudinaryUrl(viewer.image)}
-                  alt={viewer.name ?? "avatar"}
-                  fill
-                  className="object-cover"
-                  sizes="80px"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center">
-                  <span className="text-2xl font-bold text-[#0a0e1a]">{initials}</span>
-                </div>
-              )}
-              {avatarLoading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-[#0a0e1a]/60">
-                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                </div>
-              )}
+          {/* Avatar — clicking it opens the file picker */}
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={avatarLoading}
+            className="group relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-gradient-to-br from-[#f5a623] to-[#ff9f1c] shadow-[0_0_28px_rgba(245,166,35,0.25)] focus:outline-none"
+            aria-label="Change profile photo"
+          >
+            {displayImage ? (
+              <Image
+                src={displayImage}
+                alt={viewer?.name ?? "avatar"}
+                fill
+                className="object-cover"
+                sizes="80px"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center">
+                <span className="text-2xl font-bold text-[#0a0e1a]">{initials}</span>
+              </div>
+            )}
+            {/* Hover overlay */}
+            <div className="absolute inset-0 flex items-center justify-center bg-[#0a0e1a]/50 opacity-0 transition-opacity group-hover:opacity-100">
+              <Camera className="h-6 w-6 text-white" />
             </div>
-          </div>
+            {/* Upload spinner */}
+            {avatarLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-[#0a0e1a]/60">
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              </div>
+            )}
+          </button>
 
-          {/* Upload button + hint */}
+          {/* Hidden file input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+
+          {/* Text + button */}
           <div className="flex flex-col gap-2 text-center sm:text-left">
-            <p className="text-sm font-medium text-white">{viewer?.name ?? "—"}</p>
-            <p className="text-xs text-[#8b92a5]">
-              JPG, PNG or WebP · Max 5 MB · Square images look best
-            </p>
-            <CldUploadWidget
-              uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ?? "zenix_products"}
-              options={{ maxFiles: 1, cropping: true, croppingAspectRatio: 1, folder: "avatars" }}
-              onSuccess={handleAvatarUpload}
+            <p className="text-sm font-semibold text-white">{viewer?.name ?? "—"}</p>
+            <p className="text-xs text-[#8b92a5]">JPG, PNG or WebP · Max 5 MB</p>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={avatarLoading}
+              className="flex w-fit items-center gap-2 rounded-xl border border-[#1e2435] px-4 py-2 text-sm font-semibold text-[#8b92a5] transition hover:border-[#f5a623]/40 hover:text-[#f5a623] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {({ open }) => (
-                <button
-                  onClick={() => open()}
-                  disabled={avatarLoading}
-                  className="flex w-fit items-center gap-2 rounded-xl border border-[#1e2435] px-4 py-2 text-sm font-semibold text-[#8b92a5] transition hover:border-[#f5a623]/40 hover:text-[#f5a623] disabled:opacity-50"
-                >
-                  <Camera className="h-4 w-4" />
-                  {viewer?.image ? "Change photo" : "Upload photo"}
-                </button>
-              )}
-            </CldUploadWidget>
+              <Camera className="h-4 w-4" />
+              {avatarLoading ? "Uploading…" : viewer?.image ? "Change photo" : "Upload photo"}
+            </button>
           </div>
         </div>
       </div>
