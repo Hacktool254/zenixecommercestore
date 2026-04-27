@@ -208,55 +208,55 @@
 
 ### 5.1 Product Card Component
 
-- [ ] `components/products/ProductCard.tsx` — image, condition badge, name, price in KES, add to cart button, wishlist toggle, compare toggle
-- [ ] Hover: lift + orange border glow (CSS transition)
-- [ ] Out of stock: greyed image overlay + "Out of Stock" badge, disabled cart button
-- [ ] KES price formatted with thousands separator (KES 45,000)
+- [x] `components/products/ProductCard.tsx` — image, condition badge, name, price in KES, add to cart button, wishlist toggle, compare toggle
+- [x] Hover: lift + orange border glow (CSS transition)
+- [x] Out of stock: greyed image overlay + "Out of Stock" badge, disabled cart button
+- [x] KES price formatted with thousands separator (KES 45,000)
 
 ### 5.2 Product Grid
 
-- [ ] `components/products/ProductGrid.tsx` — responsive grid 2/3/4 cols
-- [ ] Stagger scroll reveal for cards
-- [ ] Loading state: skeleton cards
+- [x] `components/products/ProductGrid.tsx` — responsive grid 2/3/4 cols
+- [x] Stagger scroll reveal for cards
+- [x] Loading state: skeleton cards
 
 ### 5.3 Filters Component
 
-- [ ] `components/products/Filters.tsx`:
+- [x] `components/products/Filters.tsx`:
   - Category checkboxes (All, iPhones, Mac, TVs, Audio, Gaming, Connectivity, Power)
   - Condition: Brand New | Ex UK (radio or toggle)
   - Price range slider (0 — 500,000 KES)
   - In Stock only toggle
-- [ ] Desktop: sidebar left panel
-- [ ] Mobile: bottom sheet (Radix Sheet component)
-- [ ] Apply filters updates URL search params
+- [x] Desktop: sidebar left panel
+- [x] Mobile: bottom sheet (Radix Sheet component)
+- [x] Apply filters updates URL search params
 
 ### 5.4 Shop Page
 
-- [ ] `app/(store)/shop/page.tsx` — filters sidebar + product grid
-- [ ] Read filters from URL search params (shareable/bookmarkable filter URLs)
-- [ ] Sort dropdown (Newest, Price Low-High, Price High-Low)
-- [ ] Active filter chips above grid with remove button
-- [ ] Page metadata
+- [x] `app/(store)/shop/page.tsx` — filters sidebar + product grid
+- [x] Read filters from URL search params (shareable/bookmarkable filter URLs)
+- [x] Sort dropdown (Newest, Price Low-High, Price High-Low)
+- [x] Active filter chips above grid with remove button
+- [x] Page metadata
 
 ### 5.5 Category Page
 
-- [ ] `app/(store)/shop/[category]/page.tsx` — pre-filtered to category
-- [ ] Category hero banner with name and product count
-- [ ] Generates static params for all categories
+- [x] `app/(store)/shop/[category]/page.tsx` — pre-filtered to category
+- [x] Category hero banner with name and product count
+- [x] Generates static params for all categories
 
 ### 5.6 Product Detail Page
 
-- [ ] `app/(store)/shop/[category]/[slug]/page.tsx`
-- [ ] Image gallery: main image + thumbnail row, click to switch
-- [ ] Condition badge, product name, KES price, stock status
-- [ ] Quantity selector (1 to available stock)
-- [ ] Add to Cart button (primary) + Add to Wishlist (icon button) + Compare (icon button)
-- [ ] WhatsApp inquiry link: "Ask about this product"
-- [ ] Specs table (from product.specs object)
-- [ ] Full description
-- [ ] Related products (same category)
-- [ ] Structured data (JSON-LD Product schema for SEO)
-- [ ] generateMetadata for SEO title/description per product
+- [x] `app/(store)/shop/[category]/[slug]/page.tsx`
+- [x] Image gallery: main image + thumbnail row, click to switch
+- [x] Condition badge, product name, KES price, stock status
+- [x] Quantity selector (1 to available stock)
+- [x] Add to Cart button (primary) + Add to Wishlist (icon button) + Compare (icon button)
+- [x] WhatsApp inquiry link: "Ask about this product"
+- [x] Specs table (from product.specs object)
+- [x] Full description
+- [x] Related products (same category)
+- [x] Structured data (JSON-LD Product schema for SEO)
+- [x] generateMetadata for SEO title/description per product
 
 ---
 
