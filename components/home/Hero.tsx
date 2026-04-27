@@ -161,8 +161,8 @@ export function Hero() {
             </motion.div>
           </div>
 
-          {/* Bottom half — text content */}
-          <div className="flex flex-1 flex-col justify-center px-4 pb-14 md:px-6 lg:px-8">
+          {/* Text — directly below logo */}
+          <div className="flex flex-col px-4 pt-6 pb-14 md:px-6 lg:px-8">
             {/* Badge */}
             <motion.div
               initial={{ opacity: 0, y: 14 }}
