@@ -1,4 +1,7 @@
+import type { Metadata } from "next";
 import { AccountSidebar } from "@/components/account/AccountSidebar";
+
+export const metadata: Metadata = { title: "My Account — Zenix Electronics" };
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
   return (

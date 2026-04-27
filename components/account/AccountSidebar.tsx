@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { User, ShoppingBag, MapPin, Heart, LogOut } from "lucide-react";
+import { useAuthActions } from "@convex-dev/auth/react";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -14,6 +15,13 @@ const NAV = [
 
 export function AccountSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { signOut } = useAuthActions();
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/");
+  };
 
   return (
     <aside className="w-full shrink-0 md:w-56">
@@ -38,7 +46,10 @@ export function AccountSidebar() {
         })}
       </nav>
       <div className="mt-4 hidden border-t border-[#1e2435] pt-4 md:block">
-        <button className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-[#8b92a5] transition-colors hover:bg-[#1a2035] hover:text-white">
+        <button
+          onClick={handleSignOut}
+          className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-[#8b92a5] transition-colors hover:bg-[#1a2035] hover:text-white"
+        >
           <LogOut className="h-4 w-4 shrink-0" />
           Sign Out
         </button>
