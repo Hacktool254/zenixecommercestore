@@ -163,6 +163,7 @@ export function Hero() {
                 src="/logo.png"
                 alt="Zenix Electronics"
                 fill
+                sizes="(max-width: 640px) 288px, (max-width: 1024px) 320px, 384px"
                 className="rounded-full object-cover shadow-[0_0_60px_rgba(245,166,35,0.2)]"
                 priority
               />

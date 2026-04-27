@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { ProductCard } from "./ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Product } from "@/types";
@@ -29,9 +28,6 @@ interface Props {
 }
 
 export function ProductGrid({ products, skeletonCount = 8 }: Props) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
-
   if (products === undefined) {
     return (
       <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
@@ -52,12 +48,13 @@ export function ProductGrid({ products, skeletonCount = 8 }: Props) {
   }
 
   return (
-    <div ref={ref} className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
       {products.map((product, i) => (
         <motion.div
           key={product._id}
           initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0 }}
           transition={{ duration: 0.35, delay: Math.min(i * 0.06, 0.4) }}
         >
           <ProductCard product={product} />
