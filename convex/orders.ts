@@ -116,6 +116,34 @@ export const getAllOrders = query({
   },
 });
 
+export const getAdminStats = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    const user = await ctx.db.get(userId);
+    if (!user || user.role !== "admin") throw new Error("Admin only");
+
+    const orders = await ctx.db.query("orders").collect();
+    const products = await ctx.db.query("products").collect();
+
+    const totalRevenue = orders
+      .filter((o) => o.paymentStatus === "paid")
+      .reduce((sum, o) => sum + o.total, 0);
+
+    const lowStock = products.filter((p) => p.stock <= 5 && p.isActive);
+
+    return {
+      totalOrders: orders.length,
+      totalRevenue,
+      totalProducts: products.filter((p) => p.isActive).length,
+      lowStockCount: lowStock.length,
+      recentOrders: orders.sort((a, b) => b._creationTime - a._creationTime).slice(0, 10),
+      lowStockProducts: lowStock.sort((a, b) => a.stock - b.stock).slice(0, 10),
+    };
+  },
+});
+
 export const updateOrderStatus = mutation({
   args: {
     id: v.id("orders"),

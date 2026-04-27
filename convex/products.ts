@@ -126,6 +126,19 @@ export const searchProducts = query({
   },
 });
 
+export const getAllProductsAdmin = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    const user = await ctx.db.get(userId);
+    if (!user || user.role !== "admin") throw new Error("Admin only");
+
+    const products = await ctx.db.query("products").collect();
+    return products.sort((a, b) => b._creationTime - a._creationTime);
+  },
+});
+
 export const createProduct = mutation({
   args: {
     name: v.string(),
