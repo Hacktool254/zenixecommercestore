@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { ShoppingBag, ArrowLeft, Trash2 } from "lucide-react";
 import { useCartStore } from "@/stores/cart.store";
 import { CartItem } from "@/components/cart/CartItem";
-import { GlowCursor } from "@/components/shared/cursors/GlowCursor";
 
 const DELIVERY_FEE = 300;
 
@@ -19,7 +18,6 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <div className="mx-auto flex max-w-7xl flex-1 flex-col items-center justify-center px-4 py-24 text-center md:px-6">
-        <GlowCursor />
         <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-2xl bg-[#0d1117]">
           <ShoppingBag className="h-9 w-9 text-[#8b92a5]" />
         </div>
@@ -44,7 +42,6 @@ export default function CartPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-6">
-      <GlowCursor />
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>

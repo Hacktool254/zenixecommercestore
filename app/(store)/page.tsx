@@ -5,7 +5,6 @@ import { CategoryStrip } from "@/components/home/CategoryStrip";
 import { NewArrivals } from "@/components/home/NewArrivals";
 import { HotDeals } from "@/components/home/HotDeals";
 import { WhatsAppBanner } from "@/components/home/WhatsAppBanner";
-import { HomePageClient } from "@/components/home/HomePageClient";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const metadata: Metadata = {
@@ -46,7 +45,6 @@ function SectionSkeleton() {
 export default function HomePage() {
   return (
     <>
-      <HomePageClient />
       <Hero />
       <CategoryStrip />
       <Suspense fallback={<SectionSkeleton />}>

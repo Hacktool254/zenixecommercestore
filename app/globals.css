@@ -1,26 +1,278 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
+@custom-variant dark (&:is(.dark *));
+
+/* ─── Zenix Electronics Design Tokens ─── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Backgrounds */
+  --bg-base: #0a0e1a;
+  --bg-surface: #0d1117;
+  --bg-elevated: #111827;
+  --bg-subtle: #1a2035;
+
+  /* Zenix Accent (orange) */
+  --zenix-accent: #f5a623;
+  --zenix-accent-hover: #ff9f1c;
+  --zenix-accent-muted: rgba(245, 166, 35, 0.15);
+
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: #cbd5e1;
+  --text-muted: #8b92a5;
+
+  /* Borders */
+  --zenix-border: #1e2435;
+  --zenix-border-accent: rgba(245, 166, 35, 0.4);
+
+  /* Status */
+  --success: #22c55e;
+  --error: #ef4444;
+  --info: #38bdf8;
+
+  /* Shadows */
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 20px rgba(245, 166, 35, 0.3), 0 0 40px rgba(245, 166, 35, 0.1);
+  --shadow-glow-lg: 0 0 60px rgba(245, 166, 35, 0.2);
+
+  /* ─── shadcn/ui tokens — mapped to Zenix dark theme ─── */
+  --background: #0a0e1a;
+  --foreground: #ffffff;
+  --card: #0d1117;
+  --card-foreground: #ffffff;
+  --popover: #111827;
+  --popover-foreground: #ffffff;
+  --primary: #f5a623;
+  --primary-foreground: #0a0e1a;
+  --secondary: #1a2035;
+  --secondary-foreground: #ffffff;
+  --muted: #1a2035;
+  --muted-foreground: #8b92a5;
+  --accent: #1a2035;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --border: #1e2435;
+  --input: #1a2035;
+  --ring: #f5a623;
+  --radius: 0.625rem;
+
+  /* Sidebar */
+  --sidebar: #0d1117;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #f5a623;
+  --sidebar-primary-foreground: #0a0e1a;
+  --sidebar-accent: #1a2035;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #1e2435;
+  --sidebar-ring: #f5a623;
+
+  /* Charts */
+  --chart-1: #f5a623;
+  --chart-2: #38bdf8;
+  --chart-3: #22c55e;
+  --chart-4: #a78bfa;
+  --chart-5: #f87171;
 }
 
+/* ─── Tailwind v4 Theme ─── */
 @theme inline {
+  /* Zenix custom tokens */
+  --color-bg-base: var(--bg-base);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-subtle: var(--bg-subtle);
+  --color-zenix-accent: var(--zenix-accent);
+  --color-zenix-accent-hover: var(--zenix-accent-hover);
+  --color-zenix-accent-muted: var(--zenix-accent-muted);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-zenix-border: var(--zenix-border);
+  --color-zenix-border-accent: var(--zenix-border-accent);
+  --color-success: var(--success);
+  --color-error: var(--error);
+  --color-info: var(--info);
+
+  /* shadcn mapped tokens */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Radius */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+
+  /* Fonts */
+  --font-sans: var(--font-space-grotesk);
+  --font-heading: var(--font-space-grotesk);
+  --font-body: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ─── Base Styles ─── */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    scroll-behavior: smooth;
+    font-family: var(--font-inter), system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-inter), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-space-grotesk), system-ui, sans-serif;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-subtle);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--zenix-accent);
+}
+
+/* ─── Focus Ring ─── */
+:focus-visible {
+  outline: 2px solid var(--zenix-accent);
+  outline-offset: 2px;
+}
+
+/* ─── Animations ─── */
+@keyframes whatsapp-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 16px rgba(37, 211, 102, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(-12px);
+  }
+  50% {
+    transform: translateY(12px);
+  }
+}
+
+.whatsapp-pulse {
+  animation: whatsapp-pulse 2.5s infinite;
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    currentColor 25%,
+    color-mix(in srgb, currentColor 60%, white) 50%,
+    currentColor 75%
+  );
+  background-size: 200% auto;
+  animation: shimmer 2s linear infinite;
+}
+
+.skeleton {
+  background: var(--bg-subtle);
+  animation: skeleton-pulse 1.8s ease-in-out infinite;
+}
+
+.float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* ─── Glassmorphism ─── */
+.glass {
+  background: rgba(13, 17, 23, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ─── Reduced Motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
