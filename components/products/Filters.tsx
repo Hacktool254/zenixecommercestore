@@ -24,6 +24,9 @@ const BRANDS = [
   { value: "", label: "All Brands" },
   { value: "Apple", label: "Apple" },
   { value: "Samsung", label: "Samsung" },
+  { value: "Sony", label: "Sony" },
+  { value: "Microsoft", label: "Microsoft" },
+  { value: "TCL", label: "TCL" },
 ];
 
 const SORT_OPTIONS = [
