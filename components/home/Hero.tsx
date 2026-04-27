@@ -131,8 +131,8 @@ export function Hero() {
       <div className="relative z-10 flex min-h-screen w-full">
         {/* ── LEFT COLUMN ── */}
         <div className="flex flex-1 flex-col overflow-hidden">
-          {/* Top half — logo (foreground) */}
-          <div className="flex h-[48vh] items-end px-4 pb-4 md:px-6 lg:px-8">
+          {/* Top — logo just below header */}
+          <div className="flex px-4 pt-6 md:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
