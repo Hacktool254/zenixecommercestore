@@ -2,6 +2,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { WhatsAppFAB } from "@/components/shared/WhatsAppFAB";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 
 export default function StoreLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -11,6 +12,7 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
       <Footer />
       <BottomNav />
       <WhatsAppFAB />
+      <CartDrawer />
     </>
   );
 }
