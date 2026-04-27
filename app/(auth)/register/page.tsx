@@ -63,8 +63,11 @@ export default function RegisterPage() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#8b92a5]">Full name</label>
+          <label htmlFor="reg-name" className="mb-1.5 block text-xs font-medium text-[#8b92a5]">
+            Full name
+          </label>
           <input
+            id="reg-name"
             {...register("name")}
             type="text"
             autoComplete="name"
@@ -75,8 +78,11 @@ export default function RegisterPage() {
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#8b92a5]">Email</label>
+          <label htmlFor="reg-email" className="mb-1.5 block text-xs font-medium text-[#8b92a5]">
+            Email
+          </label>
           <input
+            id="reg-email"
             {...register("email")}
             type="email"
             autoComplete="email"
@@ -87,9 +93,12 @@ export default function RegisterPage() {
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#8b92a5]">Password</label>
+          <label htmlFor="reg-password" className="mb-1.5 block text-xs font-medium text-[#8b92a5]">
+            Password
+          </label>
           <div className="relative">
             <input
+              id="reg-password"
               {...register("password")}
               type={showPassword ? "text" : "password"}
               autoComplete="new-password"
@@ -100,6 +109,7 @@ export default function RegisterPage() {
               type="button"
               onClick={() => setShowPassword((v) => !v)}
               className="absolute top-1/2 right-3 -translate-y-1/2 text-[#8b92a5] hover:text-white"
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
@@ -110,11 +120,12 @@ export default function RegisterPage() {
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#8b92a5]">
+          <label htmlFor="reg-confirm" className="mb-1.5 block text-xs font-medium text-[#8b92a5]">
             Confirm password
           </label>
           <div className="relative">
             <input
+              id="reg-confirm"
               {...register("confirmPassword")}
               type={showConfirm ? "text" : "password"}
               autoComplete="new-password"
@@ -125,6 +136,7 @@ export default function RegisterPage() {
               type="button"
               onClick={() => setShowConfirm((v) => !v)}
               className="absolute top-1/2 right-3 -translate-y-1/2 text-[#8b92a5] hover:text-white"
+              aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}
             >
               {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>

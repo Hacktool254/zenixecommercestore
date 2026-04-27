@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ShoppingCart, Heart, GitCompare } from "lucide-react";
 import { useCartStore } from "@/stores/cart.store";
 import { useUIStore } from "@/stores/ui.store";
+import { cloudinaryUrl } from "@/lib/utils";
 import type { Product } from "@/types";
 
 interface Props {
@@ -52,9 +53,10 @@ export function ProductCard({ product, showHotBadge }: Props) {
       {/* Image */}
       <div className="relative aspect-square overflow-hidden bg-[#111827]">
         <Image
-          src={product.images[0] ?? "/logo.png"}
+          src={cloudinaryUrl(product.images[0] ?? "/logo.png")}
           alt={product.name}
           fill
+          loading="lazy"
           className={`object-cover transition-transform duration-300 group-hover:scale-105 ${isOutOfStock ? "opacity-50 grayscale" : ""}`}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
         />

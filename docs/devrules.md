@@ -468,33 +468,33 @@
 
 ### 13.1 Metadata
 
-- [ ] Root layout metadata (title template, description, OG image)
-- [ ] `generateMetadata` for product pages (name, description, price, image)
-- [ ] `generateMetadata` for category pages
-- [ ] Sitemap: `app/sitemap.ts` — generates URLs for all products and categories
-- [ ] Robots: `app/robots.ts`
+- [x] Root layout metadata (title template, description, OG image)
+- [x] `generateMetadata` for product pages (name, description, price, image)
+- [x] `generateMetadata` for category pages
+- [x] Sitemap: `app/sitemap.ts` — generates URLs for all products and categories
+- [x] Robots: `app/robots.ts`
 
 ### 13.2 Structured Data
 
-- [ ] Product JSON-LD schema on all product detail pages (name, price, availability, image)
-- [ ] BreadcrumbList JSON-LD on product and category pages
+- [x] Product JSON-LD schema on all product detail pages (name, price, availability, image)
+- [x] BreadcrumbList JSON-LD on product and category pages
 
 ### 13.3 Performance
 
-- [ ] All product images via `next/image` with explicit width/height
-- [ ] Cloudinary image URLs with `f_auto,q_auto` transformations
-- [ ] Lazy load below-fold images
-- [ ] `loading="eager"` on above-fold hero image
-- [ ] Route-level code splitting (automatic with App Router)
-- [ ] `<Suspense>` with skeletons for all data-fetched sections
+- [x] All product images via `next/image` with explicit width/height
+- [x] Cloudinary image URLs with `f_auto,q_auto` transformations
+- [x] Lazy load below-fold images
+- [x] `loading="eager"` on above-fold hero image
+- [x] Route-level code splitting (automatic with App Router)
+- [x] `<Suspense>` with skeletons for all data-fetched sections
 
 ### 13.4 Accessibility
 
-- [ ] All images have descriptive `alt` text
-- [ ] Focus ring visible on all interactive elements (orange outline)
-- [ ] Form labels always associated with inputs
-- [ ] Color contrast verified with WCAG 2.1 AA
-- [ ] Keyboard navigation tested — cart, modals, dropdowns
+- [x] All images have descriptive `alt` text
+- [x] Focus ring visible on all interactive elements (orange outline)
+- [x] Form labels always associated with inputs
+- [x] Color contrast verified with WCAG 2.1 AA
+- [x] Keyboard navigation tested — cart, modals, dropdowns
 
 ---
 

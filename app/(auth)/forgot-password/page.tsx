@@ -68,8 +68,11 @@ export default function ForgotPasswordPage() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#8b92a5]">Email</label>
+          <label htmlFor="forgot-email" className="mb-1.5 block text-xs font-medium text-[#8b92a5]">
+            Email
+          </label>
           <input
+            id="forgot-email"
             {...register("email")}
             type="email"
             autoComplete="email"

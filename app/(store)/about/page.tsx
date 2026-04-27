@@ -40,10 +40,14 @@ function ContactForm() {
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold tracking-widest text-[#8b92a5] uppercase">
+          <label
+            htmlFor="contact-name"
+            className="text-xs font-semibold tracking-widest text-[#8b92a5] uppercase"
+          >
             Your Name
           </label>
           <input
+            id="contact-name"
             required
             value={form.name}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
@@ -52,10 +56,14 @@ function ContactForm() {
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold tracking-widest text-[#8b92a5] uppercase">
+          <label
+            htmlFor="contact-phone"
+            className="text-xs font-semibold tracking-widest text-[#8b92a5] uppercase"
+          >
             Phone / WhatsApp
           </label>
           <input
+            id="contact-phone"
             required
             type="tel"
             value={form.phone}
@@ -66,10 +74,14 @@ function ContactForm() {
         </div>
       </div>
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold tracking-widest text-[#8b92a5] uppercase">
+        <label
+          htmlFor="contact-message"
+          className="text-xs font-semibold tracking-widest text-[#8b92a5] uppercase"
+        >
           Message
         </label>
         <textarea
+          id="contact-message"
           required
           rows={4}
           value={form.message}

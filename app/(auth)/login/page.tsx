@@ -53,8 +53,11 @@ function LoginForm() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#8b92a5]">Email</label>
+          <label htmlFor="login-email" className="mb-1.5 block text-xs font-medium text-[#8b92a5]">
+            Email
+          </label>
           <input
+            id="login-email"
             {...register("email")}
             type="email"
             autoComplete="email"
@@ -65,9 +68,15 @@ function LoginForm() {
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-[#8b92a5]">Password</label>
+          <label
+            htmlFor="login-password"
+            className="mb-1.5 block text-xs font-medium text-[#8b92a5]"
+          >
+            Password
+          </label>
           <div className="relative">
             <input
+              id="login-password"
               {...register("password")}
               type={showPassword ? "text" : "password"}
               autoComplete="current-password"
