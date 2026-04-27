@@ -4,6 +4,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { WidgetCarousel } from "@/components/shared/WidgetCarousel";
+import type { WidgetItem } from "@/components/shared/WidgetCarousel";
 import {
   Smartphone,
   Tv,
@@ -182,30 +184,56 @@ function CategoryCard({ cat, index }: { cat: (typeof CATEGORIES)[number]; index:
   );
 }
 
+const CATEGORY_WIDGETS: WidgetItem[] = [
+  { id: "iphones", label: "iPhones", sub: "12 Pro → 17 Pro Max", color: "#a8d5e2" },
+  { id: "samsung", label: "Samsung", sub: "S-series · Z Fold · Z Flip", color: "#1e88e5" },
+  { id: "gaming", label: "Gaming", sub: "PS5 Pro · Xbox Series X", color: "#f87171" },
+  { id: "mac", label: "Mac", sub: "Air M4/M5 · Pro M5", color: "#cbd5e1" },
+  { id: "ipad", label: "iPad", sub: "10th Gen → Pro M5", color: "#a78bfa" },
+  { id: "wearables", label: "Wearables", sub: "Series 6–11 · Ultra 3", color: "#34d399" },
+  { id: "audio", label: "Audio", sub: "AirPods 4 · AirPods Max", color: "#f87171" },
+  { id: "televisions", label: "Televisions", sub: 'TCL 4K · 55"–85"', color: "#f5a623" },
+];
+
 export default function CategoriesPage() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 md:px-6">
-      {/* Header */}
-      <div className="mb-10">
-        <p className="mb-1 text-xs font-semibold tracking-widest text-[#f5a623] uppercase">
-          Browse
-        </p>
-        <h1
-          className="mb-2 text-3xl font-bold text-white sm:text-4xl"
-          style={{ fontFamily: "var(--font-space-grotesk)" }}
-        >
-          All Categories
-        </h1>
-        <p className="text-sm text-[#8b92a5]">
-          Explore our full range of premium electronics — brand new and Ex UK.
-        </p>
-      </div>
+    <div className="mx-auto max-w-[1600px] px-4 py-10 md:px-6 lg:px-8">
+      <div className="flex gap-8 xl:gap-10">
+        {/* Main content */}
+        <div className="min-w-0 flex-1">
+          {/* Header */}
+          <div className="mb-10">
+            <p className="mb-1 text-xs font-semibold tracking-widest text-[#f5a623] uppercase">
+              Browse
+            </p>
+            <h1
+              className="mb-2 text-3xl font-bold text-white sm:text-4xl"
+              style={{ fontFamily: "var(--font-space-grotesk)" }}
+            >
+              All Categories
+            </h1>
+            <p className="text-sm text-[#8b92a5]">
+              Explore our full range of premium electronics — brand new and Ex UK.
+            </p>
+          </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {CATEGORIES.map((cat, i) => (
-          <CategoryCard key={cat.value} cat={cat} index={i} />
-        ))}
+          {/* Grid */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+            {CATEGORIES.map((cat, i) => (
+              <CategoryCard key={cat.value} cat={cat} index={i} />
+            ))}
+          </div>
+        </div>
+
+        {/* Right widget — desktop only */}
+        <div className="hidden w-[220px] shrink-0 flex-col pt-[76px] xl:flex">
+          <p className="mb-3 text-[10px] font-semibold tracking-widest text-[#8b92a5] uppercase">
+            Popular
+          </p>
+          <div className="sticky top-24 h-[480px]">
+            <WidgetCarousel items={CATEGORY_WIDGETS} autoScrollMs={2800} />
+          </div>
+        </div>
       </div>
     </div>
   );

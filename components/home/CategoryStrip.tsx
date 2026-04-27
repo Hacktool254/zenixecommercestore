@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import {
   Smartphone,
@@ -32,31 +31,76 @@ const CATEGORIES = [
 ];
 
 export function CategoryStrip() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const ref = useRef<HTMLElement>(null);
+
+  // Parallax: scroll from entering the section to leaving it
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  const bgY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ["4%", "-4%"]);
 
   return (
-    <section ref={ref} className="bg-[#0a0e1a] py-10">
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <motion.h2
-          initial={{ opacity: 0, y: 12 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.4 }}
-          className="mb-6 text-lg font-semibold text-white"
-          style={{ fontFamily: "var(--font-space-grotesk)" }}
-        >
-          Shop by Category
-        </motion.h2>
+    <section
+      ref={ref}
+      className="relative flex min-h-screen items-center overflow-hidden bg-[#080c16]"
+    >
+      {/* Parallax background layer */}
+      <motion.div className="pointer-events-none absolute inset-[-10%] z-0" style={{ y: bgY }}>
+        {/* Subtle grid */}
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage:
+              "linear-gradient(#f5a623 1px, transparent 1px), linear-gradient(90deg, #f5a623 1px, transparent 1px)",
+            backgroundSize: "80px 80px",
+          }}
+        />
+        {/* Gradient blobs */}
+        <div
+          className="absolute top-1/4 left-1/4 h-[400px] w-[400px] rounded-full blur-[120px]"
+          style={{ background: "rgba(245,166,35,0.06)" }}
+        />
+        <div
+          className="absolute right-1/4 bottom-1/4 h-[300px] w-[300px] rounded-full blur-[100px]"
+          style={{ background: "rgba(56,189,248,0.05)" }}
+        />
+      </motion.div>
 
-        {/* Scrollable row */}
-        <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      {/* Content */}
+      <motion.div
+        className="relative z-10 w-full px-4 py-20 md:px-6 lg:px-8"
+        style={{ y: contentY }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5 }}
+          className="mb-10"
+        >
+          <p className="mb-1 text-xs font-semibold tracking-widest text-[#f5a623] uppercase">
+            Explore
+          </p>
+          <h2
+            className="text-3xl font-bold text-white sm:text-4xl"
+            style={{ fontFamily: "var(--font-space-grotesk)" }}
+          >
+            Shop by Category
+          </h2>
+        </motion.div>
+
+        {/* Grid — wraps on all screens */}
+        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-11">
           {CATEGORIES.map(({ label, href, icon: Icon, color }, i) => (
             <motion.div
               key={href}
-              initial={{ opacity: 0, y: 16 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.35, delay: i * 0.06 }}
-              className="snap-start"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0 }}
+              transition={{ duration: 0.35, delay: Math.min(i * 0.06, 0.5) }}
             >
               <Link href={href} className="group flex flex-col items-center gap-2.5 outline-none">
                 <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-[#1e2435] bg-[#0d1117] transition-all duration-200 group-hover:scale-105 group-hover:border-[#f5a623]/40 group-hover:shadow-[0_0_16px_rgba(245,166,35,0.15)]">
@@ -72,7 +116,7 @@ export function CategoryStrip() {
             </motion.div>
           ))}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
