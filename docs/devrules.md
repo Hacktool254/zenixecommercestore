@@ -449,18 +449,18 @@
 
 ### 12.1 Delivery Info Page
 
-- [ ] `app/(store)/delivery/page.tsx`
-- [ ] Coverage areas in Nairobi
-- [ ] Estimated delivery times
-- [ ] Delivery fee structure
-- [ ] Pickup option at Accra Road, Cookie House
+- [x] `app/(store)/delivery/page.tsx`
+- [x] Coverage areas in Nairobi
+- [x] Estimated delivery times
+- [x] Delivery fee structure
+- [x] Pickup option at Accra Road, Cookie House
 
 ### 12.2 About/Contact Page
 
-- [ ] `app/(store)/about/page.tsx`
-- [ ] Zenix story, location, contact info
-- [ ] Google Maps embed for Accra Road, Nairobi
-- [ ] Contact form (sends WhatsApp or email)
+- [x] `app/(store)/about/page.tsx`
+- [x] Zenix story, location, contact info
+- [x] Google Maps embed for Accra Road, Nairobi
+- [x] Contact form (sends WhatsApp or email)
 
 ---
 
