@@ -385,18 +385,18 @@
 
 ### 10.1 Comparison Logic
 
-- [ ] Zustand `comparisonList` — max 3 products
-- [ ] "Compare" button on product cards — toggles product in comparison list
-- [ ] Floating comparison bar at bottom of page when 2+ products selected
-- [ ] "Compare Now" button in floating bar → navigates to `/compare`
+- [x] Zustand `comparisonList` — max 3 products
+- [x] "Compare" button on product cards — toggles product in comparison list
+- [x] Floating comparison bar at bottom of page when 2+ products selected
+- [x] "Compare Now" button in floating bar → navigates to `/compare`
 
 ### 10.2 Comparison Page
 
-- [ ] `app/(store)/compare/page.tsx` — side-by-side table
-- [ ] Rows: Image, Name, Price, Condition, Category, Specs (all spec keys merged)
-- [ ] Highlight best value (lowest price) in green
-- [ ] "Add to Cart" button per column
-- [ ] "Remove" button per column
+- [x] `app/(store)/compare/page.tsx` — side-by-side table
+- [x] Rows: Image, Name, Price, Condition, Category, Specs (all spec keys merged)
+- [x] Highlight best value (lowest price) in green
+- [x] "Add to Cart" button per column
+- [x] "Remove" button per column
 
 ---
 
