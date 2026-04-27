@@ -264,30 +264,30 @@
 
 ### 6.1 Cart Drawer
 
-- [ ] `components/cart/CartDrawer.tsx` — slides in from right, Framer Motion spring animation
-- [ ] Backdrop blur overlay
-- [ ] Cart items list with image, name, price, quantity controls, remove button
-- [ ] Subtotal at bottom
-- [ ] Checkout button → `/checkout`
-- [ ] Empty state with "Start Shopping" link
-- [ ] Controlled by Zustand `isDrawerOpen`
+- [x] `components/cart/CartDrawer.tsx` — slides in from right, Framer Motion spring animation
+- [x] Backdrop blur overlay
+- [x] Cart items list with image, name, price, quantity controls, remove button
+- [x] Subtotal at bottom
+- [x] Checkout button → `/checkout`
+- [x] Empty state with "Start Shopping" link
+- [x] Controlled by Zustand `isDrawerOpen`
 
 ### 6.2 Cart Item Component
 
-- [ ] `components/cart/CartItem.tsx` — product thumbnail, name, condition, price × quantity, +/- buttons, delete button
-- [ ] Optimistic UI — quantity updates instantly, syncs to Convex
+- [x] `components/cart/CartItem.tsx` — product thumbnail, name, condition, price × quantity, +/- buttons, delete button
+- [x] Optimistic UI — quantity updates instantly, syncs to Convex
 
 ### 6.3 Cart Page
 
-- [ ] `app/(store)/cart/page.tsx` — full-page cart view
-- [ ] Same items list as drawer, but with more space
-- [ ] Order summary card (subtotal, delivery fee, total)
-- [ ] "Continue Shopping" + "Proceed to Checkout" buttons
+- [x] `app/(store)/cart/page.tsx` — full-page cart view
+- [x] Same items list as drawer, but with more space
+- [x] Order summary card (subtotal, delivery fee KES 300, total)
+- [x] "Continue Shopping" + "Proceed to Checkout" buttons
 
 ### 6.4 Add to Cart Logic
 
-- [ ] `addToCart` in Zustand store triggers Convex `addToCart` mutation for authenticated users
-- [ ] For guests: cart lives in Zustand only (localStorage persist)
+- [x] `addToCart` in Zustand store — cart lives in Zustand with localStorage persistence
+- [x] For guests: cart persists in localStorage via Zustand persist middleware
 - [ ] On login: merge guest cart with server cart
 
 ---
@@ -296,28 +296,29 @@
 
 ### 7.1 Login Page
 
-- [ ] `app/(auth)/login/page.tsx` — email + password form
-- [ ] React Hook Form + Zod validation
-- [ ] Error messages inline
-- [ ] Link to register + forgot password
-- [ ] Redirect to previous page or `/account` after login
+- [x] `app/(auth)/login/page.tsx` — email + password form
+- [x] React Hook Form + Zod validation
+- [x] Error messages inline
+- [x] Link to register + forgot password
+- [x] Redirect to previous page or `/account` after login via `?redirect=` param
 
 ### 7.2 Register Page
 
-- [ ] `app/(auth)/register/page.tsx` — name, email, password, confirm password
-- [ ] Zod schema validation
-- [ ] Success → redirect to `/account`
+- [x] `app/(auth)/register/page.tsx` — name, email, password, confirm password
+- [x] Zod schema validation with password match refine
+- [x] Success → redirect to `/account`
 
 ### 7.3 Forgot Password Page
 
-- [ ] `app/(auth)/forgot-password/page.tsx` — email input
-- [ ] Sends reset email via Convex Auth
+- [x] `app/(auth)/forgot-password/page.tsx` — email input
+- [x] Sends reset email via Convex Auth `flow: "reset"`
+- [x] Success state shown with checkmark (no page redirect)
 
 ### 7.4 Auth Middleware
 
-- [ ] `middleware.ts` — protect `/checkout`, `/account/*`, `/admin/*` routes
-- [ ] Redirect unauthenticated users to `/auth/login?redirect=...`
-- [ ] Redirect non-admin users away from `/admin/*`
+- [x] `proxy.ts` — protect `/checkout`, `/account/*`, `/admin/*` routes (Next.js uses proxy.ts with Convex Auth)
+- [x] Redirect unauthenticated users to `/login?redirect=...`
+- [x] Redirect non-admin users away from `/admin/*` (JWT role check)
 
 ---
 
