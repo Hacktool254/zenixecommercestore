@@ -149,10 +149,10 @@
 
 ### 3.6 Route Groups & Layouts
 
-- [ ] `app/(store)/layout.tsx` — includes Header, Footer, WhatsAppFAB, BottomNav
-- [ ] `app/(auth)/layout.tsx` — minimal layout, centered card
-- [ ] `app/admin/layout.tsx` — AdminSidebar + main content area, protected route
-- [ ] `app/account/layout.tsx` — AccountSidebar + content area, protected route
+- [x] `app/(store)/layout.tsx` — includes Header, Footer, WhatsAppFAB, BottomNav
+- [x] `app/(auth)/layout.tsx` — minimal layout, centered card
+- [x] `app/admin/layout.tsx` — AdminSidebar + main content area, protected route
+- [x] `app/account/layout.tsx` — AccountSidebar + content area, protected route
 
 ### 3.7 Zustand Stores
 
