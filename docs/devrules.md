@@ -165,42 +165,42 @@
 
 ### 4.1 Hero Section
 
-- [ ] `components/home/Hero.tsx` — full viewport height, two-column layout
-- [ ] Left: animated headline with Framer Motion text reveal, subtext, two CTA buttons (Shop Now + View Deals)
-- [ ] Right: floating product image (framer-motion y-axis loop animation)
-- [ ] Background: circuit board SVG pattern (subtle, animated opacity)
-- [ ] Mobile: single column, centered
+- [x] `components/home/Hero.tsx` — full viewport height, two-column layout
+- [x] Left: animated headline with Framer Motion text reveal, subtext, two CTA buttons (Shop Now + View Deals)
+- [x] Right: floating product image (framer-motion y-axis loop animation)
+- [x] Background: circuit board SVG pattern (subtle, animated opacity)
+- [x] Mobile: single column, centered
 
 ### 4.2 Category Strip
 
-- [ ] `components/home/CategoryStrip.tsx` — horizontal scrollable row with snap
-- [ ] One card per category: icon + label
-- [ ] Hover: orange underline + scale(1.05)
-- [ ] Scroll reveal on enter
+- [x] `components/home/CategoryStrip.tsx` — horizontal scrollable row with snap
+- [x] One card per category: icon + label
+- [x] Hover: orange underline + scale(1.05)
+- [x] Scroll reveal on enter
 
 ### 4.3 New Arrivals Section
 
-- [ ] `components/home/NewArrivals.tsx` — "New Arrivals" section heading + "View All" link
-- [ ] Grid of 4 product cards, fetched via `getNewArrivals` Convex query
-- [ ] Stagger scroll reveal animation
+- [x] `components/home/NewArrivals.tsx` — "New Arrivals" section heading + "View All" link
+- [x] Grid of 4 product cards, fetched via `getNewArrivals` Convex query
+- [x] Stagger scroll reveal animation
 
 ### 4.4 Hot Deals Section
 
-- [ ] `components/home/HotDeals.tsx` — orange accent section header
-- [ ] Grid of 4 discounted products, fetched via `getHotDeals`
-- [ ] Show original price struck through + sale price
-- [ ] Shimmer badge animation on "Hot Deal" badge
+- [x] `components/home/HotDeals.tsx` — orange accent section header
+- [x] Grid of 4 discounted products, fetched via `getHotDeals`
+- [x] Show original price struck through + sale price
+- [x] Shimmer badge animation on "Hot Deal" badge
 
 ### 4.5 WhatsApp CTA Banner
 
-- [ ] `components/home/WhatsAppBanner.tsx` — dark card with text + WhatsApp button
-- [ ] "Need help choosing? Chat with us instantly on WhatsApp"
+- [x] `components/home/WhatsAppBanner.tsx` — dark card with text + WhatsApp button
+- [x] "Need help choosing? Chat with us instantly on WhatsApp"
 
 ### 4.6 Homepage Page
 
-- [ ] `app/(store)/page.tsx` — compose all home sections
-- [ ] Add `<Suspense>` boundaries with skeleton loaders for data-fetched sections
-- [ ] Page metadata (title, description, OG tags)
+- [x] `app/(store)/page.tsx` — compose all home sections
+- [x] Add `<Suspense>` boundaries with skeleton loaders for data-fetched sections
+- [x] Page metadata (title, description, OG tags)
 
 ---
 

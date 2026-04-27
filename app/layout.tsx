@@ -21,6 +21,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://zenixecommercestore.vercel.app"
+  ),
   title: {
     default: "Zenix Electronics — Premium Electronics in Nairobi",
     template: "%s | Zenix Electronics",
