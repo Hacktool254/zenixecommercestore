@@ -156,8 +156,8 @@
 
 ### 3.7 Zustand Stores
 
-- [ ] `stores/cart.store.ts` — items, addItem, removeItem, updateQuantity, clearCart, isDrawerOpen, openDrawer, closeDrawer, computed totals
-- [ ] `stores/ui.store.ts` — isSearchOpen, comparisonList (up to 3 products), addToComparison, removeFromComparison
+- [x] `stores/cart.store.ts` — items, addItem, removeItem, updateQuantity, clearCart, isDrawerOpen, openDrawer, closeDrawer, computed totals
+- [x] `stores/ui.store.ts` — isSearchOpen, comparisonList (up to 3 products), addToComparison, removeFromComparison
 
 ---
 
