@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, User, ShoppingCart, Menu, X, Zap } from "lucide-react";
+import Image from "next/image";
+import { Search, User, ShoppingCart, Menu, X } from "lucide-react";
 import { useCartStore } from "@/stores/cart.store";
 import { useUIStore } from "@/stores/ui.store";
 import { cn } from "@/lib/utils";
@@ -48,17 +49,15 @@ export function Header() {
       >
         <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 md:px-6">
           {/* Logo */}
-          <Link href="/" className="flex shrink-0 items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[#f5a623]">
-              <Zap className="h-4 w-4 fill-[#0a0e1a] text-[#0a0e1a]" strokeWidth={2.5} />
-            </div>
-            <span
-              className="font-space-grotesk font-700 text-lg tracking-tight text-white"
-              style={{ fontFamily: "var(--font-space-grotesk)" }}
-            >
-              Zenix
-              <span className="text-[#f5a623]">.</span>
-            </span>
+          <Link href="/" className="flex shrink-0 items-center">
+            <Image
+              src="/logo.png"
+              alt="Zenix Electronics"
+              width={120}
+              height={40}
+              className="h-10 w-auto object-contain"
+              priority
+            />
           </Link>
 
           {/* Desktop nav */}
