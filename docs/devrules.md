@@ -326,29 +326,29 @@
 
 ### 8.1 Checkout Page Structure
 
-- [ ] `app/(store)/checkout/page.tsx` — multi-step with progress indicator
-- [ ] Step 1: Delivery address (existing saved addresses or new address form)
-- [ ] Step 2: Order review (items, address, totals)
-- [ ] Step 3: Payment (Paystack)
+- [x] `app/(store)/checkout/page.tsx` — multi-step with progress indicator
+- [x] Step 1: Delivery address (existing saved addresses or new address form)
+- [x] Step 2: Order review (items, address, totals)
+- [x] Step 3: Payment (Paystack)
 
 ### 8.2 Paystack Integration
 
-- [ ] `lib/paystack.ts` — initialize transaction, verify transaction functions
-- [ ] Install Paystack inline JS: `@paystack/inline-js` or use redirect
-- [ ] On "Pay Now": call `/api/paystack/initialize` route → get access code → trigger Paystack popup
-- [ ] On success callback: verify transaction via `/api/paystack/verify/[reference]`
-- [ ] Redirect to `/order/[id]` on confirmed payment
+- [x] `lib/paystack.ts` — initialize transaction, verify transaction functions
+- [x] Install Paystack inline JS: `@paystack/inline-js` or use redirect
+- [x] On "Pay Now": call `/api/paystack/initialize` route → get access code → trigger Paystack popup
+- [x] On success callback: verify transaction via `/api/paystack/verify/[reference]`
+- [x] Redirect to `/order/[id]` on confirmed payment
 
 ### 8.3 Paystack Webhook
 
-- [ ] `app/api/paystack/webhook/route.ts` — verify HMAC signature
-- [ ] Handle `charge.success` event → call `updatePaymentStatus` in Convex
-- [ ] Handle `charge.failed` event → update order accordingly
+- [x] `app/api/paystack/webhook/route.ts` — verify HMAC signature
+- [x] Handle `charge.success` event → call `updatePaymentStatus` in Convex
+- [x] Handle `charge.failed` event → update order accordingly
 
 ### 8.4 Order Confirmation Page
 
-- [ ] `app/(store)/order/[id]/page.tsx` — order number, items summary, delivery address, payment method, status
-- [ ] "Continue Shopping" button
+- [x] `app/(store)/order/[id]/page.tsx` — order number, items summary, delivery address, payment method, status
+- [x] "Continue Shopping" button
 - [ ] Option to download/print receipt (future)
 
 ---
