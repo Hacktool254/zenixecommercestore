@@ -1,8 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { User, ShoppingBag, MapPin, Heart, LogOut, ArrowLeft } from "lucide-react";
+import {
+  User,
+  ShoppingBag,
+  MapPin,
+  Heart,
+  LogOut,
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -20,6 +30,7 @@ export function AccountSidebar() {
   const router = useRouter();
   const { signOut } = useAuthActions();
   const viewer = useQuery(api.users.viewer);
+  const [collapsed, setCollapsed] = useState(false);
 
   const initials = viewer?.name
     ? viewer.name
@@ -36,41 +47,82 @@ export function AccountSidebar() {
   };
 
   return (
-    <aside className="flex w-full shrink-0 flex-col md:w-64">
+    <aside
+      className={cn(
+        "relative hidden shrink-0 flex-col transition-all duration-300 md:flex",
+        collapsed ? "w-[68px]" : "w-60"
+      )}
+    >
+      {/* Collapse toggle */}
+      <button
+        onClick={() => setCollapsed((c) => !c)}
+        className="absolute top-6 -right-3 z-20 flex h-6 w-6 items-center justify-center rounded-full border border-[#1e2435] bg-[#0d1117] text-[#8b92a5] shadow-md transition hover:border-[#f5a623]/40 hover:text-[#f5a623]"
+        aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+      >
+        {collapsed ? (
+          <ChevronRight className="h-3.5 w-3.5" />
+        ) : (
+          <ChevronLeft className="h-3.5 w-3.5" />
+        )}
+      </button>
+
       {/* User card */}
-      <div className="mb-6 overflow-hidden rounded-2xl border border-[#1e2435] bg-[#0d1117]">
-        <div className="relative px-5 pt-6 pb-5">
-          {/* Subtle gradient accent */}
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-[#f5a623]/6 to-transparent" />
-          <div className="relative flex flex-col items-center text-center">
-            {/* Avatar */}
-            <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#f5a623] to-[#ff9f1c] shadow-[0_0_24px_rgba(245,166,35,0.3)]">
-              <span className="text-xl font-bold text-[#0a0e1a]">{initials}</span>
-            </div>
-            <p
-              className="font-semibold text-white"
-              style={{ fontFamily: "var(--font-space-grotesk)" }}
+      <div
+        className={cn(
+          "mb-4 overflow-hidden rounded-2xl border border-[#1e2435] bg-[#0d1117] transition-all duration-300",
+          collapsed ? "px-2 py-4" : ""
+        )}
+      >
+        <div className={cn("relative", collapsed ? "px-0 pt-0 pb-0" : "px-5 pt-6 pb-5")}>
+          {!collapsed && (
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-[#f5a623]/6 to-transparent" />
+          )}
+          <div
+            className={cn(
+              "relative flex flex-col items-center text-center",
+              collapsed && "items-center"
+            )}
+          >
+            <div
+              className={cn(
+                "flex shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#f5a623] to-[#ff9f1c] shadow-[0_0_24px_rgba(245,166,35,0.25)]",
+                collapsed ? "h-10 w-10 rounded-xl" : "mb-3 h-16 w-16"
+              )}
             >
-              {viewer?.name ?? "Loading…"}
-            </p>
-            <p className="mt-0.5 text-xs text-[#8b92a5]">{viewer?.email ?? ""}</p>
-            <span className="mt-2 rounded-full border border-[#f5a623]/30 bg-[#f5a623]/10 px-2.5 py-0.5 text-[10px] font-semibold tracking-widest text-[#f5a623] uppercase">
-              {viewer?.role ?? "customer"}
-            </span>
+              <span className={cn("font-bold text-[#0a0e1a]", collapsed ? "text-sm" : "text-xl")}>
+                {initials}
+              </span>
+            </div>
+            {!collapsed && (
+              <>
+                <p
+                  className="font-semibold text-white"
+                  style={{ fontFamily: "var(--font-space-grotesk)" }}
+                >
+                  {viewer?.name ?? "Loading…"}
+                </p>
+                <p className="mt-0.5 text-xs text-[#8b92a5]">{viewer?.email ?? ""}</p>
+                <span className="mt-2 rounded-full border border-[#f5a623]/30 bg-[#f5a623]/10 px-2.5 py-0.5 text-[10px] font-semibold tracking-widest text-[#f5a623] uppercase">
+                  {viewer?.role ?? "customer"}
+                </span>
+              </>
+            )}
           </div>
         </div>
       </div>
 
       {/* Nav */}
-      <nav className="mb-3 flex flex-row gap-1 overflow-x-auto rounded-2xl border border-[#1e2435] bg-[#0d1117] p-2 md:flex-col">
+      <nav className="mb-3 flex flex-col gap-1 rounded-2xl border border-[#1e2435] bg-[#0d1117] p-2">
         {NAV.map(({ label, href, icon: Icon, exact }) => {
           const active = exact ? pathname === href : pathname.startsWith(href);
           return (
             <Link
               key={href}
               href={href}
+              title={collapsed ? label : undefined}
               className={cn(
-                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium whitespace-nowrap transition-all",
+                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
+                collapsed && "justify-center px-2",
                 active
                   ? "bg-[#f5a623]/10 text-[#f5a623] shadow-[inset_0_0_0_1px_rgba(245,166,35,0.2)]"
                   : "text-[#8b92a5] hover:bg-[#111827] hover:text-white"
@@ -84,34 +136,70 @@ export function AccountSidebar() {
               >
                 <Icon className="h-3.5 w-3.5" />
               </span>
-              <span className="hidden md:inline">{label}</span>
-              <span className="md:hidden">{label.split(" ")[0]}</span>
+              {!collapsed && <span>{label}</span>}
             </Link>
           );
         })}
       </nav>
 
       {/* Footer actions */}
-      <div className="hidden flex-col gap-1 md:flex">
+      <div className="flex flex-col gap-1">
         <Link
           href="/shop"
-          className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#8b92a5] transition hover:bg-[#111827] hover:text-white"
+          title={collapsed ? "Continue Shopping" : undefined}
+          className={cn(
+            "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#8b92a5] transition hover:bg-[#111827] hover:text-white",
+            collapsed && "justify-center px-2"
+          )}
         >
           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#1a2035]">
             <ArrowLeft className="h-3.5 w-3.5" />
           </span>
-          Continue Shopping
+          {!collapsed && <span>Continue Shopping</span>}
         </Link>
         <button
           onClick={handleSignOut}
-          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#8b92a5] transition hover:bg-[#1a2035] hover:text-red-400"
+          title={collapsed ? "Sign Out" : undefined}
+          className={cn(
+            "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#8b92a5] transition hover:bg-[#1a2035] hover:text-red-400",
+            collapsed && "justify-center px-2"
+          )}
         >
           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#1a2035]">
             <LogOut className="h-3.5 w-3.5" />
           </span>
-          Sign Out
+          {!collapsed && <span>Sign Out</span>}
         </button>
       </div>
+
+      {/* Mobile nav (horizontal strip) */}
+      <nav className="mb-3 flex flex-row gap-1 overflow-x-auto rounded-2xl border border-[#1e2435] bg-[#0d1117] p-2 md:hidden">
+        {NAV.map(({ label, href, icon: Icon, exact }) => {
+          const active = exact ? pathname === href : pathname.startsWith(href);
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={cn(
+                "flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium whitespace-nowrap transition-all",
+                active
+                  ? "bg-[#f5a623]/10 text-[#f5a623] shadow-[inset_0_0_0_1px_rgba(245,166,35,0.2)]"
+                  : "text-[#8b92a5] hover:bg-[#111827] hover:text-white"
+              )}
+            >
+              <span
+                className={cn(
+                  "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors",
+                  active ? "bg-[#f5a623]/15" : "bg-[#1a2035]"
+                )}
+              >
+                <Icon className="h-3.5 w-3.5" />
+              </span>
+              <span>{label}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </aside>
   );
 }
