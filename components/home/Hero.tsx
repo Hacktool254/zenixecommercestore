@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
+import { motion, useMotionValue, useTransform, useSpring, useScroll } from "framer-motion";
 import { useRef, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
 
@@ -30,15 +30,165 @@ const WIDGET_ITEMS = [
   { id: "tcl85", label: 'TCL C8L 85"', sub: "KES 189,999", color: "#f5a623" },
 ];
 
+// 3D orb rings — angles for each ring plane
+const RINGS = [
+  { rx: 0, ry: 0, rz: 0, r: 120, delay: 0, dur: 18 },
+  { rx: 60, ry: 0, rz: 30, r: 110, delay: 0.5, dur: 22 },
+  { rx: 120, ry: 20, rz: 60, r: 100, delay: 1, dur: 26 },
+  { rx: 30, ry: 80, rz: 10, r: 130, delay: 0.3, dur: 20 },
+];
+
+function HolographicOrb({
+  mouseX,
+  mouseY,
+}: {
+  mouseX: ReturnType<typeof useMotionValue<number>>;
+  mouseY: ReturnType<typeof useMotionValue<number>>;
+}) {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const floatY = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const scale = useTransform(scrollYProgress, [0, 0.6, 1], [1, 1.05, 0.9]);
+  const orbRotateX = useSpring(useTransform(mouseY, [-400, 400], [12, -12]), {
+    stiffness: 100,
+    damping: 20,
+  });
+  const orbRotateY = useSpring(useTransform(mouseX, [-400, 400], [-12, 12]), {
+    stiffness: 100,
+    damping: 20,
+  });
+
+  return (
+    <div ref={sectionRef} className="relative flex h-full w-full items-center justify-center">
+      {/* Ambient glow */}
+      <div
+        className="pointer-events-none absolute h-[420px] w-[420px] rounded-full blur-[100px]"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(245,166,35,0.12) 0%, rgba(167,139,250,0.07) 50%, transparent 70%)",
+        }}
+      />
+      {/* 3D spinning rings */}
+      <motion.div
+        style={{ y: floatY, scale, rotateX: orbRotateX, rotateY: orbRotateY, perspective: 900 }}
+        className="relative flex items-center justify-center"
+      >
+        <svg width="300" height="300" viewBox="-150 -150 300 300" className="overflow-visible">
+          {RINGS.map((ring, i) => (
+            <motion.g
+              key={i}
+              style={{
+                transform: `rotateX(${ring.rx}deg) rotateY(${ring.ry}deg) rotateZ(${ring.rz}deg)`,
+              }}
+              animate={{ rotateZ: [ring.rz, ring.rz + 360] }}
+              transition={{
+                duration: ring.dur,
+                repeat: Infinity,
+                ease: "linear",
+                delay: ring.delay,
+              }}
+            >
+              <ellipse
+                cx="0"
+                cy="0"
+                rx={ring.r}
+                ry={ring.r * 0.28}
+                fill="none"
+                stroke="url(#ringGrad)"
+                strokeWidth="1.2"
+                strokeDasharray="8 5"
+                opacity="0.55"
+              />
+              {/* Dot on ring */}
+              <motion.circle
+                cx={ring.r}
+                cy="0"
+                r="3.5"
+                fill="#f5a623"
+                animate={{ cx: [ring.r, -ring.r, ring.r] }}
+                transition={{
+                  duration: ring.dur,
+                  repeat: Infinity,
+                  ease: "linear",
+                  delay: ring.delay,
+                }}
+                opacity="0.9"
+              />
+            </motion.g>
+          ))}
+          <defs>
+            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#f5a623" stopOpacity="0.8" />
+              <stop offset="50%" stopColor="#a78bfa" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.8" />
+            </linearGradient>
+          </defs>
+        </svg>
+
+        {/* Center glow dot */}
+        <motion.div
+          className="absolute h-16 w-16 rounded-full"
+          animate={{ scale: [1, 1.15, 1], opacity: [0.6, 1, 0.6] }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+          style={{
+            background:
+              "radial-gradient(circle, rgba(245,166,35,0.9) 0%, rgba(245,166,35,0.2) 50%, transparent 70%)",
+          }}
+        />
+        <motion.div
+          className="absolute h-4 w-4 rounded-full bg-[#f5a623]"
+          animate={{ scale: [0.9, 1.1, 0.9] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </motion.div>
+
+      {/* Floating particles */}
+      {[...Array(12)].map((_, i) => {
+        const angle = (i / 12) * Math.PI * 2;
+        const radius = 160 + (i % 3) * 25;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius * 0.5;
+        return (
+          <motion.div
+            key={i}
+            className="absolute h-1 w-1 rounded-full bg-[#f5a623]"
+            style={{ left: "50%", top: "50%", marginLeft: x, marginTop: y }}
+            animate={{ opacity: [0, 0.8, 0], scale: [0.5, 1.2, 0.5] }}
+            transition={{
+              duration: 2.5 + (i % 4) * 0.5,
+              repeat: Infinity,
+              delay: i * 0.2,
+              ease: "easeInOut",
+            }}
+          />
+        );
+      })}
+
+      {/* Scroll text */}
+      <motion.div
+        className="absolute bottom-8 flex flex-col items-center gap-1.5"
+        animate={{ opacity: [0.4, 1, 0.4] }}
+        transition={{ duration: 2.5, repeat: Infinity }}
+        style={{ y: floatY }}
+      >
+        <div className="h-8 w-[1px] bg-gradient-to-b from-[#f5a623]/60 to-transparent" />
+        <span className="text-[9px] tracking-widest text-[#8b92a5] uppercase">Scroll</span>
+      </motion.div>
+    </div>
+  );
+}
+
 export function Hero() {
-  // Mouse tilt for logo
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const rotateX = useSpring(useTransform(mouseY, [-400, 400], [14, -14]), {
+  const logoRotateX = useSpring(useTransform(mouseY, [-400, 400], [14, -14]), {
     stiffness: 160,
     damping: 24,
   });
-  const rotateY = useSpring(useTransform(mouseX, [-400, 400], [-14, 14]), {
+  const logoRotateY = useSpring(useTransform(mouseX, [-400, 400], [-14, 14]), {
     stiffness: 160,
     damping: 24,
   });
@@ -54,28 +204,23 @@ export function Hero() {
     mouseY.set(0);
   };
 
-  // Widget panel: capture wheel events on hover so page doesn't scroll
   const widgetListRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = widgetListRef.current;
     if (!el) return;
-
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       el.scrollBy({ top: e.deltaY * 0.85 });
     };
-
-    const addWheel = () => el.addEventListener("wheel", onWheel, { passive: false });
-    const removeWheel = () => el.removeEventListener("wheel", onWheel);
-
-    el.addEventListener("mouseenter", addWheel);
-    el.addEventListener("mouseleave", removeWheel);
-
+    const add = () => el.addEventListener("wheel", onWheel, { passive: false });
+    const remove = () => el.removeEventListener("wheel", onWheel);
+    el.addEventListener("mouseenter", add);
+    el.addEventListener("mouseleave", remove);
     return () => {
-      el.removeEventListener("mouseenter", addWheel);
-      el.removeEventListener("mouseleave", removeWheel);
-      removeWheel();
+      el.removeEventListener("mouseenter", add);
+      el.removeEventListener("mouseleave", remove);
+      remove();
     };
   }, []);
 
@@ -117,22 +262,14 @@ export function Hero() {
           </defs>
           <rect width="100%" height="100%" fill="url(#circuit)" />
         </motion.svg>
-        {/* Soft glow behind logo area */}
-        <div
-          className="absolute top-0 left-0 h-[55vh] w-[40vw]"
-          style={{
-            background:
-              "radial-gradient(ellipse 70% 70% at 20% 40%, rgba(245,166,35,0.08) 0%, transparent 70%)",
-          }}
-        />
       </div>
 
-      {/* ── Full-height flex row ── */}
+      {/* ── Three-column layout ── */}
       <div className="relative z-10 flex min-h-screen w-full">
-        {/* ── LEFT COLUMN ── */}
-        <div className="flex flex-1 flex-col overflow-hidden">
-          {/* Top — logo just below header */}
-          <div className="flex px-4 pt-6 md:px-6 lg:px-8">
+        {/* ── LEFT COLUMN — fixed width, contains logo + text ── */}
+        <div className="flex w-[340px] shrink-0 flex-col md:w-[380px] lg:w-[420px]">
+          {/* Logo — just below header */}
+          <div className="px-4 pt-6 md:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -140,30 +277,28 @@ export function Hero() {
               style={{ perspective: 900 }}
             >
               <motion.div
-                style={{ rotateX, rotateY }}
-                className="relative h-[220px] w-[220px] md:h-[260px] md:w-[260px] lg:h-[300px] lg:w-[300px]"
+                style={{ rotateX: logoRotateX, rotateY: logoRotateY }}
+                className="relative h-[200px] w-[200px] md:h-[240px] md:w-[240px] lg:h-[280px] lg:w-[280px]"
               >
                 <Image
                   src="/logo.png"
                   alt="Zenix Electronics"
                   fill
-                  sizes="(max-width: 768px) 220px, (max-width: 1024px) 260px, 300px"
+                  sizes="(max-width: 768px) 200px, (max-width: 1024px) 240px, 280px"
                   className="rounded-full object-cover shadow-[0_0_80px_rgba(245,166,35,0.3),0_0_30px_rgba(245,166,35,0.15)]"
                   priority
                 />
-                {/* Orbit ring */}
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-[-14px] rounded-full border border-dashed border-[#f5a623]/20"
+                  className="absolute inset-[-12px] rounded-full border border-dashed border-[#f5a623]/20"
                 />
               </motion.div>
             </motion.div>
           </div>
 
           {/* Text — directly below logo */}
-          <div className="flex flex-col px-4 pt-6 pb-14 md:px-6 lg:px-8">
-            {/* Badge */}
+          <div className="flex flex-col px-4 pt-6 pb-10 md:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
@@ -174,9 +309,8 @@ export function Hero() {
               Zenix Electronics
             </motion.div>
 
-            {/* Headline */}
             <h1
-              className="mb-4 text-3xl leading-tight font-bold tracking-tight text-white sm:text-4xl lg:text-5xl xl:text-[3.5rem]"
+              className="mb-4 text-2xl leading-tight font-bold tracking-tight text-white md:text-3xl lg:text-4xl"
               style={{ fontFamily: "var(--font-space-grotesk)" }}
             >
               {HEADLINE_WORDS.map((word, i) => (
@@ -192,18 +326,16 @@ export function Hero() {
               ))}
             </h1>
 
-            {/* Subtext */}
             <motion.p
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: 0.75 }}
-              className="mb-6 max-w-md text-sm leading-relaxed text-[#8b92a5] sm:text-base"
+              className="mb-6 text-sm leading-relaxed text-[#8b92a5]"
             >
               iPhones, TVs, Soundbars, Starlinks, PlayStation &amp; more. Located at{" "}
               <span className="text-[#cbd5e1]">Cookie House, Accra Road</span>.
             </motion.p>
 
-            {/* CTAs */}
             <motion.div
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
@@ -214,8 +346,7 @@ export function Hero() {
                 href="/shop"
                 className="inline-flex items-center gap-2 rounded-xl bg-[#f5a623] px-5 py-2.5 text-sm font-semibold text-[#0a0e1a] transition-all hover:bg-[#ff9f1c] hover:shadow-[0_0_20px_rgba(245,166,35,0.4)] active:scale-95"
               >
-                Shop Now
-                <ArrowRight className="h-4 w-4" />
+                Shop Now <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href="/deals"
@@ -225,7 +356,6 @@ export function Hero() {
               </Link>
             </motion.div>
 
-            {/* Stats */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -251,21 +381,23 @@ export function Hero() {
           </div>
         </div>
 
-        {/* ── RIGHT PANEL ── */}
+        {/* ── MIDDLE — 3D holographic orb with scroll parallax ── */}
+        <div className="relative hidden flex-1 md:block">
+          <HolographicOrb mouseX={mouseX} mouseY={mouseY} />
+        </div>
+
+        {/* ── RIGHT PANEL — widget list ── */}
         <motion.div
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.55, delay: 0.3 }}
-          className="hidden w-[220px] shrink-0 flex-col border-l border-[#1e2435] md:flex lg:w-[250px]"
+          className="hidden w-[200px] shrink-0 flex-col border-l border-[#1e2435] md:flex lg:w-[230px]"
         >
-          {/* "Featured Products" header — aligned with nav height */}
           <div className="flex h-[72px] shrink-0 items-center border-b border-[#1e2435] px-4">
             <p className="text-[10px] font-semibold tracking-widest text-[#f5a623] uppercase">
               Featured Products
             </p>
           </div>
-
-          {/* All widgets — scrollable on hover */}
           <div
             ref={widgetListRef}
             className="flex flex-1 flex-col gap-1.5 overflow-y-auto px-3 py-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -278,7 +410,6 @@ export function Hero() {
                 transition={{ duration: 0.28, delay: 0.45 + i * 0.04 }}
                 className="group relative cursor-pointer rounded-xl border border-[#1e2435] bg-[#0d1117] px-3.5 py-2.5 transition-all duration-200 hover:border-[rgba(245,166,35,0.25)] hover:bg-[#111827]"
               >
-                {/* Left accent bar */}
                 <div
                   className="absolute top-0 bottom-0 left-0 w-[2.5px] rounded-r-full opacity-0 transition-opacity duration-200 group-hover:opacity-100"
                   style={{ background: item.color }}
