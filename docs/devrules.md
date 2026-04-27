@@ -132,20 +132,20 @@
 
 ### 3.3 Mobile Bottom Navigation
 
-- [ ] `components/layout/BottomNav.tsx` — Home, Shop, Deals, Account, Cart (5 icons)
-- [ ] Fixed bottom, visible only on mobile (hidden md:)
-- [ ] Active state with orange accent
+- [x] `components/layout/BottomNav.tsx` — Home, Shop, Deals, Account, Cart (5 icons)
+- [x] Fixed bottom, visible only on mobile (hidden md:)
+- [x] Active state with orange accent
 
 ### 3.4 Footer Component
 
-- [ ] `components/layout/Footer.tsx` — logo, nav links, address (Accra Road, Cookie House, Nairobi), social links, copyright
-- [ ] 3-column grid on desktop, stacked on mobile
+- [x] `components/layout/Footer.tsx` — logo, nav links, address (Accra Road, Cookie House, Nairobi), social links, copyright
+- [x] 3-column grid on desktop, stacked on mobile
 
 ### 3.5 WhatsApp FAB
 
-- [ ] `components/shared/WhatsAppFAB.tsx` — fixed bottom-right button with WhatsApp green + pulse ring CSS animation
-- [ ] Links to `https://wa.me/${WHATSAPP_NUMBER}`
-- [ ] Hidden on checkout page
+- [x] `components/shared/WhatsAppFAB.tsx` — fixed bottom-right button with WhatsApp green + pulse ring CSS animation
+- [x] Links to `https://wa.me/${WHATSAPP_NUMBER}`
+- [x] Hidden on checkout page
 
 ### 3.6 Route Groups & Layouts
 
