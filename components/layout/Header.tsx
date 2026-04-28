@@ -47,8 +47,8 @@ export function Header() {
           WebkitBackdropFilter: "blur(12px)",
         }}
       >
-        <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 md:px-6">
-          {/* Logo */}
+        <div className="flex h-full w-full items-center px-4 md:px-6">
+          {/* Logo + nav — flex-1 so Featured Products hugs the right edge */}
           <Link href="/" className="flex shrink-0 items-center">
             <Image
               src="/logo.png"
@@ -60,8 +60,8 @@ export function Header() {
             />
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-1 md:flex">
+          {/* Desktop nav — grows to push icons right */}
+          <nav className="hidden flex-1 items-center gap-1 md:flex">
             {NAV_LINKS.map(({ label, href }) => {
               const active = pathname === href || pathname.startsWith(href + "/");
               return (
@@ -127,11 +127,6 @@ export function Header() {
               </AnimatePresence>
             </button>
 
-            {/* Featured Products label — aligns with hero right panel */}
-            <span className="hidden pl-3 text-[10px] font-semibold tracking-widest text-[#f5a623] uppercase select-none md:block">
-              Featured Products
-            </span>
-
             {/* Mobile hamburger */}
             <button
               onClick={() => setMobileMenuOpen((v) => !v)}
@@ -140,6 +135,13 @@ export function Header() {
             >
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
+          </div>
+
+          {/* Featured Products — fixed-width block pinned to right edge, directly above carousel */}
+          <div className="hidden w-[200px] shrink-0 items-center justify-start pl-4 lg:flex lg:w-[230px]">
+            <span className="text-[10px] font-semibold tracking-widest text-[#f5a623] uppercase select-none">
+              Featured Products
+            </span>
           </div>
         </div>
       </header>
