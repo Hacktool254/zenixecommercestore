@@ -19,15 +19,16 @@ function mod(n: number, m: number) {
   return ((n % m) + m) % m;
 }
 
-// How many items visible above and below the active center
-const ABOVE = 3;
-const BELOW = 3;
+// Show 5 above + active + 5 below = 11 items visible, filling the panel
+const ABOVE = 5;
+const BELOW = 5;
 const TOTAL_VISIBLE = ABOVE + 1 + BELOW;
 
 export function WidgetCarousel({ items, autoScrollMs = 2200 }: Props) {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const advance = useCallback(() => {
     setActive((prev) => mod(prev + 1, items.length));
@@ -45,7 +46,6 @@ export function WidgetCarousel({ items, autoScrollMs = 2200 }: Props) {
     }
   }, []);
 
-  // Start auto-scroll on mount and whenever paused changes
   useEffect(() => {
     if (paused) {
       stopTimer();
@@ -57,16 +57,50 @@ export function WidgetCarousel({ items, autoScrollMs = 2200 }: Props) {
 
   const handleClick = (idx: number) => {
     setActive(idx);
-    // Reset timer on manual click
     if (!paused) startTimer();
   };
 
-  // Build the visible slots: offsets from -ABOVE to +BELOW
+  // Wheel scroll when hovered — each tick of the wheel advances/reverses by 1
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    let wheelAccum = 0;
+    const THRESHOLD = 60;
+
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      wheelAccum += e.deltaY;
+      if (wheelAccum > THRESHOLD) {
+        wheelAccum = 0;
+        setActive((prev) => mod(prev + 1, items.length));
+      } else if (wheelAccum < -THRESHOLD) {
+        wheelAccum = 0;
+        setActive((prev) => mod(prev - 1, items.length));
+      }
+    };
+
+    const attach = () => el.addEventListener("wheel", onWheel, { passive: false });
+    const detach = () => {
+      el.removeEventListener("wheel", onWheel);
+      wheelAccum = 0;
+    };
+
+    el.addEventListener("mouseenter", attach);
+    el.addEventListener("mouseleave", detach);
+    return () => {
+      el.removeEventListener("mouseenter", attach);
+      el.removeEventListener("mouseleave", detach);
+      detach();
+    };
+  }, [items.length]);
+
   const offsets = Array.from({ length: TOTAL_VISIBLE }, (_, i) => i - ABOVE);
 
   return (
     <div
-      className="relative flex h-full flex-col items-stretch justify-center gap-1 select-none"
+      ref={containerRef}
+      className="relative flex h-full flex-col items-stretch justify-between py-1 select-none"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -78,28 +112,28 @@ export function WidgetCarousel({ items, autoScrollMs = 2200 }: Props) {
         const isActive = offset === 0;
         const absOffset = Math.abs(offset);
 
-        // Scale and opacity reduce going away from center, more aggressive going up
-        const scale = isActive ? 1 : absOffset === 1 ? 0.84 : absOffset === 2 ? 0.68 : 0.52;
-        // Items above the active fade more (they "disappear upward")
-        const opacityBelow = absOffset === 1 ? 0.55 : absOffset === 2 ? 0.3 : 0.12;
-        const opacityAbove = absOffset === 1 ? 0.4 : absOffset === 2 ? 0.18 : 0.06;
-        const opacity = isActive ? 1 : offset < 0 ? opacityAbove : opacityBelow;
+        // Very subtle scale — barely noticeable difference
+        const scale = isActive ? 1 : 1 - absOffset * 0.04;
+
+        // Opacity: above fades faster than below (disappearing upward feel)
+        const opacity = isActive
+          ? 1
+          : offset < 0
+            ? Math.max(0.08, 0.75 - absOffset * 0.14)
+            : Math.max(0.12, 0.85 - absOffset * 0.14);
 
         const accentColor = item.color ?? "#f5a623";
-        const py = isActive ? "py-3 px-4" : absOffset === 1 ? "py-2 px-3.5" : "py-1.5 px-3";
-        const textSize = isActive ? "text-sm" : absOffset === 1 ? "text-xs" : "text-[10px]";
 
         return (
           <motion.button
             key={item.id}
-            layout
             onClick={() => handleClick(idx)}
             animate={{ scale, opacity }}
-            transition={{ type: "spring", stiffness: 280, damping: 28 }}
-            className={`relative w-full cursor-pointer overflow-hidden rounded-xl border text-left transition-colors duration-200 ${py} ${
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className={`relative w-full cursor-pointer overflow-hidden rounded-xl border px-3.5 text-left transition-colors duration-150 ${
               isActive
-                ? "border-[rgba(245,166,35,0.35)] bg-[#111827]/90 shadow-[0_0_20px_rgba(245,166,35,0.15)]"
-                : "border-[#1e2435] bg-[#0d1117]/60"
+                ? "border-[rgba(245,166,35,0.35)] bg-[#111827]/90 py-2.5 shadow-[0_0_16px_rgba(245,166,35,0.12)]"
+                : "border-[#1e2435] bg-[#0d1117]/50 py-1.5 hover:border-[rgba(245,166,35,0.2)] hover:bg-[#0d1117]"
             }`}
             style={{ transformOrigin: "center" }}
           >
@@ -108,16 +142,16 @@ export function WidgetCarousel({ items, autoScrollMs = 2200 }: Props) {
                 layoutId="widget-active-bar"
                 className="absolute top-0 bottom-0 left-0 w-[3px] rounded-r-full"
                 style={{ background: accentColor }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                transition={{ type: "spring", stiffness: 320, damping: 32 }}
               />
             )}
             <p
-              className={`leading-snug font-semibold ${textSize}`}
+              className={`truncate leading-snug font-semibold ${isActive ? "text-sm" : "text-xs"}`}
               style={{ color: isActive ? accentColor : "#cbd5e1" }}
             >
               {item.label}
             </p>
-            {item.sub && isActive && (
+            {isActive && item.sub && (
               <AnimatePresence>
                 <motion.p
                   key="sub"
@@ -141,9 +175,11 @@ export function WidgetCarousel({ items, autoScrollMs = 2200 }: Props) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute right-0 bottom-0 left-0 flex justify-center pb-1"
+            className="pointer-events-none absolute right-2 bottom-0 flex items-center gap-1"
           >
-            <span className="text-[8px] tracking-widest text-[#8b92a5] uppercase">paused</span>
+            <span className="text-[8px] tracking-widest text-[#8b92a5] uppercase">
+              scroll to browse
+            </span>
           </motion.div>
         )}
       </AnimatePresence>
