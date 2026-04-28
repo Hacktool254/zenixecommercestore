@@ -297,8 +297,8 @@ export function Hero() {
             </motion.div>
           </div>
 
-          {/* Text — directly below logo */}
-          <div className="flex flex-col px-4 pt-6 pb-10 md:px-6 lg:px-8">
+          {/* Text — below logo with extra top spacing */}
+          <div className="flex flex-col px-4 pt-16 pb-10 md:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
