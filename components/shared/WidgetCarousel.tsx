@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export interface WidgetItem {
@@ -15,65 +15,87 @@ interface Props {
   autoScrollMs?: number;
 }
 
-function clamp(v: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, v));
-}
-
 function mod(n: number, m: number) {
   return ((n % m) + m) % m;
 }
 
+// How many items visible above and below the active center
+const ABOVE = 3;
+const BELOW = 3;
+const TOTAL_VISIBLE = ABOVE + 1 + BELOW;
+
 export function WidgetCarousel({ items, autoScrollMs = 2200 }: Props) {
   const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const start = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setActive((prev) => mod(prev + 1, items.length));
-    }, autoScrollMs);
-  };
+  const advance = useCallback(() => {
+    setActive((prev) => mod(prev + 1, items.length));
+  }, [items.length]);
 
+  const startTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(advance, autoScrollMs);
+  }, [advance, autoScrollMs]);
+
+  const stopTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  // Start auto-scroll on mount and whenever paused changes
   useEffect(() => {
-    start();
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items.length, autoScrollMs]);
+    if (paused) {
+      stopTimer();
+    } else {
+      startTimer();
+    }
+    return stopTimer;
+  }, [paused, startTimer, stopTimer]);
 
   const handleClick = (idx: number) => {
     setActive(idx);
-    start(); // reset timer on manual click
+    // Reset timer on manual click
+    if (!paused) startTimer();
   };
 
-  // Render 5 items visible: -2 -1 [0] +1 +2
-  const VISIBLE = 5;
-  const offsets = Array.from({ length: VISIBLE }, (_, i) => i - Math.floor(VISIBLE / 2));
+  // Build the visible slots: offsets from -ABOVE to +BELOW
+  const offsets = Array.from({ length: TOTAL_VISIBLE }, (_, i) => i - ABOVE);
 
   return (
-    <div className="relative flex h-full flex-col items-stretch justify-center gap-0 select-none">
+    <div
+      className="relative flex h-full flex-col items-stretch justify-center gap-1 select-none"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
       {offsets.map((offset) => {
         const idx = mod(active + offset, items.length);
         const item = items[idx];
         if (!item) return null;
+
         const isActive = offset === 0;
         const absOffset = Math.abs(offset);
 
-        // Scale and opacity drop-off from center
-        const scale = isActive ? 1 : absOffset === 1 ? 0.82 : 0.65;
-        const opacity = isActive ? 1 : absOffset === 1 ? 0.55 : 0.28;
-        const py = isActive ? "py-3.5 px-5" : absOffset === 1 ? "py-2.5 px-4" : "py-1.5 px-3";
-        const textSize = isActive ? "text-sm" : absOffset === 1 ? "text-xs" : "text-[10px]";
+        // Scale and opacity reduce going away from center, more aggressive going up
+        const scale = isActive ? 1 : absOffset === 1 ? 0.84 : absOffset === 2 ? 0.68 : 0.52;
+        // Items above the active fade more (they "disappear upward")
+        const opacityBelow = absOffset === 1 ? 0.55 : absOffset === 2 ? 0.3 : 0.12;
+        const opacityAbove = absOffset === 1 ? 0.4 : absOffset === 2 ? 0.18 : 0.06;
+        const opacity = isActive ? 1 : offset < 0 ? opacityAbove : opacityBelow;
+
         const accentColor = item.color ?? "#f5a623";
+        const py = isActive ? "py-3 px-4" : absOffset === 1 ? "py-2 px-3.5" : "py-1.5 px-3";
+        const textSize = isActive ? "text-sm" : absOffset === 1 ? "text-xs" : "text-[10px]";
 
         return (
           <motion.button
-            key={`${offset}-${item.id}`}
+            key={item.id}
             layout
             onClick={() => handleClick(idx)}
             animate={{ scale, opacity }}
-            transition={{ type: "spring", stiffness: 260, damping: 28 }}
+            transition={{ type: "spring", stiffness: 280, damping: 28 }}
             className={`relative w-full cursor-pointer overflow-hidden rounded-xl border text-left transition-colors duration-200 ${py} ${
               isActive
                 ? "border-[rgba(245,166,35,0.35)] bg-[#111827]/90 shadow-[0_0_20px_rgba(245,166,35,0.15)]"
@@ -98,6 +120,7 @@ export function WidgetCarousel({ items, autoScrollMs = 2200 }: Props) {
             {item.sub && isActive && (
               <AnimatePresence>
                 <motion.p
+                  key="sub"
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
@@ -110,6 +133,20 @@ export function WidgetCarousel({ items, autoScrollMs = 2200 }: Props) {
           </motion.button>
         );
       })}
+
+      {/* Pause indicator */}
+      <AnimatePresence>
+        {paused && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute right-0 bottom-0 left-0 flex justify-center pb-1"
+          >
+            <span className="text-[8px] tracking-widest text-[#8b92a5] uppercase">paused</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

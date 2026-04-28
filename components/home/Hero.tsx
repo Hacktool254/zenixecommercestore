@@ -3,15 +3,17 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useMotionValue, useTransform, useSpring, useScroll } from "framer-motion";
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import { ArrowRight } from "lucide-react";
+import { WidgetCarousel } from "@/components/shared/WidgetCarousel";
+import type { WidgetItem } from "@/components/shared/WidgetCarousel";
 
 const HEADLINE_WORDS = ["Premium", "Electronics,", "Nairobi's", "Best."];
 
 const circuitPath =
   "M10 10 L50 10 L50 30 L90 30 M30 10 L30 50 L70 50 L70 70 L110 70 M70 30 L70 10 M90 70 L130 70 L130 50 M110 10 L110 50";
 
-const WIDGET_ITEMS = [
+const WIDGET_ITEMS: WidgetItem[] = [
   { id: "iphone17promax", label: "iPhone 17 Pro Max", sub: "From KES 189,999", color: "#a8d5e2" },
   { id: "iphone17pro", label: "iPhone 17 Pro", sub: "From KES 159,999", color: "#a8d5e2" },
   { id: "iphone17air", label: "iPhone 17 Air", sub: "From KES 139,999", color: "#a8d5e2" },
@@ -204,26 +206,6 @@ export function Hero() {
     mouseY.set(0);
   };
 
-  const widgetListRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = widgetListRef.current;
-    if (!el) return;
-    const onWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      el.scrollBy({ top: e.deltaY * 0.85 });
-    };
-    const add = () => el.addEventListener("wheel", onWheel, { passive: false });
-    const remove = () => el.removeEventListener("wheel", onWheel);
-    el.addEventListener("mouseenter", add);
-    el.addEventListener("mouseleave", remove);
-    return () => {
-      el.removeEventListener("mouseenter", add);
-      el.removeEventListener("mouseleave", remove);
-      remove();
-    };
-  }, []);
-
   return (
     <section
       className="relative flex min-h-screen overflow-hidden bg-[#0a0e1a]"
@@ -386,7 +368,7 @@ export function Hero() {
           <HolographicOrb mouseX={mouseX} mouseY={mouseY} />
         </div>
 
-        {/* ── RIGHT PANEL — widget list ── */}
+        {/* ── RIGHT PANEL — auto-scrolling widget carousel ── */}
         <motion.div
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
@@ -398,28 +380,8 @@ export function Hero() {
               Featured Products
             </p>
           </div>
-          <div
-            ref={widgetListRef}
-            className="flex flex-1 flex-col gap-1.5 overflow-y-auto px-3 py-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          >
-            {WIDGET_ITEMS.map((item, i) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, x: 16 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.28, delay: 0.45 + i * 0.04 }}
-                className="group relative cursor-pointer rounded-xl border border-[#1e2435] bg-[#0d1117] px-3.5 py-2.5 transition-all duration-200 hover:border-[rgba(245,166,35,0.25)] hover:bg-[#111827]"
-              >
-                <div
-                  className="absolute top-0 bottom-0 left-0 w-[2.5px] rounded-r-full opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-                  style={{ background: item.color }}
-                />
-                <p className="text-xs leading-snug font-semibold text-[#cbd5e1] transition-colors duration-150 group-hover:text-white">
-                  {item.label}
-                </p>
-                <p className="mt-0.5 text-[10px] text-[#8b92a5]">{item.sub}</p>
-              </motion.div>
-            ))}
+          <div className="flex flex-1 flex-col px-3 py-4">
+            <WidgetCarousel items={WIDGET_ITEMS} autoScrollMs={2400} />
           </div>
         </motion.div>
       </div>
