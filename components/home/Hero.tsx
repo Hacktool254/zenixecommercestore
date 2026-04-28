@@ -266,8 +266,8 @@ export function Hero() {
 
       {/* ── Three-column layout ── */}
       <div className="relative z-10 flex min-h-screen w-full">
-        {/* ── LEFT COLUMN — fixed width, contains logo + text ── */}
-        <div className="flex w-[340px] shrink-0 flex-col md:w-[380px] lg:w-[420px]">
+        {/* ── LEFT COLUMN — ~40% wide, text reaches nav midpoint ── */}
+        <div className="flex w-[480px] shrink-0 flex-col md:w-[520px] lg:w-[580px] xl:w-[620px]">
           {/* Logo — just below header */}
           <div className="px-4 pt-6 md:px-6 lg:px-8">
             <motion.div
