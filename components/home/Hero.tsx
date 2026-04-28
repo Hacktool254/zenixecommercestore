@@ -373,14 +373,9 @@ export function Hero() {
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.55, delay: 0.3 }}
-          className="hidden w-[200px] shrink-0 flex-col border-l border-[#1e2435] md:flex lg:w-[230px]"
+          className="hidden w-[200px] shrink-0 flex-col md:flex lg:w-[230px]"
         >
-          <div className="flex h-[72px] shrink-0 items-center border-b border-[#1e2435] px-4">
-            <p className="text-[10px] font-semibold tracking-widest text-[#f5a623] uppercase">
-              Featured Products
-            </p>
-          </div>
-          <div className="flex flex-1 flex-col px-3 py-4">
+          <div className="flex flex-1 flex-col px-3 pt-[72px] pb-4">
             <WidgetCarousel items={WIDGET_ITEMS} autoScrollMs={2400} />
           </div>
         </motion.div>

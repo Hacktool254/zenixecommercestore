@@ -127,6 +127,11 @@ export function Header() {
               </AnimatePresence>
             </button>
 
+            {/* Featured Products label — aligns with hero right panel */}
+            <span className="hidden pl-3 text-[10px] font-semibold tracking-widest text-[#f5a623] uppercase select-none md:block">
+              Featured Products
+            </span>
+
             {/* Mobile hamburger */}
             <button
               onClick={() => setMobileMenuOpen((v) => !v)}
