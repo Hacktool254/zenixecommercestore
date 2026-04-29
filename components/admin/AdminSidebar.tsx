@@ -2,7 +2,16 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Package, ShoppingBag, Warehouse, ArrowLeft, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingBag,
+  Warehouse,
+  Users,
+  ArrowLeft,
+  LogOut,
+  Zap,
+} from "lucide-react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { cn } from "@/lib/utils";
 
@@ -10,6 +19,7 @@ const NAV = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard, exact: true },
   { label: "Products", href: "/admin/products", icon: Package },
   { label: "Orders", href: "/admin/orders", icon: ShoppingBag },
+  { label: "Customers", href: "/admin/customers", icon: Users },
   { label: "Inventory", href: "/admin/inventory", icon: Warehouse },
 ];
 
@@ -24,17 +34,28 @@ export function AdminSidebar() {
   };
 
   return (
-    <aside className="flex h-full w-60 shrink-0 flex-col border-r border-[#1e2435] bg-[#0d1117]">
-      <div className="flex h-[72px] items-center px-6">
-        <span
-          className="text-base font-semibold text-white"
-          style={{ fontFamily: "var(--font-space-grotesk)" }}
-        >
-          Admin Panel
-        </span>
+    <aside className="flex h-full w-64 shrink-0 flex-col border-r border-[#f5a623]/10 bg-[#080c16]">
+      {/* Logo */}
+      <div className="flex h-[72px] items-center gap-3 border-b border-[#f5a623]/10 px-6">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#f5a623]/10">
+          <Zap className="h-4 w-4 text-[#f5a623]" />
+        </div>
+        <div>
+          <p className="text-[11px] font-black tracking-[0.25em] text-[#f5a623] uppercase">Zenix</p>
+          <p className="text-[9px] font-bold tracking-[0.2em] text-[#f5a623]/40 uppercase">
+            Admin Portal
+          </p>
+        </div>
       </div>
 
-      <nav className="flex flex-1 flex-col gap-0.5 px-3 py-2">
+      {/* Nav label */}
+      <div className="px-6 pt-6 pb-2">
+        <p className="text-[9px] font-black tracking-[0.3em] text-[#f5a623]/30 uppercase">
+          Navigation
+        </p>
+      </div>
+
+      <nav className="flex flex-1 flex-col gap-0.5 px-3">
         {NAV.map(({ label, href, icon: Icon, exact }) => {
           const active = exact ? pathname === href : pathname.startsWith(href);
           return (
@@ -42,30 +63,38 @@ export function AdminSidebar() {
               key={href}
               href={href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all",
                 active
                   ? "bg-[#f5a623]/10 text-[#f5a623]"
-                  : "text-[#8b92a5] hover:bg-[#1a2035] hover:text-white"
+                  : "text-[#8b92a5] hover:bg-[#f5a623]/5 hover:text-white"
               )}
             >
-              <Icon className="h-4 w-4 shrink-0" />
+              {active && (
+                <span className="absolute top-1/2 left-0 h-5 w-0.5 -translate-y-1/2 rounded-r bg-[#f5a623]" />
+              )}
+              <Icon
+                className={cn(
+                  "h-4 w-4 shrink-0",
+                  active ? "text-[#f5a623]" : "text-[#8b92a5] group-hover:text-white"
+                )}
+              />
               {label}
             </Link>
           );
         })}
       </nav>
 
-      <div className="flex flex-col gap-0.5 border-t border-[#1e2435] p-3">
+      <div className="flex flex-col gap-0.5 border-t border-[#f5a623]/10 p-3">
         <Link
           href="/"
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[#8b92a5] transition-colors hover:bg-[#1a2035] hover:text-white"
+          className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-[#8b92a5] transition hover:bg-[#f5a623]/5 hover:text-white"
         >
           <ArrowLeft className="h-4 w-4 shrink-0" />
           Back to Store
         </Link>
         <button
           onClick={handleSignOut}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[#8b92a5] transition-colors hover:bg-[#1a2035] hover:text-white"
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-[#8b92a5] transition hover:bg-red-500/10 hover:text-red-400"
         >
           <LogOut className="h-4 w-4 shrink-0" />
           Sign Out
