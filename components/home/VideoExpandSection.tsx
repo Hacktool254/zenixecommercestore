@@ -58,12 +58,14 @@ export function VideoExpandSection() {
     offset: ["start start", "end end"],
   });
 
-  // Enter from right — tracks from entering viewport bottom to top of screen
+  // Enter from right — synced with HotDeals exit: viewport bottom → viewport top
   const { scrollYProgress: enterProgress } = useScroll({
     target: enterRef,
     offset: ["start end", "start start"],
   });
-  const enterX = useTransform(enterProgress, [0, 1], ["100%", "0%"]);
+  // Spring to smooth out the enter so it doesn't feel abrupt
+  const enterSmooth = useSpring(enterProgress, { stiffness: 80, damping: 22, mass: 0.5 });
+  const enterX = useTransform(enterSmooth, [0, 1], ["100%", "0%"]);
 
   // Smooth spring on progress
   const smoothProgress = useSpring(scrollYProgress, {
@@ -90,11 +92,11 @@ export function VideoExpandSection() {
         (wrapperRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
         (enterRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
       }}
-      className="relative z-10"
+      className="relative z-10 overflow-x-hidden"
       style={{ height: "300vh" }}
     >
-      {/* Sticky viewport — slides in from the right, then stays */}
-      <motion.div style={{ x: enterX }} className="sticky top-0 h-screen overflow-hidden">
+      {/* Sticky viewport — slides in from the right, then locks */}
+      <motion.div style={{ x: enterX }} className="sticky top-0 h-screen w-screen overflow-hidden">
         {/* Layer 1 — always visible base: full image + spin ring + play button */}
         <div className="absolute inset-0">
           <Image src="/circle-vid-bg.png" alt="" fill className="object-cover" priority />

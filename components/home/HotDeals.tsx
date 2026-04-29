@@ -225,10 +225,10 @@ export function HotDeals() {
 
   return (
     // Tall wrapper gives scroll budget for the horizontal exit animation
-    <div ref={wrapperRef} className="relative z-10" style={{ height: "200vh" }}>
+    <div ref={wrapperRef} className="relative z-10 overflow-x-hidden" style={{ height: "200vh" }}>
       <motion.section
         style={{ x: slideX }}
-        className="sticky top-0 overflow-hidden bg-[#080c16] py-14"
+        className="sticky top-0 w-screen overflow-hidden bg-[#080c16] py-14"
       >
         {/* SVG turbulence filter */}
         <svg
