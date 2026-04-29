@@ -264,11 +264,11 @@ export function CategoryStrip() {
     return () => window.removeEventListener("resize", calc);
   }, []);
 
-  // Scroll progress over the extra height equals row travel distance.
-  // offset ["start start","end end"] tracks from sticky-pin to sticky-release.
+  // ["start start","end start"]: progress 0 when wrapper top hits viewport top (sticky pins),
+  // progress 1 when wrapper bottom hits viewport top (sticky releases — no dead zone).
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
-    offset: ["start start", "end end"],
+    offset: ["start start", "end start"],
   });
   const xRaw = useTransform(scrollYProgress, [0, 1], [0, -maxScroll]);
   // Spring smoothing replicates lerp(0.075) from the original script
