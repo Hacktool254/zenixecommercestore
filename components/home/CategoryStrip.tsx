@@ -171,13 +171,12 @@ function CategorySlide({ item, index, rowX, padding, vw }: SlideProps) {
           background: hasVideo
             ? "#0d1117"
             : `radial-gradient(ellipse at 50% 15%, ${item.glow} 0%, #0d1117 70%)`,
-          // Outer card glow only for the video card
           boxShadow: hasVideo
             ? `0 0 0 1px ${item.color}30, 0 0 60px ${item.color}25, 0 0 120px ${item.color}10`
             : undefined,
         }}
       >
-        {/* Video fills the entire card background */}
+        {/* Video fills entire card background */}
         {hasVideo && (
           <>
             <video
@@ -188,7 +187,6 @@ function CategorySlide({ item, index, rowX, padding, vw }: SlideProps) {
               playsInline
               className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
-            {/* Scrim — darkens video so label is readable */}
             <div
               className="absolute inset-0"
               style={{
@@ -199,14 +197,13 @@ function CategorySlide({ item, index, rowX, padding, vw }: SlideProps) {
           </>
         )}
 
-        {/* Icon area */}
+        {/* Icon */}
         <div className="relative z-10 flex flex-1 items-center justify-center p-8">
           <div
             className="relative flex h-32 w-32 items-center justify-center overflow-hidden rounded-[1.75rem] transition-transform duration-300 group-hover:scale-105"
             style={
               hasVideo
                 ? {
-                    // Inset shadow glows inside, not outside — won't bleed onto video
                     boxShadow: `inset 0 0 32px ${item.color}50, inset 0 0 12px ${item.color}35`,
                     border: `1px solid ${item.color}40`,
                     background: `radial-gradient(circle, ${item.color}08 0%, transparent 70%)`,
@@ -264,13 +261,8 @@ export function CategoryStrip() {
     return () => window.removeEventListener("resize", calc);
   }, []);
 
-  // ["start start","end end"]: 0 when wrapper top = viewport top (pin),
-  // 1 when wrapper bottom = viewport bottom — exactly when CSS sticky releases.
-  // "end start" is wrong: it fires 100vh late, leaving a dead zone.
-  const { scrollYProgress } = useScroll({
-    target: wrapperRef,
-    offset: ["start start", "end end"],
-  });
+  // Scroll progress over the extra height equals row travel distance
+  const { scrollYProgress } = useScroll({ target: wrapperRef });
   const xRaw = useTransform(scrollYProgress, [0, 1], [0, -maxScroll]);
   // Spring smoothing replicates lerp(0.075) from the original script
   const rowX = useSpring(xRaw, { stiffness: 80, damping: 22, mass: 0.5 });
