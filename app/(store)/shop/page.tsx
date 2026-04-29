@@ -18,14 +18,62 @@ const CHIP_LABELS: Record<string, (v: string) => string> = {
 };
 
 const SHOP_WIDGETS: WidgetItem[] = [
-  { id: "iphone17pro", label: "iPhone 17 Pro Max", sub: "From KES 189,999", color: "#a8d5e2" },
-  { id: "s26ultra", label: "Samsung S26 Ultra", sub: "From KES 179,999", color: "#1e88e5" },
-  { id: "ps5pro", label: "PlayStation 5 Pro", sub: "KES 84,999", color: "#f87171" },
-  { id: "mbprom5", label: "MacBook Pro M5", sub: "KES 349,999", color: "#cbd5e1" },
-  { id: "ipadpro", label: 'iPad Pro 13" M5', sub: "From KES 179,999", color: "#a78bfa" },
-  { id: "applewatch", label: "Apple Watch Ultra 3", sub: "KES 99,999", color: "#34d399" },
-  { id: "airpodsmax", label: "AirPods Max USB-C", sub: "KES 54,999", color: "#f87171" },
-  { id: "tcl85", label: 'TCL C8L 85"', sub: "KES 189,999", color: "#f5a623" },
+  {
+    id: "iphone17pro",
+    label: "iPhone 17 Pro Max",
+    sub: "From KES 189,999",
+    color: "#a8d5e2",
+    href: "/shop/iphones/iphone-17-pro-max-brand-new",
+  },
+  {
+    id: "s26ultra",
+    label: "Samsung S26 Ultra",
+    sub: "From KES 179,999",
+    color: "#1e88e5",
+    href: "/shop/samsung/samsung-s26-ultra-brand-new",
+  },
+  {
+    id: "ps5pro",
+    label: "PlayStation 5 Pro",
+    sub: "KES 84,999",
+    color: "#f87171",
+    href: "/shop/gaming/ps5-pro",
+  },
+  {
+    id: "mbprom5",
+    label: "MacBook Pro M5",
+    sub: "KES 349,999",
+    color: "#cbd5e1",
+    href: "/shop/mac/macbook-pro-m5",
+  },
+  {
+    id: "ipadpro",
+    label: 'iPad Pro 13" M5',
+    sub: "From KES 179,999",
+    color: "#a78bfa",
+    href: "/shop/ipads/ipad-pro-13-m5",
+  },
+  {
+    id: "applewatch",
+    label: "Apple Watch Ultra 3",
+    sub: "KES 99,999",
+    color: "#34d399",
+    href: "/shop/wearables/apple-watch-ultra-3",
+  },
+  {
+    id: "airpodsmax",
+    label: "AirPods Max USB-C",
+    sub: "KES 54,999",
+    color: "#f87171",
+    href: "/shop/audio/airpods-max-usbc",
+  },
+  {
+    id: "tcl85",
+    label: 'TCL C8L 85"',
+    sub: "KES 189,999",
+    color: "#f5a623",
+    href: "/shop/televisions/tcl-c8l-miniled-qled",
+  },
 ];
 
 export default function ShopPage() {

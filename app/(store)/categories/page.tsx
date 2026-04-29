@@ -105,7 +105,7 @@ const CATEGORIES = [
   {
     value: "power",
     label: "Power",
-    description: "Power banks, fast chargers, UPS systems and power solutions for every need.",
+    description: "Power banks, fast chargers and power solutions for every need.",
     icon: Plug,
     color: "#22c55e",
     bg: "rgba(34,197,94,0.08)",
@@ -185,14 +185,50 @@ function CategoryCard({ cat, index }: { cat: (typeof CATEGORIES)[number]; index:
 }
 
 const CATEGORY_WIDGETS: WidgetItem[] = [
-  { id: "iphones", label: "iPhones", sub: "12 Pro → 17 Pro Max", color: "#a8d5e2" },
-  { id: "samsung", label: "Samsung", sub: "S-series · Z Fold · Z Flip", color: "#1e88e5" },
-  { id: "gaming", label: "Gaming", sub: "PS5 Pro · Xbox Series X", color: "#f87171" },
-  { id: "mac", label: "Mac", sub: "Air M4/M5 · Pro M5", color: "#cbd5e1" },
-  { id: "ipad", label: "iPad", sub: "10th Gen → Pro M5", color: "#a78bfa" },
-  { id: "wearables", label: "Wearables", sub: "Series 6–11 · Ultra 3", color: "#34d399" },
-  { id: "audio", label: "Audio", sub: "AirPods 4 · AirPods Max", color: "#f87171" },
-  { id: "televisions", label: "Televisions", sub: 'TCL 4K · 55"–85"', color: "#f5a623" },
+  {
+    id: "iphones",
+    label: "iPhones",
+    sub: "12 Pro → 17 Pro Max",
+    color: "#a8d5e2",
+    href: "/shop/iphones",
+  },
+  {
+    id: "samsung",
+    label: "Samsung",
+    sub: "S-series · Z Fold · Z Flip",
+    color: "#1e88e5",
+    href: "/shop/samsung",
+  },
+  {
+    id: "gaming",
+    label: "Gaming",
+    sub: "PS5 Pro · Xbox Series X",
+    color: "#f87171",
+    href: "/shop/gaming",
+  },
+  { id: "mac", label: "Mac", sub: "Air M4/M5 · Pro M5", color: "#cbd5e1", href: "/shop/mac" },
+  { id: "ipad", label: "iPad", sub: "10th Gen → Pro M5", color: "#a78bfa", href: "/shop/ipads" },
+  {
+    id: "wearables",
+    label: "Wearables",
+    sub: "Series 6–11 · Ultra 3",
+    color: "#34d399",
+    href: "/shop/wearables",
+  },
+  {
+    id: "audio",
+    label: "Audio",
+    sub: "AirPods 4 · AirPods Max",
+    color: "#f87171",
+    href: "/shop/audio",
+  },
+  {
+    id: "televisions",
+    label: "Televisions",
+    sub: 'TCL 4K · 55"–85"',
+    color: "#f5a623",
+    href: "/shop/televisions",
+  },
 ];
 
 export default function CategoriesPage() {

@@ -30,7 +30,7 @@ const CATEGORY_META: Record<string, { label: string; description: string }> = {
     label: "Starlink & Connectivity",
     description: "Starlink kits and routers for Kenya.",
   },
-  power: { label: "Power", description: "Power banks, chargers, UPS solutions." },
+  power: { label: "Power", description: "Power banks, fast chargers and power solutions." },
   accessories: {
     label: "Accessories",
     description: "Apple Pencil, AirTag, Magic Mouse, Keyboard, Apple TV.",

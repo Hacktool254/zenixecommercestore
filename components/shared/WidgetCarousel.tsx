@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
 export interface WidgetItem {
@@ -8,6 +9,7 @@ export interface WidgetItem {
   label: string;
   sub?: string;
   color?: string;
+  href?: string;
 }
 
 interface Props {
@@ -27,6 +29,7 @@ const TOTAL_VISIBLE = ABOVE + 1 + BELOW;
 export function WidgetCarousel({ items, autoScrollMs = 2200 }: Props) {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
+  const router = useRouter();
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -56,6 +59,11 @@ export function WidgetCarousel({ items, autoScrollMs = 2200 }: Props) {
   }, [paused, startTimer, stopTimer]);
 
   const handleClick = (idx: number) => {
+    const item = items[idx];
+    if (idx === active && item?.href) {
+      router.push(item.href);
+      return;
+    }
     setActive(idx);
     if (!paused) startTimer();
   };
