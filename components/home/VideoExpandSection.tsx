@@ -76,7 +76,11 @@ export function VideoExpandSection() {
 
   return (
     // Tall wrapper = pin budget. 300vh gives plenty of scroll to expand fully.
-    <div ref={wrapperRef} className="relative z-10 bg-[#080c16]" style={{ height: "300vh" }}>
+    <div
+      ref={wrapperRef}
+      className="relative z-10 -mt-16 rounded-t-[2.5rem] bg-[#080c16] shadow-[0_-32px_80px_rgba(0,0,0,0.7)]"
+      style={{ height: "300vh" }}
+    >
       {/* Sticky viewport — stays visible during scroll */}
       <div className="sticky top-0 h-screen overflow-hidden">
         {/* Layer 1 — always visible base: full image + spin ring + play button */}

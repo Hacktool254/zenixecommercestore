@@ -216,7 +216,7 @@ export function HotDeals() {
   });
 
   return (
-    <section className="relative z-10 overflow-hidden bg-[#080c16] py-14">
+    <section className="relative z-10 -mt-16 overflow-hidden rounded-t-[2.5rem] bg-[#080c16] py-14 shadow-[0_-32px_80px_rgba(0,0,0,0.7)]">
       {/* SVG turbulence filter */}
       <svg
         aria-hidden="true"
@@ -310,7 +310,7 @@ export function HotDeals() {
       </svg>
 
       {/* Header */}
-      <div className="relative z-10 mx-auto mb-10 flex max-w-7xl items-end justify-between px-6 md:px-10">
+      <div className="relative z-10 mx-auto mb-10 flex max-w-[1600px] items-end justify-between px-4 md:px-6 lg:px-10">
         <div>
           <p className="mb-1 text-xs font-semibold tracking-widest text-[#f5a623] uppercase">
             Limited Time
