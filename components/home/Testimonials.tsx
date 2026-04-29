@@ -151,54 +151,56 @@ export function Testimonials() {
       </div>
 
       {/* ── Desktop layout — original sticky scroll-driven animation ── */}
-      <div ref={wrapperRef} className="relative hidden lg:block" style={{ height: "400vh" }}>
-        <div className="sticky top-0 h-screen overflow-hidden">
-          <div className="pointer-events-none absolute inset-0">
-            <div
-              className="absolute top-1/4 right-1/4 h-[600px] w-[600px] rounded-full blur-[180px]"
-              style={{ background: "rgba(245,166,35,0.03)" }}
-            />
-          </div>
+      <div className="hidden lg:block">
+        <div ref={wrapperRef} className="relative" style={{ height: "400vh" }}>
+          <div className="sticky top-0 h-screen overflow-hidden">
+            <div className="pointer-events-none absolute inset-0">
+              <div
+                className="absolute top-1/4 right-1/4 h-[600px] w-[600px] rounded-full blur-[180px]"
+                style={{ background: "rgba(245,166,35,0.03)" }}
+              />
+            </div>
 
-          <motion.div
-            initial={{ clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)" }}
-            whileInView={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute top-8 left-8 z-10"
-          >
-            <p className="text-xs font-semibold tracking-widest text-[#f5a623] uppercase">
-              What customers say
-            </p>
-          </motion.div>
+            <motion.div
+              initial={{ clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)" }}
+              whileInView={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute top-8 left-8 z-10"
+            >
+              <p className="text-xs font-semibold tracking-widest text-[#f5a623] uppercase">
+                What customers say
+              </p>
+            </motion.div>
 
-          <div className="absolute inset-0 flex flex-col items-end justify-center pr-6 md:pr-10 lg:pr-16">
-            {LINES.map((line, i) => (
-              <motion.div key={i} style={{ x: lineX[i] }} className="leading-none">
-                <span
-                  className="block font-black tracking-tighter uppercase"
-                  style={{
-                    fontSize: "clamp(3.5rem, 14vw, 14rem)",
-                    color: line.gold ? "#f5a623" : "#ffffff",
-                    fontFamily: "var(--font-space-grotesk)",
-                    lineHeight: 0.92,
-                  }}
+            <div className="absolute inset-0 flex flex-col items-end justify-center pr-6 md:pr-10 lg:pr-16">
+              {LINES.map((line, i) => (
+                <motion.div key={i} style={{ x: lineX[i] }} className="leading-none">
+                  <span
+                    className="block font-black tracking-tighter uppercase"
+                    style={{
+                      fontSize: "clamp(3.5rem, 14vw, 14rem)",
+                      color: line.gold ? "#f5a623" : "#ffffff",
+                      fontFamily: "var(--font-space-grotesk)",
+                      lineHeight: 0.92,
+                    }}
+                  >
+                    {line.text}
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="absolute top-1/2 left-6 flex -translate-y-1/2 flex-col gap-3 md:left-10 lg:left-16">
+              {CARDS.map((card, i) => (
+                <motion.div
+                  key={card.name}
+                  style={{ x: cardMotion[i]?.x, opacity: cardMotion[i]?.opacity }}
                 >
-                  {line.text}
-                </span>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="absolute top-1/2 left-6 flex -translate-y-1/2 flex-col gap-3 md:left-10 lg:left-16">
-            {CARDS.map((card, i) => (
-              <motion.div
-                key={card.name}
-                style={{ x: cardMotion[i]?.x, opacity: cardMotion[i]?.opacity }}
-              >
-                <TestimonialCard card={card} delay={0} inView={true} />
-              </motion.div>
-            ))}
+                  <TestimonialCard card={card} delay={0} inView={true} />
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

@@ -2,8 +2,9 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
-import { motion, useMotionValue, useAnimationFrame, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import { ArrowRight, Flame, ChevronLeft, ChevronRight } from "lucide-react";
+
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { ProductCard } from "@/components/products/ProductCard";
@@ -25,17 +26,6 @@ const SLOT: Record<number, { x: number; scale: number; opacity: number; z: numbe
 };
 
 const SPRING = { type: "spring" as const, stiffness: 260, damping: 28, mass: 0.9 };
-
-function FloatLabel({ children, reverse }: { children: React.ReactNode; reverse?: boolean }) {
-  const x = useMotionValue(0);
-  const sign = reverse ? -1 : 1;
-  useAnimationFrame((t) => x.set(Math.sin(t / 1800) * 18 * sign));
-  return (
-    <motion.span style={{ x }} className="inline-block">
-      {children}
-    </motion.span>
-  );
-}
 
 function SkeletonCard() {
   return (
@@ -168,11 +158,11 @@ function ElectricCard({
 export function HotDeals() {
   const products = useQuery(api.products.getHotDeals);
   const [center, setCenter] = useState(10_000);
-  const [paused, setPaused] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const resumeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wheelLockRef = useRef(false);
+  const touchStartX = useRef(0);
 
   const items: Product[] = products ? (products as Product[]) : [];
   const count = items.length;
@@ -190,31 +180,34 @@ export function HotDeals() {
     }
   }, []);
 
+  // Always auto-play — no pause on hover
   useEffect(() => {
-    if (!paused) startTimer();
-    else stopTimer();
+    startTimer();
     return stopTimer;
-  }, [paused, startTimer, stopTimer]);
+  }, [startTimer, stopTimer]);
 
+  // Touch swipe
   useEffect(() => {
     const el = carouselRef.current;
     if (!el) return;
-    const handler = (e: WheelEvent) => {
-      e.preventDefault();
-      if (wheelLockRef.current || count === 0) return;
-      wheelLockRef.current = true;
-      setTimeout(() => {
-        wheelLockRef.current = false;
-      }, 380);
-      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      setCenter((c) => (delta > 0 ? c + 1 : c - 1));
+    const onTouchStart = (e: TouchEvent) => {
+      touchStartX.current = e.touches[0]!.clientX;
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      const dx = touchStartX.current - e.changedTouches[0]!.clientX;
+      if (Math.abs(dx) < 40) return;
+      setCenter((c) => (dx > 0 ? c + 1 : c - 1));
       stopTimer();
       if (resumeRef.current) clearTimeout(resumeRef.current);
       resumeRef.current = setTimeout(startTimer, 1400);
     };
-    el.addEventListener("wheel", handler, { passive: false });
-    return () => el.removeEventListener("wheel", handler);
-  }, [count, startTimer, stopTimer]);
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [startTimer, stopTimer]);
 
   const cards = [-3, -2, -1, 0, 1, 2, 3].map((slot) => {
     const key = center + slot;
@@ -318,40 +311,27 @@ export function HotDeals() {
 
       {/* Header */}
       <div className="relative z-10 mx-auto mb-10 flex max-w-7xl items-end justify-between px-6 md:px-10">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f5a623]/15">
-            <Flame className="h-5 w-5 text-[#f5a623]" />
-          </div>
-          <div>
-            <p className="mb-1 text-xs font-semibold tracking-widest text-[#f5a623] uppercase">
-              <FloatLabel>Limited Time</FloatLabel>
-            </p>
-            <h2
-              className="text-2xl font-bold text-white sm:text-3xl"
-              style={{ fontFamily: "var(--font-space-grotesk)" }}
-            >
-              <FloatLabel reverse>Hot Deals</FloatLabel>
-            </h2>
-          </div>
+        <div>
+          <p className="mb-1 text-xs font-semibold tracking-widest text-[#f5a623] uppercase">
+            Limited Time
+          </p>
+          <h2
+            className="text-2xl font-bold text-white sm:text-3xl"
+            style={{ fontFamily: "var(--font-space-grotesk)" }}
+          >
+            Hot Deals
+          </h2>
         </div>
         <Link
           href="/deals"
           className="flex items-center gap-1.5 text-sm font-medium text-[#8b92a5] transition-colors hover:text-[#f5a623]"
         >
-          <FloatLabel>
-            View All <ArrowRight className="inline h-4 w-4" />
-          </FloatLabel>
+          View All <ArrowRight className="inline h-4 w-4" />
         </Link>
       </div>
 
       {/* Carousel */}
-      <div
-        ref={carouselRef}
-        className="relative"
-        style={{ height: CARD_H + 60 }}
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
-      >
+      <div ref={carouselRef} className="relative" style={{ height: CARD_H + 60 }}>
         <button
           onClick={() => setCenter((c) => c - 1)}
           aria-label="Previous"
