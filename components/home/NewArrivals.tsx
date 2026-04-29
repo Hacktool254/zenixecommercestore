@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { cloudinaryUrl } from "@/lib/utils";
@@ -90,10 +91,18 @@ function ArrivalCard({ product }: { product: Product }) {
 }
 
 export function NewArrivals() {
+  const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const states = useRef<CardState[]>([]);
   const rafId = useRef(0);
+
+  // Scale down as HotDeals scrolls over the top — same mechanic as Hero
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const scrollScale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
 
   const products = useQuery(api.products.getNewArrivals);
   const allItems = (products ?? []) as Product[];
@@ -187,7 +196,11 @@ export function NewArrivals() {
   }, [count]);
 
   return (
-    <section className="relative z-10 bg-[#0a0e1a] px-4 py-10 md:px-6 lg:px-10">
+    <motion.section
+      ref={sectionRef}
+      style={{ scale: scrollScale, transformOrigin: "center top" }}
+      className="sticky top-0 z-0 bg-[#0a0e1a] px-4 py-10 md:px-6 lg:px-10"
+    >
       {/* Ambient glow */}
       <div className="pointer-events-none absolute inset-0">
         <div
@@ -243,6 +256,6 @@ export function NewArrivals() {
           </div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
