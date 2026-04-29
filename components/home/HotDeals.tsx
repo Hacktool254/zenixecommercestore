@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { motion, useMotionValue, useSpring, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Flame, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -156,7 +156,7 @@ function ElectricCard({
 }
 
 export function HotDeals() {
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const products = useQuery(api.products.getHotDeals);
   const [center, setCenter] = useState(10_000);
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -165,12 +165,13 @@ export function HotDeals() {
   const wheelLockRef = useRef(false);
   const touchStartX = useRef(0);
 
-  // Horizontal exit: section slides left as VideoExpandSection enters from the right
+  // Recede behind VideoExpandSection — same mechanic as NewArrivals behind HotDeals
   const { scrollYProgress } = useScroll({
-    target: wrapperRef,
+    target: sectionRef,
     offset: ["start start", "end start"],
   });
-  const slideX = useTransform(scrollYProgress, [0, 1], ["0%", "-100%"]);
+  const scrollScale = useTransform(scrollYProgress, [0, 1], [1, 0.82]);
+  const scrollY = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"]);
 
   const items: Product[] = products ? (products as Product[]) : [];
   const count = items.length;
@@ -224,170 +225,168 @@ export function HotDeals() {
   });
 
   return (
-    // Tall wrapper gives scroll budget for the horizontal exit animation
-    <div ref={wrapperRef} className="relative z-10 overflow-x-hidden" style={{ height: "200vh" }}>
-      <motion.section
-        style={{ x: slideX }}
-        className="sticky top-0 w-screen overflow-hidden bg-[#080c16] py-14"
+    <motion.section
+      ref={sectionRef}
+      style={{ scale: scrollScale, y: scrollY, transformOrigin: "center top" }}
+      className="sticky top-0 z-0 overflow-hidden bg-[#080c16] py-14"
+    >
+      {/* SVG turbulence filter */}
+      <svg
+        aria-hidden="true"
+        style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }}
       >
-        {/* SVG turbulence filter */}
-        <svg
-          aria-hidden="true"
-          style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }}
+        <defs>
+          <filter
+            id="turbulent-gold"
+            colorInterpolationFilters="sRGB"
+            x="-20%"
+            y="-20%"
+            width="140%"
+            height="140%"
+          >
+            <feTurbulence
+              type="turbulence"
+              baseFrequency="0.02"
+              numOctaves="10"
+              result="noise1"
+              seed="1"
+            />
+            <feOffset in="noise1" dx="0" dy="0" result="offsetNoise1">
+              <animate
+                attributeName="dy"
+                values="700; 0"
+                dur="6s"
+                repeatCount="indefinite"
+                calcMode="linear"
+              />
+            </feOffset>
+            <feTurbulence
+              type="turbulence"
+              baseFrequency="0.02"
+              numOctaves="10"
+              result="noise2"
+              seed="1"
+            />
+            <feOffset in="noise2" dx="0" dy="0" result="offsetNoise2">
+              <animate
+                attributeName="dy"
+                values="0; -700"
+                dur="6s"
+                repeatCount="indefinite"
+                calcMode="linear"
+              />
+            </feOffset>
+            <feTurbulence
+              type="turbulence"
+              baseFrequency="0.02"
+              numOctaves="10"
+              result="noise3"
+              seed="2"
+            />
+            <feOffset in="noise3" dx="0" dy="0" result="offsetNoise3">
+              <animate
+                attributeName="dx"
+                values="490; 0"
+                dur="6s"
+                repeatCount="indefinite"
+                calcMode="linear"
+              />
+            </feOffset>
+            <feTurbulence
+              type="turbulence"
+              baseFrequency="0.02"
+              numOctaves="10"
+              result="noise4"
+              seed="2"
+            />
+            <feOffset in="noise4" dx="0" dy="0" result="offsetNoise4">
+              <animate
+                attributeName="dx"
+                values="0; -490"
+                dur="6s"
+                repeatCount="indefinite"
+                calcMode="linear"
+              />
+            </feOffset>
+            <feComposite in="offsetNoise1" in2="offsetNoise2" result="part1" />
+            <feComposite in="offsetNoise3" in2="offsetNoise4" result="part2" />
+            <feBlend in="part1" in2="part2" mode="color-dodge" result="combinedNoise" />
+            <feDisplacementMap
+              in="SourceGraphic"
+              in2="combinedNoise"
+              scale="30"
+              xChannelSelector="R"
+              yChannelSelector="B"
+            />
+          </filter>
+        </defs>
+      </svg>
+
+      {/* Header */}
+      <div className="relative z-10 mx-auto mb-10 flex max-w-[1600px] items-end justify-between px-4 md:px-6 lg:px-10">
+        <div>
+          <p className="mb-1 text-xs font-semibold tracking-widest text-[#f5a623] uppercase">
+            Limited Time
+          </p>
+          <h2
+            className="text-2xl font-bold text-white sm:text-3xl"
+            style={{ fontFamily: "var(--font-space-grotesk)" }}
+          >
+            Hot Deals
+          </h2>
+        </div>
+        <Link
+          href="/deals"
+          className="flex items-center gap-1.5 text-sm font-medium text-[#8b92a5] transition-colors hover:text-[#f5a623]"
         >
-          <defs>
-            <filter
-              id="turbulent-gold"
-              colorInterpolationFilters="sRGB"
-              x="-20%"
-              y="-20%"
-              width="140%"
-              height="140%"
+          View All <ArrowRight className="inline h-4 w-4" />
+        </Link>
+      </div>
+
+      {/* Carousel */}
+      <div ref={carouselRef} className="relative" style={{ height: CARD_H + 60 }}>
+        <button
+          onClick={() => setCenter((c) => c - 1)}
+          aria-label="Previous"
+          className="absolute top-1/2 left-4 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#f5a623]/30 bg-[#0d1117]/80 text-[#f5a623] backdrop-blur-sm transition-all hover:border-[#f5a623]/70 hover:bg-[#f5a623]/10 hover:shadow-[0_0_20px_rgba(245,166,35,0.25)] active:scale-90"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+        <button
+          onClick={() => setCenter((c) => c + 1)}
+          aria-label="Next"
+          className="absolute top-1/2 right-4 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#f5a623]/30 bg-[#0d1117]/80 text-[#f5a623] backdrop-blur-sm transition-all hover:border-[#f5a623]/70 hover:bg-[#f5a623]/10 hover:shadow-[0_0_20px_rgba(245,166,35,0.25)] active:scale-90"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
+
+        {cards.map(({ slot, key, product }) => {
+          const cfg = SLOT[slot]!;
+          return (
+            <motion.div
+              key={key}
+              initial={{ x: cfg.x, scale: cfg.scale, opacity: cfg.opacity }}
+              animate={{ x: cfg.x, scale: cfg.scale, opacity: cfg.opacity }}
+              transition={SPRING}
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                width: CARD_W,
+                marginLeft: -CARD_W / 2,
+                marginTop: -(CARD_H / 2),
+                zIndex: cfg.z,
+              }}
             >
-              <feTurbulence
-                type="turbulence"
-                baseFrequency="0.02"
-                numOctaves="10"
-                result="noise1"
-                seed="1"
-              />
-              <feOffset in="noise1" dx="0" dy="0" result="offsetNoise1">
-                <animate
-                  attributeName="dy"
-                  values="700; 0"
-                  dur="6s"
-                  repeatCount="indefinite"
-                  calcMode="linear"
-                />
-              </feOffset>
-              <feTurbulence
-                type="turbulence"
-                baseFrequency="0.02"
-                numOctaves="10"
-                result="noise2"
-                seed="1"
-              />
-              <feOffset in="noise2" dx="0" dy="0" result="offsetNoise2">
-                <animate
-                  attributeName="dy"
-                  values="0; -700"
-                  dur="6s"
-                  repeatCount="indefinite"
-                  calcMode="linear"
-                />
-              </feOffset>
-              <feTurbulence
-                type="turbulence"
-                baseFrequency="0.02"
-                numOctaves="10"
-                result="noise3"
-                seed="2"
-              />
-              <feOffset in="noise3" dx="0" dy="0" result="offsetNoise3">
-                <animate
-                  attributeName="dx"
-                  values="490; 0"
-                  dur="6s"
-                  repeatCount="indefinite"
-                  calcMode="linear"
-                />
-              </feOffset>
-              <feTurbulence
-                type="turbulence"
-                baseFrequency="0.02"
-                numOctaves="10"
-                result="noise4"
-                seed="2"
-              />
-              <feOffset in="noise4" dx="0" dy="0" result="offsetNoise4">
-                <animate
-                  attributeName="dx"
-                  values="0; -490"
-                  dur="6s"
-                  repeatCount="indefinite"
-                  calcMode="linear"
-                />
-              </feOffset>
-              <feComposite in="offsetNoise1" in2="offsetNoise2" result="part1" />
-              <feComposite in="offsetNoise3" in2="offsetNoise4" result="part2" />
-              <feBlend in="part1" in2="part2" mode="color-dodge" result="combinedNoise" />
-              <feDisplacementMap
-                in="SourceGraphic"
-                in2="combinedNoise"
-                scale="30"
-                xChannelSelector="R"
-                yChannelSelector="B"
-              />
-            </filter>
-          </defs>
-        </svg>
-
-        {/* Header */}
-        <div className="relative z-10 mx-auto mb-10 flex max-w-[1600px] items-end justify-between px-4 md:px-6 lg:px-10">
-          <div>
-            <p className="mb-1 text-xs font-semibold tracking-widest text-[#f5a623] uppercase">
-              Limited Time
-            </p>
-            <h2
-              className="text-2xl font-bold text-white sm:text-3xl"
-              style={{ fontFamily: "var(--font-space-grotesk)" }}
-            >
-              Hot Deals
-            </h2>
-          </div>
-          <Link
-            href="/deals"
-            className="flex items-center gap-1.5 text-sm font-medium text-[#8b92a5] transition-colors hover:text-[#f5a623]"
-          >
-            View All <ArrowRight className="inline h-4 w-4" />
-          </Link>
-        </div>
-
-        {/* Carousel */}
-        <div ref={carouselRef} className="relative" style={{ height: CARD_H + 60 }}>
-          <button
-            onClick={() => setCenter((c) => c - 1)}
-            aria-label="Previous"
-            className="absolute top-1/2 left-4 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#f5a623]/30 bg-[#0d1117]/80 text-[#f5a623] backdrop-blur-sm transition-all hover:border-[#f5a623]/70 hover:bg-[#f5a623]/10 hover:shadow-[0_0_20px_rgba(245,166,35,0.25)] active:scale-90"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <button
-            onClick={() => setCenter((c) => c + 1)}
-            aria-label="Next"
-            className="absolute top-1/2 right-4 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#f5a623]/30 bg-[#0d1117]/80 text-[#f5a623] backdrop-blur-sm transition-all hover:border-[#f5a623]/70 hover:bg-[#f5a623]/10 hover:shadow-[0_0_20px_rgba(245,166,35,0.25)] active:scale-90"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-
-          {cards.map(({ slot, key, product }) => {
-            const cfg = SLOT[slot]!;
-            return (
-              <motion.div
-                key={key}
-                initial={{ x: cfg.x, scale: cfg.scale, opacity: cfg.opacity }}
-                animate={{ x: cfg.x, scale: cfg.scale, opacity: cfg.opacity }}
-                transition={SPRING}
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  width: CARD_W,
-                  marginLeft: -CARD_W / 2,
-                  marginTop: -(CARD_H / 2),
-                  zIndex: cfg.z,
-                }}
-              >
-                {!product ? (
-                  <SkeletonCard />
-                ) : (
-                  <ElectricCard product={product} isCenter={slot === 0} priority={slot === 0} />
-                )}
-              </motion.div>
-            );
-          })}
-        </div>
-      </motion.section>
-    </div>
+              {!product ? (
+                <SkeletonCard />
+              ) : (
+                <ElectricCard product={product} isCenter={slot === 0} priority={slot === 0} />
+              )}
+            </motion.div>
+          );
+        })}
+      </div>
+    </motion.section>
   );
 }

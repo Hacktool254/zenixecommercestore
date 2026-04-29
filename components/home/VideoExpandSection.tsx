@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef } from "react";
-import type React from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -50,22 +49,12 @@ function SpinRing() {
 
 export function VideoExpandSection() {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const enterRef = useRef<HTMLDivElement>(null);
 
   // Circle expand — tracks full scroll through the tall wrapper
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
     offset: ["start start", "end end"],
   });
-
-  // Enter from right — synced with HotDeals exit: viewport bottom → viewport top
-  const { scrollYProgress: enterProgress } = useScroll({
-    target: enterRef,
-    offset: ["start end", "start start"],
-  });
-  // Spring to smooth out the enter so it doesn't feel abrupt
-  const enterSmooth = useSpring(enterProgress, { stiffness: 80, damping: 22, mass: 0.5 });
-  const enterX = useTransform(enterSmooth, [0, 1], ["100%", "0%"]);
 
   // Smooth spring on progress
   const smoothProgress = useSpring(scrollYProgress, {
@@ -87,16 +76,9 @@ export function VideoExpandSection() {
 
   return (
     // Tall wrapper = pin budget. 300vh gives plenty of scroll to expand fully.
-    <div
-      ref={(el) => {
-        (wrapperRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
-        (enterRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
-      }}
-      className="relative z-10 overflow-x-hidden"
-      style={{ height: "300vh" }}
-    >
-      {/* Sticky viewport — slides in from the right, then locks */}
-      <motion.div style={{ x: enterX }} className="sticky top-0 h-screen w-screen overflow-hidden">
+    <div ref={wrapperRef} className="relative z-10" style={{ height: "300vh" }}>
+      {/* Sticky viewport — stays visible during scroll */}
+      <div className="sticky top-0 h-screen overflow-hidden">
         {/* Layer 1 — always visible base: full image + spin ring + play button */}
         <div className="absolute inset-0">
           <Image src="/circle-vid-bg.png" alt="" fill className="object-cover" priority />
@@ -168,7 +150,7 @@ export function VideoExpandSection() {
             </Link>
           </motion.div>
         </motion.div>
-      </motion.div>
+      </div>
     </div>
   );
 }
