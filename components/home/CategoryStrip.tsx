@@ -150,6 +150,8 @@ function CategorySlide({ item, index, rowX, padding, vw }: SlideProps) {
     return 1;
   });
 
+  const hasVideo = !!item.video;
+
   return (
     <motion.div
       style={{
@@ -164,44 +166,70 @@ function CategorySlide({ item, index, rowX, padding, vw }: SlideProps) {
     >
       <Link
         href={item.href}
-        className="group flex h-full w-full flex-col items-center justify-between overflow-hidden rounded-3xl border border-[#1e2435] p-8 transition-colors duration-300 hover:border-[rgba(245,166,35,0.35)]"
+        className="group relative flex h-full w-full flex-col items-center justify-between overflow-hidden rounded-3xl border border-[#1e2435] transition-all duration-300"
         style={{
-          background: `radial-gradient(ellipse at 50% 15%, ${item.glow} 0%, #0d1117 70%)`,
+          background: hasVideo
+            ? "#0d1117"
+            : `radial-gradient(ellipse at 50% 15%, ${item.glow} 0%, #0d1117 70%)`,
+          // Outer card glow only for the video card
+          boxShadow: hasVideo
+            ? `0 0 0 1px ${item.color}30, 0 0 60px ${item.color}25, 0 0 120px ${item.color}10`
+            : undefined,
         }}
       >
-        {/* Icon / video area */}
-        <div className="flex flex-1 items-center justify-center">
+        {/* Video fills the entire card background */}
+        {hasVideo && (
+          <>
+            <video
+              src={item.video}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            {/* Scrim — darkens video so label is readable */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to top, rgba(10,14,26,0.85) 0%, rgba(10,14,26,0.3) 50%, transparent 100%)",
+              }}
+            />
+          </>
+        )}
+
+        {/* Icon area */}
+        <div className="relative z-10 flex flex-1 items-center justify-center p-8">
           <div
-            className="relative flex h-32 w-32 items-center justify-center overflow-hidden rounded-[1.75rem] border border-[#1e2435] transition-all duration-300 group-hover:scale-105"
-            style={{
-              background: `radial-gradient(circle, ${item.glow} 0%, transparent 70%)`,
-              boxShadow: `0 0 40px ${item.color}20`,
-            }}
+            className="relative flex h-32 w-32 items-center justify-center overflow-hidden rounded-[1.75rem] transition-transform duration-300 group-hover:scale-105"
+            style={
+              hasVideo
+                ? {
+                    // Inset shadow glows inside, not outside — won't bleed onto video
+                    boxShadow: `inset 0 0 32px ${item.color}50, inset 0 0 12px ${item.color}35`,
+                    border: `1px solid ${item.color}40`,
+                    background: `radial-gradient(circle, ${item.color}08 0%, transparent 70%)`,
+                  }
+                : {
+                    background: `radial-gradient(circle, ${item.glow} 0%, transparent 70%)`,
+                    boxShadow: `0 0 40px ${item.color}20`,
+                    border: "1px solid #1e2435",
+                  }
+            }
           >
-            {item.video ? (
-              <>
-                <video
-                  src={item.video}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-                {/* Subtle color tint overlay to tie video to card palette */}
-                <div
-                  className="absolute inset-0"
-                  style={{ background: `${item.glow}`, mixBlendMode: "color" }}
-                />
-              </>
-            ) : (
-              <Icon className="h-14 w-14" style={{ color: item.color }} />
-            )}
+            <Icon
+              className="h-14 w-14"
+              style={{
+                color: item.color,
+                filter: hasVideo ? `drop-shadow(0 0 8px ${item.color}90)` : undefined,
+              }}
+            />
           </div>
         </div>
 
         {/* Label */}
-        <div className="w-full text-center">
+        <div className="relative z-10 w-full p-8 pt-0 text-center">
           <p
             className="text-2xl font-bold tracking-tight uppercase"
             style={{ fontFamily: "var(--font-space-grotesk)", color: item.color }}
