@@ -4,31 +4,20 @@ import {
   nextjsMiddlewareRedirect,
 } from "@convex-dev/auth/nextjs/server";
 
-const isProtected = createRouteMatcher(["/checkout(.*)", "/account(.*)", "/admin(.*)"]);
-const isAdminOnly = createRouteMatcher(["/admin(.*)"]);
+const isProtectedCustomerRoute = createRouteMatcher(["/checkout(.*)", "/account(.*)"]);
+const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
+const isAdminLoginPage = createRouteMatcher(["/admin/login"]);
 
 export default convexAuthNextjsMiddleware(async (request, { convexAuth }) => {
-  if (!isProtected(request)) return;
+  // Admin login page — always allow through
+  if (isAdminLoginPage(request)) return;
 
-  const authenticated = await convexAuth.isAuthenticated();
+  // Admin routes — let through, the admin layout handles role checks + redirect to /admin/login
+  if (isAdminRoute(request)) return;
 
-  if (!authenticated) {
-    const redirect = encodeURIComponent(request.nextUrl.pathname + request.nextUrl.search);
-    return nextjsMiddlewareRedirect(request, `/login?redirect=${redirect}`);
-  }
-
-  if (isAdminOnly(request)) {
-    const token = await convexAuth.getToken();
-    if (!token) return nextjsMiddlewareRedirect(request, "/");
-
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1] ?? "")) as { role?: string };
-      if (payload.role !== "admin") {
-        return nextjsMiddlewareRedirect(request, "/");
-      }
-    } catch {
-      return nextjsMiddlewareRedirect(request, "/");
-    }
+  // Customer-protected routes — redirect to user login if not authenticated
+  if (isProtectedCustomerRoute(request) && !(await convexAuth.isAuthenticated())) {
+    return nextjsMiddlewareRedirect(request, "/login");
   }
 });
 
