@@ -12,7 +12,10 @@ export function WhatsAppBanner() {
   const inView = useInView(ref, { once: true, margin: "-60px" });
 
   return (
-    <section ref={ref} className="relative z-10 bg-[#0a0e1a] px-4 py-10 md:px-6">
+    <section
+      ref={ref}
+      className="relative z-30 -mt-12 rounded-t-[2.5rem] bg-[#0a0e1a] px-4 py-10 shadow-[0_-32px_80px_rgba(0,0,0,0.7)] md:px-6"
+    >
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}

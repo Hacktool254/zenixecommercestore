@@ -5,6 +5,7 @@ import { CategoryStrip } from "@/components/home/CategoryStrip";
 import { NewArrivals } from "@/components/home/NewArrivals";
 import { HotDeals } from "@/components/home/HotDeals";
 import { VideoExpandSection } from "@/components/home/VideoExpandSection";
+import { MessageSection } from "@/components/home/MessageSection";
 import { Testimonials } from "@/components/home/Testimonials";
 import { WhatsAppBanner } from "@/components/home/WhatsAppBanner";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -55,6 +56,7 @@ export default function HomePage() {
       <Suspense fallback={<SectionSkeleton />}>
         <HotDeals />
       </Suspense>
+      <MessageSection />
       <VideoExpandSection />
       <Testimonials />
       <WhatsAppBanner />
