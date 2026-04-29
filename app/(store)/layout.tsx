@@ -11,7 +11,7 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
     <>
       <FluidCursor />
       <Header />
-      <main className="flex flex-1 flex-col pt-[72px] pb-16 md:pb-0">{children}</main>
+      <main className="relative flex flex-1 flex-col pt-[72px] pb-16 md:pb-0">{children}</main>
       <Footer />
       <BottomNav />
       <WhatsAppFAB />

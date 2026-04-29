@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSyncExternalStore } from "react";
 import { Home, Grid2x2, Tag, User, ShoppingCart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCartStore } from "@/stores/cart.store";
@@ -16,7 +17,11 @@ const NAV_ITEMS = [
 
 export function BottomNav() {
   const pathname = usePathname();
-  const itemCount = useCartStore((s) => s.itemCount());
+  const itemCount = useSyncExternalStore(
+    useCartStore.subscribe,
+    () => useCartStore.getState().itemCount(),
+    () => 0
+  );
   const openDrawer = useCartStore((s) => s.openDrawer);
 
   const isActive = (href: string) =>
@@ -62,7 +67,7 @@ export function BottomNav() {
       <button
         onClick={openDrawer}
         className="flex flex-1 flex-col items-center justify-center gap-0.5 py-2"
-        aria-label={`Cart — ${itemCount} item${itemCount !== 1 ? "s" : ""}`}
+        aria-label="Cart"
       >
         <div className="relative">
           <ShoppingCart

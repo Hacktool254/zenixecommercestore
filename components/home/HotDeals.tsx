@@ -1,17 +1,48 @@
 "use client";
 
+import { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
-import { ArrowRight, Flame } from "lucide-react";
+import { motion, useMotionValue, useAnimationFrame, useSpring } from "framer-motion";
+import { ArrowRight, Flame, ChevronLeft, ChevronRight } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { ProductCard } from "@/components/products/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { Product } from "@/types";
 
-function ProductCardSkeleton() {
+const CARD_W = 290;
+const CARD_H = 460;
+const AUTO_MS = 2600;
+
+const SLOT: Record<number, { x: number; scale: number; opacity: number; z: number }> = {
+  [-3]: { x: -760, scale: 0.44, opacity: 0, z: 0 },
+  [-2]: { x: -520, scale: 0.64, opacity: 0.38, z: 1 },
+  [-1]: { x: -288, scale: 0.82, opacity: 0.7, z: 3 },
+  [0]: { x: 0, scale: 1.0, opacity: 1.0, z: 5 },
+  [1]: { x: 288, scale: 0.82, opacity: 0.7, z: 3 },
+  [2]: { x: 520, scale: 0.64, opacity: 0.38, z: 1 },
+  [3]: { x: 760, scale: 0.44, opacity: 0, z: 0 },
+};
+
+const SPRING = { type: "spring" as const, stiffness: 260, damping: 28, mass: 0.9 };
+
+function FloatLabel({ children, reverse }: { children: React.ReactNode; reverse?: boolean }) {
+  const x = useMotionValue(0);
+  const sign = reverse ? -1 : 1;
+  useAnimationFrame((t) => x.set(Math.sin(t / 1800) * 18 * sign));
   return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-[#1e2435] bg-[#0d1117]">
+    <motion.span style={{ x }} className="inline-block">
+      {children}
+    </motion.span>
+  );
+}
+
+function SkeletonCard() {
+  return (
+    <div
+      className="flex flex-col overflow-hidden rounded-2xl border border-[#1e2435] bg-[#0d1117]"
+      style={{ height: CARD_H }}
+    >
       <Skeleton className="aspect-square w-full" />
       <div className="flex flex-col gap-2 p-3">
         <Skeleton className="h-3 w-16" />
@@ -26,69 +57,342 @@ function ProductCardSkeleton() {
   );
 }
 
-export function HotDeals() {
-  const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
-  const products = useQuery(api.products.getHotDeals);
+function ElectricCard({
+  product,
+  isCenter,
+  priority,
+}: {
+  product: Product;
+  isCenter: boolean;
+  priority?: boolean;
+}) {
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+  const springRX = useSpring(rotateX, { stiffness: 150, damping: 20 });
+  const springRY = useSpring(rotateY, { stiffness: 150, damping: 20 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isCenter) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    rotateY.set(((e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2)) * 15);
+    rotateX.set(-((e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2)) * 10);
+  };
+
+  const handleMouseLeave = () => {
+    if (!isCenter) return;
+    rotateX.set(0);
+    rotateY.set(0);
+  };
 
   return (
-    <section ref={ref} className="relative overflow-hidden bg-[#0d1117] py-14">
-      {/* Subtle orange glow top-left */}
-      <div
-        className="pointer-events-none absolute -top-24 -left-24 h-64 w-64 rounded-full blur-3xl"
-        style={{ background: "rgba(245,166,35,0.06)" }}
-      />
+    <motion.div
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        rotateX: isCenter ? springRX : 0,
+        rotateY: isCenter ? springRY : 0,
+        transformStyle: "preserve-3d",
+        borderRadius: 20,
+        padding: 2,
+        position: "relative",
+        background:
+          "linear-gradient(-30deg, rgba(245,166,35,0.10) 0%, transparent 50%, rgba(245,166,35,0.10) 100%), #0d1117",
+      }}
+    >
+      <div style={{ position: "relative", borderRadius: 18 }}>
+        <ProductCard product={product} priority={priority} />
 
-      <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.4 }}
-          className="mb-8 flex items-center justify-between"
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            border: "2px solid rgba(245,166,35,0.45)",
+            borderRadius: 18,
+            pointerEvents: "none",
+            zIndex: 10,
+          }}
         >
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f5a623]/15">
-              <Flame className="h-5 w-5 text-[#f5a623]" />
-            </div>
-            <div>
-              <p className="mb-0.5 text-xs font-semibold tracking-widest text-[#f5a623] uppercase">
-                Limited Time
-              </p>
-              <h2
-                className="text-2xl font-bold text-white sm:text-3xl"
-                style={{ fontFamily: "var(--font-space-grotesk)" }}
-              >
-                Hot Deals
-              </h2>
-            </div>
-          </div>
-          <Link
-            href="/deals"
-            className="flex items-center gap-1.5 text-sm font-medium text-[#8b92a5] transition-colors hover:text-[#f5a623]"
-          >
-            View All <ArrowRight className="h-4 w-4" />
-          </Link>
-        </motion.div>
-
-        {/* Grid */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
-          {products === undefined
-            ? Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
-            : products.slice(0, 4).map((product, i) => (
-                <motion.div
-                  key={product._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.4, delay: 0.1 + i * 0.08 }}
-                >
-                  <ProductCard
-                    product={product as Parameters<typeof ProductCard>[0]["product"]}
-                    showHotBadge
-                  />
-                </motion.div>
-              ))}
+          <div
+            style={{
+              position: "absolute",
+              inset: -4,
+              border: "2px solid #f5a623",
+              borderRadius: 18,
+              filter: "url(#turbulent-gold)",
+              pointerEvents: "none",
+            }}
+          />
         </div>
+
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            border: "2px solid rgba(245,166,35,0.55)",
+            borderRadius: 18,
+            filter: "blur(1px)",
+            pointerEvents: "none",
+            zIndex: 11,
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            border: "2px solid rgba(245,166,35,0.35)",
+            borderRadius: 18,
+            filter: "blur(4px)",
+            pointerEvents: "none",
+            zIndex: 11,
+          }}
+        />
+      </div>
+
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          borderRadius: 20,
+          filter: "blur(32px)",
+          transform: "scale(1.1)",
+          opacity: isCenter ? 0.2 : 0.08,
+          zIndex: -1,
+          background: "linear-gradient(-30deg, #f5a623, transparent 50%, #f5a623)",
+          pointerEvents: "none",
+        }}
+      />
+    </motion.div>
+  );
+}
+
+export function HotDeals() {
+  const products = useQuery(api.products.getHotDeals);
+  const [center, setCenter] = useState(10_000);
+  const [paused, setPaused] = useState(false);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const resumeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wheelLockRef = useRef(false);
+
+  const items: Product[] = products ? (products as Product[]) : [];
+  const count = items.length;
+
+  const startTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (count < 2) return;
+    timerRef.current = setInterval(() => setCenter((c) => c + 1), AUTO_MS);
+  }, [count]);
+
+  const stopTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!paused) startTimer();
+    else stopTimer();
+    return stopTimer;
+  }, [paused, startTimer, stopTimer]);
+
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (!el) return;
+    const handler = (e: WheelEvent) => {
+      e.preventDefault();
+      if (wheelLockRef.current || count === 0) return;
+      wheelLockRef.current = true;
+      setTimeout(() => {
+        wheelLockRef.current = false;
+      }, 380);
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      setCenter((c) => (delta > 0 ? c + 1 : c - 1));
+      stopTimer();
+      if (resumeRef.current) clearTimeout(resumeRef.current);
+      resumeRef.current = setTimeout(startTimer, 1400);
+    };
+    el.addEventListener("wheel", handler, { passive: false });
+    return () => el.removeEventListener("wheel", handler);
+  }, [count, startTimer, stopTimer]);
+
+  const cards = [-3, -2, -1, 0, 1, 2, 3].map((slot) => {
+    const key = center + slot;
+    const product = count > 0 ? items[((key % count) + count) % count] : null;
+    return { slot, key, product };
+  });
+
+  return (
+    <section className="relative z-10 overflow-hidden bg-[#080c16] py-14">
+      {/* SVG turbulence filter */}
+      <svg
+        aria-hidden="true"
+        style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }}
+      >
+        <defs>
+          <filter
+            id="turbulent-gold"
+            colorInterpolationFilters="sRGB"
+            x="-20%"
+            y="-20%"
+            width="140%"
+            height="140%"
+          >
+            <feTurbulence
+              type="turbulence"
+              baseFrequency="0.02"
+              numOctaves="10"
+              result="noise1"
+              seed="1"
+            />
+            <feOffset in="noise1" dx="0" dy="0" result="offsetNoise1">
+              <animate
+                attributeName="dy"
+                values="700; 0"
+                dur="6s"
+                repeatCount="indefinite"
+                calcMode="linear"
+              />
+            </feOffset>
+            <feTurbulence
+              type="turbulence"
+              baseFrequency="0.02"
+              numOctaves="10"
+              result="noise2"
+              seed="1"
+            />
+            <feOffset in="noise2" dx="0" dy="0" result="offsetNoise2">
+              <animate
+                attributeName="dy"
+                values="0; -700"
+                dur="6s"
+                repeatCount="indefinite"
+                calcMode="linear"
+              />
+            </feOffset>
+            <feTurbulence
+              type="turbulence"
+              baseFrequency="0.02"
+              numOctaves="10"
+              result="noise3"
+              seed="2"
+            />
+            <feOffset in="noise3" dx="0" dy="0" result="offsetNoise3">
+              <animate
+                attributeName="dx"
+                values="490; 0"
+                dur="6s"
+                repeatCount="indefinite"
+                calcMode="linear"
+              />
+            </feOffset>
+            <feTurbulence
+              type="turbulence"
+              baseFrequency="0.02"
+              numOctaves="10"
+              result="noise4"
+              seed="2"
+            />
+            <feOffset in="noise4" dx="0" dy="0" result="offsetNoise4">
+              <animate
+                attributeName="dx"
+                values="0; -490"
+                dur="6s"
+                repeatCount="indefinite"
+                calcMode="linear"
+              />
+            </feOffset>
+            <feComposite in="offsetNoise1" in2="offsetNoise2" result="part1" />
+            <feComposite in="offsetNoise3" in2="offsetNoise4" result="part2" />
+            <feBlend in="part1" in2="part2" mode="color-dodge" result="combinedNoise" />
+            <feDisplacementMap
+              in="SourceGraphic"
+              in2="combinedNoise"
+              scale="30"
+              xChannelSelector="R"
+              yChannelSelector="B"
+            />
+          </filter>
+        </defs>
+      </svg>
+
+      {/* Header */}
+      <div className="relative z-10 mx-auto mb-10 flex max-w-7xl items-end justify-between px-6 md:px-10">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f5a623]/15">
+            <Flame className="h-5 w-5 text-[#f5a623]" />
+          </div>
+          <div>
+            <p className="mb-1 text-xs font-semibold tracking-widest text-[#f5a623] uppercase">
+              <FloatLabel>Limited Time</FloatLabel>
+            </p>
+            <h2
+              className="text-2xl font-bold text-white sm:text-3xl"
+              style={{ fontFamily: "var(--font-space-grotesk)" }}
+            >
+              <FloatLabel reverse>Hot Deals</FloatLabel>
+            </h2>
+          </div>
+        </div>
+        <Link
+          href="/deals"
+          className="flex items-center gap-1.5 text-sm font-medium text-[#8b92a5] transition-colors hover:text-[#f5a623]"
+        >
+          <FloatLabel>
+            View All <ArrowRight className="inline h-4 w-4" />
+          </FloatLabel>
+        </Link>
+      </div>
+
+      {/* Carousel */}
+      <div
+        ref={carouselRef}
+        className="relative"
+        style={{ height: CARD_H + 60 }}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
+        <button
+          onClick={() => setCenter((c) => c - 1)}
+          aria-label="Previous"
+          className="absolute top-1/2 left-4 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#f5a623]/30 bg-[#0d1117]/80 text-[#f5a623] backdrop-blur-sm transition-all hover:border-[#f5a623]/70 hover:bg-[#f5a623]/10 hover:shadow-[0_0_20px_rgba(245,166,35,0.25)] active:scale-90"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+        <button
+          onClick={() => setCenter((c) => c + 1)}
+          aria-label="Next"
+          className="absolute top-1/2 right-4 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#f5a623]/30 bg-[#0d1117]/80 text-[#f5a623] backdrop-blur-sm transition-all hover:border-[#f5a623]/70 hover:bg-[#f5a623]/10 hover:shadow-[0_0_20px_rgba(245,166,35,0.25)] active:scale-90"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
+
+        {cards.map(({ slot, key, product }) => {
+          const cfg = SLOT[slot]!;
+          return (
+            <motion.div
+              key={key}
+              initial={{ x: cfg.x, scale: cfg.scale, opacity: cfg.opacity }}
+              animate={{ x: cfg.x, scale: cfg.scale, opacity: cfg.opacity }}
+              transition={SPRING}
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                width: CARD_W,
+                marginLeft: -CARD_W / 2,
+                marginTop: -(CARD_H / 2),
+                zIndex: cfg.z,
+              }}
+            >
+              {!product ? (
+                <SkeletonCard />
+              ) : (
+                <ElectricCard product={product} isCenter={slot === 0} priority={slot === 0} />
+              )}
+            </motion.div>
+          );
+        })}
       </div>
     </section>
   );

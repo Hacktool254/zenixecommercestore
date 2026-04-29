@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -22,7 +22,11 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const itemCount = useCartStore((s) => s.itemCount());
+  const itemCount = useSyncExternalStore(
+    useCartStore.subscribe,
+    () => useCartStore.getState().itemCount(),
+    () => 0
+  );
   const openDrawer = useCartStore((s) => s.openDrawer);
   const openSearch = useUIStore((s) => s.openSearch);
 
@@ -47,8 +51,8 @@ export function Header() {
           WebkitBackdropFilter: "blur(12px)",
         }}
       >
-        <div className="flex h-full w-full items-center px-4 md:px-6">
-          {/* Logo + nav — flex-1 so Featured Products hugs the right edge */}
+        <div className="relative flex h-full w-full items-center px-4 md:px-6">
+          {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center">
             <Image
               src="/logo.png"
@@ -60,8 +64,8 @@ export function Header() {
             />
           </Link>
 
-          {/* Desktop nav — grows to push icons right */}
-          <nav className="hidden flex-1 items-center gap-1 md:flex">
+          {/* Desktop nav — absolutely centered, out of flow so it doesn't affect icon placement */}
+          <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 md:flex">
             {NAV_LINKS.map(({ label, href }) => {
               const active = pathname === href || pathname.startsWith(href + "/");
               return (
@@ -85,8 +89,8 @@ export function Header() {
             })}
           </nav>
 
-          {/* Right icons */}
-          <div className="flex items-center gap-1">
+          {/* Right icons — ml-auto pins them to the right independently of the centered nav */}
+          <div className="ml-auto flex items-center gap-1">
             {/* Search */}
             <button
               onClick={openSearch}
@@ -108,7 +112,7 @@ export function Header() {
             {/* Cart */}
             <button
               onClick={openDrawer}
-              aria-label={`Cart — ${itemCount} item${itemCount !== 1 ? "s" : ""}`}
+              aria-label="Cart"
               className="relative flex h-9 w-9 items-center justify-center rounded-lg text-[#cbd5e1] transition-colors hover:bg-[#1a2035] hover:text-white"
             >
               <ShoppingCart className="h-[18px] w-[18px]" />

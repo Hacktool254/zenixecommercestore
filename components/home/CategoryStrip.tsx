@@ -1,8 +1,8 @@
 "use client";
 
+import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion, useScroll, useTransform, useSpring, type MotionValue } from "framer-motion";
 import {
   Smartphone,
   Tv,
@@ -15,108 +15,306 @@ import {
   Watch,
   Tablet,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-const CATEGORIES = [
-  { label: "iPhones", href: "/shop/iphones", icon: Smartphone, color: "#a8d5e2" },
-  { label: "Samsung", href: "/shop/samsung", icon: Smartphone, color: "#1e88e5" },
-  { label: "iPad", href: "/shop/ipad", icon: Tablet, color: "#a78bfa" },
-  { label: "Mac", href: "/shop/mac", icon: Monitor, color: "#cbd5e1" },
-  { label: "Wearables", href: "/shop/wearables", icon: Watch, color: "#34d399" },
-  { label: "Audio", href: "/shop/audio", icon: Headphones, color: "#f87171" },
-  { label: "Televisions", href: "/shop/televisions", icon: Tv, color: "#f5a623" },
-  { label: "Gaming", href: "/shop/gaming", icon: Gamepad2, color: "#f87171" },
-  { label: "Starlink", href: "/shop/connectivity", icon: Wifi, color: "#38bdf8" },
-  { label: "Power", href: "/shop/power", icon: Plug, color: "#22c55e" },
-  { label: "Accessories", href: "/shop/accessories", icon: ShoppingBag, color: "#fb923c" },
+interface Category {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+  color: string;
+  glow: string;
+  video?: string;
+}
+
+const CATEGORIES: Category[] = [
+  {
+    label: "iPhones",
+    href: "/shop/iphones",
+    icon: Smartphone,
+    color: "#a8d5e2",
+    glow: "rgba(168,213,226,0.10)",
+    video: "/Mock hero 1.mp4",
+  },
+  {
+    label: "Samsung",
+    href: "/shop/samsung",
+    icon: Smartphone,
+    color: "#1e88e5",
+    glow: "rgba(30,136,229,0.10)",
+  },
+  {
+    label: "iPad",
+    href: "/shop/ipad",
+    icon: Tablet,
+    color: "#a78bfa",
+    glow: "rgba(167,139,250,0.10)",
+  },
+  {
+    label: "Mac",
+    href: "/shop/mac",
+    icon: Monitor,
+    color: "#cbd5e1",
+    glow: "rgba(203,213,225,0.10)",
+  },
+  {
+    label: "Wearables",
+    href: "/shop/wearables",
+    icon: Watch,
+    color: "#34d399",
+    glow: "rgba(52,211,153,0.10)",
+  },
+  {
+    label: "Audio",
+    href: "/shop/audio",
+    icon: Headphones,
+    color: "#f87171",
+    glow: "rgba(248,113,113,0.10)",
+  },
+  {
+    label: "Televisions",
+    href: "/shop/televisions",
+    icon: Tv,
+    color: "#f5a623",
+    glow: "rgba(245,166,35,0.10)",
+  },
+  {
+    label: "Gaming",
+    href: "/shop/gaming",
+    icon: Gamepad2,
+    color: "#f87171",
+    glow: "rgba(248,113,113,0.10)",
+  },
+  {
+    label: "Starlink",
+    href: "/shop/connectivity",
+    icon: Wifi,
+    color: "#38bdf8",
+    glow: "rgba(56,189,248,0.10)",
+  },
+  {
+    label: "Power",
+    href: "/shop/power",
+    icon: Plug,
+    color: "#22c55e",
+    glow: "rgba(34,197,94,0.10)",
+  },
+  {
+    label: "Accessories",
+    href: "/shop/accessories",
+    icon: ShoppingBag,
+    color: "#fb923c",
+    glow: "rgba(251,146,60,0.10)",
+  },
 ];
 
-export function CategoryStrip() {
-  const ref = useRef<HTMLElement>(null);
+const SLIDE_W = 320;
+const SLIDE_H = 440;
+const GAP = 72;
 
-  // Parallax: scroll from entering the section to leaving it
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
+interface SlideProps {
+  item: Category;
+  index: number;
+  rowX: MotionValue<number>;
+  padding: number;
+  vw: number;
+}
+
+// Each slide computes its own scale/offsetX from the live row x position —
+// exactly mirrors the Smooth-scroll-Slider: right of center = bigger + pushed right,
+// left of center = smaller + fades.
+function CategorySlide({ item, index, rowX, padding, vw }: SlideProps) {
+  const Icon = item.icon;
+  const slideCenter = padding + index * (SLIDE_W + GAP) + SLIDE_W / 2;
+
+  const scale = useTransform(rowX, (x) => {
+    const visual = slideCenter + x;
+    const dist = visual - vw / 2;
+    if (dist > 0) return Math.min(1.75, 1 + dist / vw);
+    return Math.max(0.5, 1 - Math.abs(dist) / vw);
   });
 
-  const bgY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
-  const contentY = useTransform(scrollYProgress, [0, 1], ["4%", "-4%"]);
+  const pushX = useTransform(rowX, (x) => {
+    const visual = slideCenter + x;
+    const dist = visual - vw / 2;
+    if (dist > 0) {
+      const s = Math.min(1.75, 1 + dist / vw);
+      return (s - 1) * 300;
+    }
+    return 0;
+  });
+
+  const opacity = useTransform(rowX, (x) => {
+    const visual = slideCenter + x;
+    const dist = visual - vw / 2;
+    if (dist < 0) return Math.max(0.3, 1 - Math.abs(dist) / vw);
+    return 1;
+  });
 
   return (
-    <section
-      ref={ref}
-      className="relative flex min-h-screen items-center overflow-hidden bg-[#080c16]"
+    <motion.div
+      style={{
+        scale,
+        x: pushX,
+        opacity,
+        width: SLIDE_W,
+        height: SLIDE_H,
+        flexShrink: 0,
+        transformOrigin: "center center",
+      }}
     >
-      {/* Parallax background layer */}
-      <motion.div className="pointer-events-none absolute inset-[-10%] z-0" style={{ y: bgY }}>
-        {/* Subtle grid */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage:
-              "linear-gradient(#f5a623 1px, transparent 1px), linear-gradient(90deg, #f5a623 1px, transparent 1px)",
-            backgroundSize: "80px 80px",
-          }}
-        />
-        {/* Gradient blobs */}
-        <div
-          className="absolute top-1/4 left-1/4 h-[400px] w-[400px] rounded-full blur-[120px]"
-          style={{ background: "rgba(245,166,35,0.06)" }}
-        />
-        <div
-          className="absolute right-1/4 bottom-1/4 h-[300px] w-[300px] rounded-full blur-[100px]"
-          style={{ background: "rgba(56,189,248,0.05)" }}
-        />
-      </motion.div>
-
-      {/* Content */}
-      <motion.div
-        className="relative z-10 w-full px-4 py-20 md:px-6 lg:px-8"
-        style={{ y: contentY }}
+      <Link
+        href={item.href}
+        className="group flex h-full w-full flex-col items-center justify-between overflow-hidden rounded-3xl border border-[#1e2435] p-8 transition-colors duration-300 hover:border-[rgba(245,166,35,0.35)]"
+        style={{
+          background: `radial-gradient(ellipse at 50% 15%, ${item.glow} 0%, #0d1117 70%)`,
+        }}
       >
+        {/* Icon / video area */}
+        <div className="flex flex-1 items-center justify-center">
+          <div
+            className="relative flex h-32 w-32 items-center justify-center overflow-hidden rounded-[1.75rem] border border-[#1e2435] transition-all duration-300 group-hover:scale-105"
+            style={{
+              background: `radial-gradient(circle, ${item.glow} 0%, transparent 70%)`,
+              boxShadow: `0 0 40px ${item.color}20`,
+            }}
+          >
+            {item.video ? (
+              <>
+                <video
+                  src={item.video}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+                {/* Subtle color tint overlay to tie video to card palette */}
+                <div
+                  className="absolute inset-0"
+                  style={{ background: `${item.glow}`, mixBlendMode: "color" }}
+                />
+              </>
+            ) : (
+              <Icon className="h-14 w-14" style={{ color: item.color }} />
+            )}
+          </div>
+        </div>
+
+        {/* Label */}
+        <div className="w-full text-center">
+          <p
+            className="text-2xl font-bold tracking-tight uppercase"
+            style={{ fontFamily: "var(--font-space-grotesk)", color: item.color }}
+          >
+            {item.label}
+          </p>
+          <p className="mt-2 text-[10px] font-semibold tracking-[0.2em] text-[#8b92a5] uppercase">
+            Shop Now →
+          </p>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
+
+export function CategoryStrip() {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [vw, setVw] = useState(1440);
+  const [maxScroll, setMaxScroll] = useState(5000);
+
+  useEffect(() => {
+    const calc = () => {
+      const w = window.innerWidth;
+      setVw(w);
+      // padding centres the first/last slide
+      const pad = w / 2 - SLIDE_W / 2;
+      const totalRowW = pad * 2 + CATEGORIES.length * SLIDE_W + (CATEGORIES.length - 1) * GAP;
+      setMaxScroll(Math.max(0, totalRowW - w));
+    };
+    calc();
+    window.addEventListener("resize", calc);
+    return () => window.removeEventListener("resize", calc);
+  }, []);
+
+  // Scroll progress over the extra height equals row travel distance
+  const { scrollYProgress } = useScroll({ target: wrapperRef });
+  const xRaw = useTransform(scrollYProgress, [0, 1], [0, -maxScroll]);
+  // Spring smoothing replicates lerp(0.075) from the original script
+  const rowX = useSpring(xRaw, { stiffness: 80, damping: 22, mass: 0.5 });
+
+  const padding = vw / 2 - SLIDE_W / 2;
+
+  return (
+    // Tall wrapper — extra height = total horizontal travel
+    <div
+      ref={wrapperRef}
+      style={{ height: `calc(100vh + ${maxScroll}px)` }}
+      className="relative z-10 bg-[#080c16]"
+    >
+      {/* Sticky inner — stays in viewport while user scrolls through wrapper */}
+      <div className="sticky top-0 h-screen overflow-hidden">
+        {/* Ambient blobs */}
+        <div className="pointer-events-none absolute inset-0">
+          <div
+            className="absolute top-1/3 left-1/4 h-[500px] w-[500px] rounded-full blur-[160px]"
+            style={{ background: "rgba(245,166,35,0.04)" }}
+          />
+          <div
+            className="absolute right-1/4 bottom-1/3 h-[400px] w-[400px] rounded-full blur-[130px]"
+            style={{ background: "rgba(56,189,248,0.04)" }}
+          />
+        </div>
+
+        {/* Section label — left center, reveals then exits left with scroll */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.5 }}
-          className="mb-10"
+          initial={{ clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)" }}
+          whileInView={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          style={{ x: rowX }}
+          className="absolute top-1/2 left-8 z-10 -translate-y-1/2"
         >
           <p className="mb-1 text-xs font-semibold tracking-widest text-[#f5a623] uppercase">
             Explore
           </p>
           <h2
-            className="text-3xl font-bold text-white sm:text-4xl"
+            className="text-3xl font-bold text-white md:text-4xl"
             style={{ fontFamily: "var(--font-space-grotesk)" }}
           >
             Shop by Category
           </h2>
         </motion.div>
 
-        {/* Grid — wraps on all screens */}
-        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-11">
-          {CATEGORIES.map(({ label, href, icon: Icon, color }, i) => (
-            <motion.div
-              key={href}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0 }}
-              transition={{ duration: 0.35, delay: Math.min(i * 0.06, 0.5) }}
-            >
-              <Link href={href} className="group flex flex-col items-center gap-2.5 outline-none">
-                <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-[#1e2435] bg-[#0d1117] transition-all duration-200 group-hover:scale-105 group-hover:border-[#f5a623]/40 group-hover:shadow-[0_0_16px_rgba(245,166,35,0.15)]">
-                  <Icon className="h-7 w-7 transition-colors duration-200" style={{ color }} />
-                </div>
-                <div className="relative">
-                  <span className="text-xs font-medium whitespace-nowrap text-[#8b92a5] transition-colors duration-200 group-hover:text-white">
-                    {label}
-                  </span>
-                  <span className="absolute -bottom-1 left-0 h-[2px] w-0 rounded-full bg-[#f5a623] transition-all duration-200 group-hover:w-full" />
-                </div>
-              </Link>
-            </motion.div>
-          ))}
+        {/* Scroll hint */}
+        <div className="absolute right-8 bottom-8 z-10 flex items-center gap-3">
+          <span className="text-[10px] font-semibold tracking-widest text-[#8b92a5] uppercase">
+            Scroll to explore
+          </span>
+          <div className="h-px w-10 bg-[#8b92a5]/30" />
         </div>
-      </motion.div>
-    </section>
+
+        {/* Horizontal sliding row */}
+        <motion.div
+          className="absolute top-0 flex h-full items-center"
+          style={{
+            x: rowX,
+            paddingLeft: padding,
+            paddingRight: padding,
+            gap: GAP,
+          }}
+        >
+          {CATEGORIES.map((cat, i) => (
+            <CategorySlide
+              key={cat.href}
+              item={cat}
+              index={i}
+              rowX={rowX}
+              padding={padding}
+              vw={vw}
+            />
+          ))}
+        </motion.div>
+      </div>
+    </div>
   );
 }

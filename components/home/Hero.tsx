@@ -40,6 +40,7 @@ const RINGS = [
   { rx: 30, ry: 80, rz: 10, r: 130, delay: 0.3, dur: 20 },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function HolographicOrb({
   mouseX,
   mouseY,
@@ -104,21 +105,8 @@ function HolographicOrb({
                 strokeDasharray="8 5"
                 opacity="0.55"
               />
-              {/* Dot on ring */}
-              <motion.circle
-                cx={ring.r}
-                cy="0"
-                r="3.5"
-                fill="#f5a623"
-                animate={{ cx: [ring.r, -ring.r, ring.r] }}
-                transition={{
-                  duration: ring.dur,
-                  repeat: Infinity,
-                  ease: "linear",
-                  delay: ring.delay,
-                }}
-                opacity="0.9"
-              />
+              {/* Dot on ring — parent g rotation handles the orbit */}
+              <circle cx={ring.r} cy="0" r="3.5" fill="#f5a623" opacity="0.9" />
             </motion.g>
           ))}
           <defs>
@@ -184,6 +172,7 @@ function HolographicOrb({
 }
 
 export function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const logoRotateX = useSpring(useTransform(mouseY, [-400, 400], [14, -14]), {
@@ -194,6 +183,14 @@ export function Hero() {
     stiffness: 160,
     damping: 24,
   });
+
+  // Hero stays sticky so CategoryStrip can slide over it
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  // Slight scale-down as it gets covered — subtle depth cue
+  const scrollScale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -207,11 +204,29 @@ export function Hero() {
   };
 
   return (
-    <section
-      className="relative flex min-h-screen overflow-hidden bg-[#0a0e1a]"
+    <motion.section
+      ref={sectionRef}
+      style={{ scale: scrollScale, transformOrigin: "center center" }}
+      className="sticky top-0 z-0 flex min-h-screen overflow-hidden bg-[#0a0e1a]"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
+      {/* Full-hero background video — plays once, freezes on last frame */}
+      <video
+        src="/hero-web.mp4"
+        autoPlay
+        muted
+        playsInline
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+        onEnded={(e) => {
+          const v = e.currentTarget;
+          v.pause();
+          v.currentTime = v.duration;
+        }}
+      />
+      {/* Dark overlay so text stays readable over video */}
+      <div className="pointer-events-none absolute inset-0 bg-[#0a0e1a]/55" />
+
       {/* Circuit board background */}
       <div className="pointer-events-none absolute inset-0">
         <motion.svg
@@ -295,16 +310,26 @@ export function Hero() {
               className="mb-4 text-2xl leading-tight font-bold tracking-tight text-white md:text-3xl lg:text-4xl"
               style={{ fontFamily: "var(--font-space-grotesk)" }}
             >
-              {HEADLINE_WORDS.map((word, i) => (
-                <motion.span
-                  key={word}
-                  className={`mr-2 inline-block ${i === 0 || i === 3 ? "text-[#f5a623]" : "text-white"}`}
-                  initial={{ opacity: 0, y: 22 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.4 + i * 0.1 }}
-                >
-                  {word}
-                </motion.span>
+              {HEADLINE_WORDS.map((word, wi) => (
+                <span key={word} className="mr-2 inline-block overflow-hidden align-bottom">
+                  <span className={wi === 0 || wi === 3 ? "text-[#f5a623]" : "text-white"}>
+                    {word.split("").map((char, ci) => (
+                      <motion.span
+                        key={ci}
+                        className="inline-block"
+                        initial={{ y: "110%" }}
+                        animate={{ y: 0 }}
+                        transition={{
+                          duration: 0.55,
+                          delay: 0.4 + wi * 0.1 + ci * 0.022,
+                          ease: [0.22, 1, 0.36, 1],
+                        }}
+                      >
+                        {char}
+                      </motion.span>
+                    ))}
+                  </span>
+                </span>
               ))}
             </h1>
 
@@ -319,10 +344,10 @@ export function Hero() {
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: 0.88 }}
-              className="flex flex-wrap gap-3"
+              className="flex flex-wrap gap-3 overflow-hidden"
+              initial={{ clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)" }}
+              animate={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" }}
+              transition={{ duration: 0.55, delay: 0.88, ease: [0.22, 1, 0.36, 1] }}
             >
               <Link
                 href="/shop"
@@ -363,10 +388,8 @@ export function Hero() {
           </div>
         </div>
 
-        {/* ── MIDDLE — 3D holographic orb with scroll parallax ── */}
-        <div className="relative hidden flex-1 md:block">
-          <HolographicOrb mouseX={mouseX} mouseY={mouseY} />
-        </div>
+        {/* ── MIDDLE — spacer so right panel stays positioned ── */}
+        <div className="hidden flex-1 md:block" />
 
         {/* ── RIGHT PANEL — auto-scrolling widget carousel ── */}
         <motion.div
@@ -380,6 +403,6 @@ export function Hero() {
           </div>
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }

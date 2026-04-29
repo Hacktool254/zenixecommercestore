@@ -126,7 +126,7 @@ export function WidgetCarousel({ items, autoScrollMs = 2200 }: Props) {
 
         return (
           <motion.button
-            key={item.id}
+            key={offset}
             onClick={() => handleClick(idx)}
             animate={{ scale, opacity }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}

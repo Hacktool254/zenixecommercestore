@@ -90,6 +90,30 @@ export const getHotDeals = query({
   },
 });
 
+export const getDealsProducts = query({
+  args: {},
+  handler: async (ctx) => {
+    const products = await ctx.db
+      .query("products")
+      .withIndex("isActive", (q) => q.eq("isActive", true))
+      .collect();
+
+    // ex-uk, ex-usa, hot deals — macbooks, samsung, apple, general deals
+    const deals = products.filter(
+      (p) => p.condition === "ex-uk" || p.condition === "ex-usa" || p.isHotDeal
+    );
+
+    deals.sort((a, b) => {
+      // hot deals first
+      if (a.isHotDeal && !b.isHotDeal) return -1;
+      if (!a.isHotDeal && b.isHotDeal) return 1;
+      return b._creationTime - a._creationTime;
+    });
+
+    return deals;
+  },
+});
+
 export const getNewArrivals = query({
   args: {},
   handler: async (ctx) => {
@@ -97,7 +121,7 @@ export const getNewArrivals = query({
       .query("products")
       .withIndex("isNewArrival", (q) => q.eq("isNewArrival", true))
       .filter((q) => q.eq(q.field("isActive"), true))
-      .take(8);
+      .take(50);
   },
 });
 

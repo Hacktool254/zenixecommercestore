@@ -11,9 +11,10 @@ import type { Product } from "@/types";
 interface Props {
   product: Product;
   showHotBadge?: boolean;
+  priority?: boolean;
 }
 
-export function ProductCard({ product, showHotBadge }: Props) {
+export function ProductCard({ product, showHotBadge, priority }: Props) {
   const addItem = useCartStore((s) => s.addItem);
   const addToComparison = useUIStore((s) => s.addToComparison);
   const comparisonList = useUIStore((s) => s.comparisonList);
@@ -56,7 +57,8 @@ export function ProductCard({ product, showHotBadge }: Props) {
           src={cloudinaryUrl(product.images[0] ?? "/logo.png")}
           alt={product.name}
           fill
-          loading="lazy"
+          loading={priority ? "eager" : "lazy"}
+          priority={priority}
           className={`object-cover transition-transform duration-300 group-hover:scale-105 ${isOutOfStock ? "opacity-50 grayscale" : ""}`}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
         />
