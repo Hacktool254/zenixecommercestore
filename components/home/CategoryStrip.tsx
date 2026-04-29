@@ -264,8 +264,12 @@ export function CategoryStrip() {
     return () => window.removeEventListener("resize", calc);
   }, []);
 
-  // Scroll progress over the extra height equals row travel distance
-  const { scrollYProgress } = useScroll({ target: wrapperRef });
+  // Scroll progress over the extra height equals row travel distance.
+  // offset ["start start","end end"] tracks from sticky-pin to sticky-release.
+  const { scrollYProgress } = useScroll({
+    target: wrapperRef,
+    offset: ["start start", "end end"],
+  });
   const xRaw = useTransform(scrollYProgress, [0, 1], [0, -maxScroll]);
   // Spring smoothing replicates lerp(0.075) from the original script
   const rowX = useSpring(xRaw, { stiffness: 80, damping: 22, mass: 0.5 });
