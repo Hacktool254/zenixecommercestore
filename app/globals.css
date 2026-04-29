@@ -205,6 +205,30 @@
   }
 }
 
+@keyframes instagram-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(253, 29, 29, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 16px rgba(253, 29, 29, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(253, 29, 29, 0);
+  }
+}
+
+@keyframes tiktok-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.25);
+  }
+  70% {
+    box-shadow: 0 0 0 16px rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
 @keyframes shimmer {
   0% {
     background-position: -200% center;
@@ -236,6 +260,14 @@
 
 .whatsapp-pulse {
   animation: whatsapp-pulse 2.5s infinite;
+}
+
+.instagram-pulse {
+  animation: instagram-pulse 2.5s infinite;
+}
+
+.tiktok-pulse {
+  animation: tiktok-pulse 2.5s infinite;
 }
 
 .shimmer {

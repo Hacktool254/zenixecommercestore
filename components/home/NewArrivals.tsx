@@ -97,13 +97,12 @@ export function NewArrivals() {
   const states = useRef<CardState[]>([]);
   const rafId = useRef(0);
 
-  // Recede behind HotDeals — scale down and push up, like Hero behind CategoryStrip
+  // Scale down as HotDeals scrolls over the top — same mechanic as Hero
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
-  const scrollScale = useTransform(scrollYProgress, [0, 1], [1, 0.82]);
-  const scrollY = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"]);
+  const scrollScale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
 
   const products = useQuery(api.products.getNewArrivals);
   const allItems = (products ?? []) as Product[];
@@ -199,7 +198,7 @@ export function NewArrivals() {
   return (
     <motion.section
       ref={sectionRef}
-      style={{ scale: scrollScale, y: scrollY, transformOrigin: "center top" }}
+      style={{ scale: scrollScale, transformOrigin: "center top" }}
       className="sticky top-0 z-0 bg-[#0a0e1a] px-4 py-10 md:px-6 lg:px-10"
     >
       {/* Ambient glow */}
