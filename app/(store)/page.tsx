@@ -56,8 +56,8 @@ export default function HomePage() {
       <Suspense fallback={<SectionSkeleton />}>
         <HotDeals />
       </Suspense>
-      <MessageSection />
       <VideoExpandSection />
+      <MessageSection />
       <Testimonials />
       <WhatsAppBanner />
     </>

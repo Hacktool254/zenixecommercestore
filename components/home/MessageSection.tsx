@@ -70,7 +70,11 @@ export function MessageSection() {
   const smooth = useSpring(scrollYProgress, { stiffness: 60, damping: 20, mass: 0.5 });
 
   return (
-    <div ref={wrapperRef} className="relative z-10 bg-[#0a0e1a]" style={{ height: "250vh" }}>
+    <div
+      ref={wrapperRef}
+      className="relative z-20 -mt-16 rounded-t-[2.5rem] bg-[#0a0e1a] shadow-[0_-32px_80px_rgba(0,0,0,0.7)]"
+      style={{ height: "250vh" }}
+    >
       <div className="sticky top-0 flex h-screen items-center overflow-hidden px-6 md:px-12 lg:px-20">
         {/* Ambient glow */}
         <div

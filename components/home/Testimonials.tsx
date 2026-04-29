@@ -117,7 +117,7 @@ export function Testimonials() {
   ];
 
   return (
-    <section className="relative z-20 -mt-16 rounded-t-[2.5rem] bg-[#0a0e1a] shadow-[0_-32px_80px_rgba(0,0,0,0.7)]">
+    <section className="relative z-30 -mt-16 rounded-t-[2.5rem] bg-[#0a0e1a] shadow-[0_-32px_80px_rgba(0,0,0,0.7)]">
       {/* ── Mobile layout — simple stacked cards, no scroll trickery ── */}
       <div className="block px-4 py-14 lg:hidden">
         <motion.div
