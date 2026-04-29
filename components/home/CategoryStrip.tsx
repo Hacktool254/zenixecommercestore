@@ -264,11 +264,12 @@ export function CategoryStrip() {
     return () => window.removeEventListener("resize", calc);
   }, []);
 
-  // ["start start","end start"]: progress 0 when wrapper top hits viewport top (sticky pins),
-  // progress 1 when wrapper bottom hits viewport top (sticky releases — no dead zone).
+  // ["start start","end end"]: 0 when wrapper top = viewport top (pin),
+  // 1 when wrapper bottom = viewport bottom — exactly when CSS sticky releases.
+  // "end start" is wrong: it fires 100vh late, leaving a dead zone.
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
-    offset: ["start start", "end start"],
+    offset: ["start start", "end end"],
   });
   const xRaw = useTransform(scrollYProgress, [0, 1], [0, -maxScroll]);
   // Spring smoothing replicates lerp(0.075) from the original script
