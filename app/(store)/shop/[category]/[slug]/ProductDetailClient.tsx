@@ -178,6 +178,7 @@ export default function ProductDetailClient() {
                     alt={`${product.name} ${i + 1}`}
                     fill
                     loading="lazy"
+                    sizes="64px"
                     className="object-cover"
                   />
                 </button>

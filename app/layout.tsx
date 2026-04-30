@@ -47,6 +47,7 @@ export default async function RootLayout({
     <ConvexAuthNextjsServerProvider>
       <html
         lang="en"
+        data-scroll-behavior="smooth"
         className={cn(
           "h-full antialiased",
           spaceGrotesk.variable,
