@@ -23,7 +23,6 @@ import {
   Watch,
   Tablet,
 } from "lucide-react";
-import { cloudinaryUrl } from "@/lib/utils";
 import { useCartStore } from "@/stores/cart.store";
 import type { Product } from "@/types";
 
@@ -127,7 +126,7 @@ function TrendingCarousel({ products }: { products: Product[] }) {
                 className="relative block aspect-square overflow-hidden bg-[#111827]"
               >
                 <Image
-                  src={cloudinaryUrl(p.images[0] ?? "/logo.png")}
+                  src={p.images[0] ?? "/logo.png"}
                   alt={p.name}
                   fill
                   loading="lazy"
@@ -286,13 +285,7 @@ export default function OverviewPage() {
           className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-[#f5a623] to-[#ff9f1c] shadow-[0_0_20px_rgba(245,166,35,0.25)]"
         >
           {viewer?.image ? (
-            <Image
-              src={cloudinaryUrl(viewer.image)}
-              alt="avatar"
-              fill
-              className="object-cover"
-              sizes="44px"
-            />
+            <Image src={viewer.image} alt="avatar" fill className="object-cover" sizes="44px" />
           ) : (
             <span className="text-sm font-bold text-[#0a0e1a]">{initials}</span>
           )}

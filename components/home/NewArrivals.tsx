@@ -7,7 +7,6 @@ import { ArrowRight } from "lucide-react";
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { cloudinaryUrl } from "@/lib/utils";
 import type { Product } from "@/types";
 
 const CARD_H = 270;
@@ -25,7 +24,7 @@ function ArrivalCard({ product }: { product: Product }) {
     >
       <div className="relative flex-1 overflow-hidden">
         <Image
-          src={cloudinaryUrl(product.images[0] ?? "/logo.png")}
+          src={product.images[0] ?? "/logo.png"}
           alt={product.name}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
@@ -34,7 +33,7 @@ function ArrivalCard({ product }: { product: Product }) {
         />
         {product.images[1] && (
           <Image
-            src={cloudinaryUrl(product.images[1])}
+            src={product.images[1]}
             alt={product.name}
             fill
             loading="lazy"

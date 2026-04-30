@@ -61,6 +61,8 @@ function slugify(name: string) {
     .replace(/\s+/g, "-");
 }
 
+const MAX_IMAGES = 5;
+
 const inputCls =
   "w-full rounded-xl border border-[#1e2435] bg-[#111827] px-3 py-2.5 text-sm text-white outline-none transition placeholder:text-[#4b5563] focus:border-[#f5a623]/50 focus:ring-1 focus:ring-[#f5a623]/20";
 
@@ -105,7 +107,7 @@ export function ProductForm({ defaultValues, defaultImages = [], onSubmit, submi
   }, [nameValue, defaultValues?.slug, setValue]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []);
+    const files = Array.from(e.target.files ?? []).slice(0, MAX_IMAGES - images.length);
     if (!files.length) return;
     setUploading(true);
     try {
@@ -169,15 +171,19 @@ export function ProductForm({ defaultValues, defaultImages = [], onSubmit, submi
             className="hidden"
             onChange={handleFileChange}
           />
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
-            className="flex h-24 w-24 flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-[#1e2435] text-[#8b92a5] transition hover:border-[#f5a623]/50 hover:text-[#f5a623] disabled:opacity-50"
-          >
-            <Upload className="h-5 w-5" />
-            <span className="text-xs">{uploading ? "Uploading…" : "Upload"}</span>
-          </button>
+          {images.length < MAX_IMAGES && (
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="flex h-24 w-24 flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-[#1e2435] text-[#8b92a5] transition hover:border-[#f5a623]/50 hover:text-[#f5a623] disabled:opacity-50"
+            >
+              <Upload className="h-5 w-5" />
+              <span className="text-xs">
+                {uploading ? "Uploading…" : `Upload (${images.length}/${MAX_IMAGES})`}
+              </span>
+            </button>
+          )}
         </div>
       </Section>
 

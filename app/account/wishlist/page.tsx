@@ -7,7 +7,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart, ShoppingCart, Trash2, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/stores/cart.store";
-import { cloudinaryUrl } from "@/lib/utils";
 import type { Product } from "@/types";
 
 export default function WishlistPage() {
@@ -107,7 +106,7 @@ export default function WishlistPage() {
                   className="relative block aspect-square overflow-hidden bg-[#111827]"
                 >
                   <Image
-                    src={cloudinaryUrl(p.images[0] ?? "/logo.png")}
+                    src={p.images[0] ?? "/logo.png"}
                     alt={p.name}
                     fill
                     loading="lazy"

@@ -19,7 +19,6 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { cn } from "@/lib/utils";
-import { cloudinaryUrl } from "@/lib/utils";
 
 const NAV = [
   { label: "Overview", href: "/account", icon: LayoutDashboard, exact: true },
@@ -91,7 +90,7 @@ export function AccountSidebar() {
             >
               {viewer?.image ? (
                 <Image
-                  src={cloudinaryUrl(viewer.image)}
+                  src={viewer.image}
                   alt={viewer.name ?? "avatar"}
                   fill
                   className="object-cover"

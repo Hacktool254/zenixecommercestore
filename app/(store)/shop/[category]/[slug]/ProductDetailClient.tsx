@@ -10,7 +10,6 @@ import { motion } from "framer-motion";
 import { ShoppingCart, Heart, GitCompare, MessageCircle, Minus, Plus, Package } from "lucide-react";
 import { useCartStore } from "@/stores/cart.store";
 import { useUIStore } from "@/stores/ui.store";
-import { cloudinaryUrl } from "@/lib/utils";
 import { ProductCard } from "@/components/products/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Product, ProductVariant } from "@/types";
@@ -145,7 +144,7 @@ export default function ProductDetailClient() {
             className="relative aspect-square overflow-hidden rounded-2xl bg-[#111827]"
           >
             <Image
-              src={cloudinaryUrl(product.images[activeImage] ?? "/logo.png")}
+              src={product.images[activeImage] ?? "/logo.png"}
               alt={product.name}
               fill
               className="object-cover"
@@ -175,7 +174,7 @@ export default function ProductDetailClient() {
                   className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 transition-colors ${activeImage === i ? "border-[#f5a623]" : "border-[#1e2435]"}`}
                 >
                   <Image
-                    src={cloudinaryUrl(img)}
+                    src={img}
                     alt={`${product.name} ${i + 1}`}
                     fill
                     loading="lazy"

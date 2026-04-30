@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { fetchQuery } from "convex/nextjs";
+
+export const dynamic = "force-dynamic";
 import { api } from "@/convex/_generated/api";
 import ProductDetailClient from "./ProductDetailClient";
 

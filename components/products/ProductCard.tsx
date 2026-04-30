@@ -5,7 +5,6 @@ import Image from "next/image";
 import { ShoppingCart, Heart, GitCompare } from "lucide-react";
 import { useCartStore } from "@/stores/cart.store";
 import { useUIStore } from "@/stores/ui.store";
-import { cloudinaryUrl } from "@/lib/utils";
 import type { Product } from "@/types";
 
 interface Props {
@@ -54,7 +53,7 @@ export function ProductCard({ product, showHotBadge, priority }: Props) {
       {/* Image */}
       <div className="relative min-h-0 flex-1 overflow-hidden bg-[#111827]">
         <Image
-          src={cloudinaryUrl(product.images[0] ?? "/logo.png")}
+          src={product.images[0] ?? "/logo.png"}
           alt={product.name}
           fill
           loading={priority ? "eager" : "lazy"}
@@ -64,7 +63,7 @@ export function ProductCard({ product, showHotBadge, priority }: Props) {
         />
         {product.images[1] && (
           <Image
-            src={cloudinaryUrl(product.images[1])}
+            src={product.images[1]}
             alt={product.name}
             fill
             loading="lazy"
