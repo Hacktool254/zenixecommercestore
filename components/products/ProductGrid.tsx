@@ -8,12 +8,12 @@ import type { Product } from "@/types";
 
 function CardSkeleton() {
   return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-[#1e2435] bg-[#0d1117]">
-      <Skeleton className="aspect-square w-full" />
-      <div className="flex flex-col gap-2 p-3">
+    <div className="flex h-[340px] flex-col overflow-hidden rounded-2xl border border-[#1e2435] bg-[#0d1117]">
+      <Skeleton className="min-h-0 flex-1" />
+      <div className="flex h-[112px] shrink-0 flex-col gap-2 p-3">
         <Skeleton className="h-4 w-full" />
         <Skeleton className="h-4 w-3/4" />
-        <div className="mt-2 flex justify-between">
+        <div className="mt-auto flex justify-between">
           <Skeleton className="h-5 w-24" />
           <Skeleton className="h-8 w-8 rounded-xl" />
         </div>

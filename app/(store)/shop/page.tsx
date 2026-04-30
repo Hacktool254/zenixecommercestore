@@ -175,7 +175,7 @@ export default function ShopPage() {
           )}
 
           {/* Body */}
-          <div className="flex gap-8">
+          <div className="flex items-start gap-8">
             <FilterSidebar />
             <div className="min-w-0 flex-1">
               <ProductGrid products={products as Product[] | undefined} />
