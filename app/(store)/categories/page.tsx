@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -29,6 +30,7 @@ const CATEGORIES = [
     color: "#a8d5e2",
     bg: "rgba(168,213,226,0.08)",
     border: "rgba(168,213,226,0.15)",
+    image: "/categories/iphones.jpg",
   },
   {
     value: "samsung",
@@ -38,6 +40,7 @@ const CATEGORIES = [
     color: "#1e88e5",
     bg: "rgba(30,136,229,0.08)",
     border: "rgba(30,136,229,0.15)",
+    image: "/categories/samsung.jpg",
   },
   {
     value: "ipad",
@@ -47,6 +50,7 @@ const CATEGORIES = [
     color: "#a78bfa",
     bg: "rgba(167,139,250,0.08)",
     border: "rgba(167,139,250,0.15)",
+    image: "/categories/ipad.jpg",
   },
   {
     value: "mac",
@@ -56,6 +60,7 @@ const CATEGORIES = [
     color: "#cbd5e1",
     bg: "rgba(203,213,225,0.08)",
     border: "rgba(203,213,225,0.15)",
+    image: "/categories/mac.jpg",
   },
   {
     value: "wearables",
@@ -65,6 +70,7 @@ const CATEGORIES = [
     color: "#34d399",
     bg: "rgba(52,211,153,0.08)",
     border: "rgba(52,211,153,0.15)",
+    image: "/categories/wearables.png",
   },
   {
     value: "audio",
@@ -74,6 +80,7 @@ const CATEGORIES = [
     color: "#f87171",
     bg: "rgba(248,113,113,0.08)",
     border: "rgba(248,113,113,0.15)",
+    image: "/categories/audio.jpg",
   },
   {
     value: "televisions",
@@ -83,6 +90,7 @@ const CATEGORIES = [
     color: "#f5a623",
     bg: "rgba(245,166,35,0.08)",
     border: "rgba(245,166,35,0.15)",
+    image: "/categories/televisions.jpg",
   },
   {
     value: "gaming",
@@ -92,6 +100,7 @@ const CATEGORIES = [
     color: "#f87171",
     bg: "rgba(248,113,113,0.08)",
     border: "rgba(248,113,113,0.15)",
+    image: "/categories/gaming.jpg",
   },
   {
     value: "connectivity",
@@ -101,6 +110,7 @@ const CATEGORIES = [
     color: "#38bdf8",
     bg: "rgba(56,189,248,0.08)",
     border: "rgba(56,189,248,0.15)",
+    image: "/categories/connectivity.jpg",
   },
   {
     value: "power",
@@ -110,6 +120,7 @@ const CATEGORIES = [
     color: "#22c55e",
     bg: "rgba(34,197,94,0.08)",
     border: "rgba(34,197,94,0.15)",
+    image: "/categories/power.jpg",
   },
   {
     value: "accessories",
@@ -119,6 +130,7 @@ const CATEGORIES = [
     color: "#fb923c",
     bg: "rgba(251,146,60,0.08)",
     border: "rgba(251,146,60,0.15)",
+    image: "/categories/accessories.jpg",
   },
 ];
 
@@ -136,48 +148,67 @@ function CategoryCard({ cat, index }: { cat: (typeof CATEGORIES)[number]; index:
     >
       <Link
         href={`/shop/${cat.value}`}
-        className="group flex h-full flex-col rounded-2xl border p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
-        style={{
-          background: cat.bg,
-          borderColor: cat.border,
-        }}
+        className="group flex h-full flex-col overflow-hidden rounded-2xl border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
+        style={{ borderColor: cat.border }}
       >
-        {/* Icon */}
-        <div
-          className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl"
-          style={{ background: `${cat.color}18`, border: `1px solid ${cat.color}30` }}
-        >
-          <Icon className="h-7 w-7" style={{ color: cat.color }} />
-        </div>
-
-        {/* Label + count */}
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <h2
-            className="text-lg font-bold text-white"
-            style={{ fontFamily: "var(--font-space-grotesk)" }}
-          >
-            {cat.label}
-          </h2>
+        {/* Category image */}
+        <div className="relative h-44 w-full overflow-hidden bg-[#0d1117]">
+          <Image
+            src={cat.image}
+            alt={cat.label}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(to top, ${cat.bg.replace("0.08", "0.6")} 0%, transparent 60%)`,
+            }}
+          />
           {count !== null && (
             <span
-              className="shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold"
-              style={{ background: `${cat.color}18`, color: cat.color }}
+              className="absolute top-3 right-3 rounded-full px-2 py-0.5 text-xs font-semibold backdrop-blur-sm"
+              style={{
+                background: `${cat.color}25`,
+                color: cat.color,
+                border: `1px solid ${cat.color}30`,
+              }}
             >
               {count}
             </span>
           )}
         </div>
 
-        {/* Description */}
-        <p className="mb-5 flex-1 text-sm leading-relaxed text-[#8b92a5]">{cat.description}</p>
+        {/* Card body */}
+        <div className="flex flex-1 flex-col p-5" style={{ background: cat.bg }}>
+          {/* Icon + label */}
+          <div className="mb-2 flex items-center gap-3">
+            <div
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+              style={{ background: `${cat.color}18`, border: `1px solid ${cat.color}30` }}
+            >
+              <Icon className="h-5 w-5" style={{ color: cat.color }} />
+            </div>
+            <h2
+              className="text-lg font-bold text-white"
+              style={{ fontFamily: "var(--font-space-grotesk)" }}
+            >
+              {cat.label}
+            </h2>
+          </div>
 
-        {/* CTA */}
-        <div
-          className="flex items-center gap-1.5 text-sm font-semibold transition-colors duration-200"
-          style={{ color: cat.color }}
-        >
-          Browse {cat.label}
-          <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+          {/* Description */}
+          <p className="mb-4 flex-1 text-sm leading-relaxed text-[#8b92a5]">{cat.description}</p>
+
+          {/* CTA */}
+          <div
+            className="flex items-center gap-1.5 text-sm font-semibold transition-colors duration-200"
+            style={{ color: cat.color }}
+          >
+            Browse {cat.label}
+            <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+          </div>
         </div>
       </Link>
     </motion.div>

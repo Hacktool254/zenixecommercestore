@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, useScroll, useTransform, useSpring, type MotionValue } from "framer-motion";
 import {
   Smartphone,
@@ -23,7 +24,7 @@ interface Category {
   icon: LucideIcon;
   color: string;
   glow: string;
-  video?: string;
+  image?: string;
 }
 
 const CATEGORIES: Category[] = [
@@ -33,7 +34,7 @@ const CATEGORIES: Category[] = [
     icon: Smartphone,
     color: "#a8d5e2",
     glow: "rgba(168,213,226,0.10)",
-    video: "/Mock hero 1.mp4",
+    image: "/categories/iphones.jpg",
   },
   {
     label: "Samsung",
@@ -41,6 +42,7 @@ const CATEGORIES: Category[] = [
     icon: Smartphone,
     color: "#1e88e5",
     glow: "rgba(30,136,229,0.10)",
+    image: "/categories/samsung.jpg",
   },
   {
     label: "iPad",
@@ -48,6 +50,7 @@ const CATEGORIES: Category[] = [
     icon: Tablet,
     color: "#a78bfa",
     glow: "rgba(167,139,250,0.10)",
+    image: "/categories/ipad.jpg",
   },
   {
     label: "Mac",
@@ -55,6 +58,7 @@ const CATEGORIES: Category[] = [
     icon: Monitor,
     color: "#cbd5e1",
     glow: "rgba(203,213,225,0.10)",
+    image: "/categories/mac.jpg",
   },
   {
     label: "Wearables",
@@ -62,6 +66,7 @@ const CATEGORIES: Category[] = [
     icon: Watch,
     color: "#34d399",
     glow: "rgba(52,211,153,0.10)",
+    image: "/categories/wearables.png",
   },
   {
     label: "Audio",
@@ -69,6 +74,7 @@ const CATEGORIES: Category[] = [
     icon: Headphones,
     color: "#f87171",
     glow: "rgba(248,113,113,0.10)",
+    image: "/categories/audio.jpg",
   },
   {
     label: "Televisions",
@@ -76,6 +82,7 @@ const CATEGORIES: Category[] = [
     icon: Tv,
     color: "#f5a623",
     glow: "rgba(245,166,35,0.10)",
+    image: "/categories/televisions.jpg",
   },
   {
     label: "Gaming",
@@ -83,6 +90,7 @@ const CATEGORIES: Category[] = [
     icon: Gamepad2,
     color: "#f87171",
     glow: "rgba(248,113,113,0.10)",
+    image: "/categories/gaming.jpg",
   },
   {
     label: "Starlink",
@@ -90,6 +98,7 @@ const CATEGORIES: Category[] = [
     icon: Wifi,
     color: "#38bdf8",
     glow: "rgba(56,189,248,0.10)",
+    image: "/categories/connectivity.jpg",
   },
   {
     label: "Power",
@@ -97,6 +106,7 @@ const CATEGORIES: Category[] = [
     icon: Plug,
     color: "#22c55e",
     glow: "rgba(34,197,94,0.10)",
+    image: "/categories/power.jpg",
   },
   {
     label: "Accessories",
@@ -104,6 +114,7 @@ const CATEGORIES: Category[] = [
     icon: ShoppingBag,
     color: "#fb923c",
     glow: "rgba(251,146,60,0.10)",
+    image: "/categories/accessories.jpg",
   },
 ];
 
@@ -150,7 +161,7 @@ function CategorySlide({ item, index, rowX, padding, vw }: SlideProps) {
     return 1;
   });
 
-  const hasVideo = !!item.video;
+  const hasImage = !!item.image;
 
   return (
     <motion.div
@@ -168,24 +179,23 @@ function CategorySlide({ item, index, rowX, padding, vw }: SlideProps) {
         href={item.href}
         className="group relative flex h-full w-full flex-col items-center justify-between overflow-hidden rounded-3xl border border-[#1e2435] transition-all duration-300"
         style={{
-          background: hasVideo
+          background: hasImage
             ? "#0d1117"
             : `radial-gradient(ellipse at 50% 15%, ${item.glow} 0%, #0d1117 70%)`,
-          boxShadow: hasVideo
+          boxShadow: hasImage
             ? `0 0 0 1px ${item.color}30, 0 0 60px ${item.color}25, 0 0 120px ${item.color}10`
             : undefined,
         }}
       >
-        {/* Video fills entire card background */}
-        {hasVideo && (
+        {/* Image fills entire card background */}
+        {hasImage && (
           <>
-            <video
-              src={item.video}
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            <Image
+              src={item.image!}
+              alt={item.label}
+              fill
+              sizes="320px"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <div
               className="absolute inset-0"
@@ -202,7 +212,7 @@ function CategorySlide({ item, index, rowX, padding, vw }: SlideProps) {
           <div
             className="relative flex h-32 w-32 items-center justify-center overflow-hidden rounded-[1.75rem] transition-transform duration-300 group-hover:scale-105"
             style={
-              hasVideo
+              hasImage
                 ? {
                     boxShadow: `inset 0 0 32px ${item.color}50, inset 0 0 12px ${item.color}35`,
                     border: `1px solid ${item.color}40`,
@@ -219,7 +229,7 @@ function CategorySlide({ item, index, rowX, padding, vw }: SlideProps) {
               className="h-14 w-14"
               style={{
                 color: item.color,
-                filter: hasVideo ? `drop-shadow(0 0 8px ${item.color}90)` : undefined,
+                filter: hasImage ? `drop-shadow(0 0 8px ${item.color}90)` : undefined,
               }}
             />
           </div>
