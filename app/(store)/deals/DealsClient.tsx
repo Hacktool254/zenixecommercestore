@@ -106,13 +106,7 @@ export function DealsClient() {
           </div>
         </motion.div>
 
-        {/* Dense grid — 2 cols mobile → 3 tablet → 4 desktop → 5 wide */}
-        <div
-          className="grid gap-3 sm:gap-4"
-          style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-          }}
-        >
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {items === undefined
             ? Array.from({ length: 20 }).map((_, i) => <ProductCardSkeleton key={i} />)
             : items.map((product, i) => (

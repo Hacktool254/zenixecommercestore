@@ -236,7 +236,12 @@ export function NewArrivals() {
           <div
             ref={containerRef}
             className="grid gap-2"
-            style={{ gridTemplateColumns: "repeat(6, minmax(140px, 1fr))", minWidth: 900 }}
+            style={{
+              gridTemplateColumns: "repeat(6, minmax(140px, 1fr))",
+              minWidth: 900,
+              perspective: "1200px",
+              perspectiveOrigin: "50% 50%",
+            }}
           >
             {items.map((product, i) => (
               <div
@@ -248,6 +253,7 @@ export function NewArrivals() {
                   height: CARD_H,
                   willChange: "transform",
                   transformStyle: "preserve-3d",
+                  perspective: "800px",
                 }}
               >
                 <ArrivalCard product={product} />

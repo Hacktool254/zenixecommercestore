@@ -59,9 +59,19 @@ export function ProductCard({ product, showHotBadge, priority }: Props) {
           fill
           loading={priority ? "eager" : "lazy"}
           priority={priority}
-          className={`object-cover transition-transform duration-300 group-hover:scale-105 ${isOutOfStock ? "opacity-50 grayscale" : ""}`}
+          className={`object-cover transition-all duration-500 group-hover:scale-105 ${product.images[1] ? "group-hover:opacity-0" : ""} ${isOutOfStock ? "opacity-50 grayscale" : ""}`}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
         />
+        {product.images[1] && (
+          <Image
+            src={cloudinaryUrl(product.images[1])}
+            alt={product.name}
+            fill
+            loading="lazy"
+            className={`object-cover opacity-0 transition-all duration-500 group-hover:scale-105 group-hover:opacity-100 ${isOutOfStock ? "grayscale" : ""}`}
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          />
+        )}
 
         {/* Out of stock overlay */}
         {isOutOfStock && (

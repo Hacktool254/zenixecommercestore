@@ -30,7 +30,7 @@ interface Props {
 export function ProductGrid({ products, skeletonCount = 8 }: Props) {
   if (products === undefined) {
     return (
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {Array.from({ length: skeletonCount }).map((_, i) => (
           <CardSkeleton key={i} />
         ))}
@@ -48,7 +48,7 @@ export function ProductGrid({ products, skeletonCount = 8 }: Props) {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {products.map((product, i) => (
         <motion.div
           key={product._id}
