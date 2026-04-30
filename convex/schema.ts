@@ -33,6 +33,7 @@ export default defineSchema({
     isFeatured: v.boolean(),
     isHotDeal: v.boolean(),
     isNewArrival: v.boolean(),
+    displayOrder: v.optional(v.number()),
     variants: v.optional(
       v.array(
         v.object({

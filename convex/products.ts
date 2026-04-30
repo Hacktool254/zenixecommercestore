@@ -44,7 +44,12 @@ export const getAllProducts = query({
     } else if (args.sortBy === "price-desc") {
       products.sort((a, b) => b.price - a.price);
     } else {
-      products.sort((a, b) => b._creationTime - a._creationTime);
+      products.sort((a, b) => {
+        const ao = a.displayOrder ?? 9999;
+        const bo = b.displayOrder ?? 9999;
+        if (ao !== bo) return ao - bo;
+        return b._creationTime - a._creationTime;
+      });
     }
 
     return products;
@@ -184,6 +189,7 @@ export const createProduct = mutation({
     isFeatured: v.boolean(),
     isHotDeal: v.boolean(),
     isNewArrival: v.boolean(),
+    displayOrder: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -219,6 +225,7 @@ export const updateProduct = mutation({
     isFeatured: v.optional(v.boolean()),
     isHotDeal: v.optional(v.boolean()),
     isNewArrival: v.optional(v.boolean()),
+    displayOrder: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -240,6 +247,33 @@ export const deleteProduct = mutation({
     if (!user || user.role !== "admin") throw new Error("Admin only");
 
     await ctx.db.delete(args.id);
+  },
+});
+
+export const updateProductImages = mutation({
+  args: {
+    slug: v.string(),
+    images: v.array(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const product = await ctx.db
+      .query("products")
+      .withIndex("slug", (q) => q.eq("slug", args.slug))
+      .first();
+    if (!product) throw new Error(`Product not found: ${args.slug}`);
+    await ctx.db.patch(product._id, { images: args.images });
+  },
+});
+
+export const setDisplayOrder = mutation({
+  args: { slug: v.string(), displayOrder: v.number() },
+  handler: async (ctx, args) => {
+    const product = await ctx.db
+      .query("products")
+      .withIndex("slug", (q) => q.eq("slug", args.slug))
+      .first();
+    if (!product) throw new Error(`Product not found: ${args.slug}`);
+    await ctx.db.patch(product._id, { displayOrder: args.displayOrder });
   },
 });
 
