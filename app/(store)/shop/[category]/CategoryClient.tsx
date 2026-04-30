@@ -6,7 +6,22 @@ import { api } from "@/convex/_generated/api";
 import { ProductGrid } from "@/components/products/ProductGrid";
 import { FilterSheet, SORT_OPTIONS } from "@/components/products/Filters";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import Image from "next/image";
 import type { Product } from "@/types";
+
+const CATEGORY_IMAGE: Record<string, string> = {
+  iphones: "/categories/iphones.jpg",
+  samsung: "/categories/samsung.jpg",
+  ipad: "/categories/ipad.jpg",
+  mac: "/categories/mac.jpg",
+  wearables: "/categories/wearables.png",
+  audio: "/categories/audio.jpg",
+  televisions: "/categories/televisions.jpg",
+  gaming: "/categories/gaming.jpg",
+  connectivity: "/categories/connectivity.jpg",
+  power: "/categories/power.jpg",
+  accessories: "/categories/accessories.jpg",
+};
 
 const CATEGORY_META: Record<string, { label: string; description: string }> = {
   iphones: {
@@ -48,6 +63,7 @@ export default function CategoryClient() {
   const products = useQuery(api.products.getAllProducts, { category, sortBy });
 
   const meta = CATEGORY_META[category] ?? { label: category, description: "" };
+  const catImage = CATEGORY_IMAGE[category] ?? null;
 
   const handleSort = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -58,20 +74,41 @@ export default function CategoryClient() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-6">
       {/* Category banner */}
-      <div className="mb-8 rounded-2xl border border-[#1e2435] bg-[#0d1117] px-6 py-8">
-        <p className="mb-1 text-xs font-semibold tracking-widest text-[#f5a623] uppercase">
-          Category
-        </p>
-        <h1
-          className="mb-2 text-3xl font-bold text-white sm:text-4xl"
-          style={{ fontFamily: "var(--font-space-grotesk)" }}
-        >
-          {meta.label}
-        </h1>
-        <p className="text-sm text-[#8b92a5]">{meta.description}</p>
-        {products !== undefined && (
-          <p className="mt-3 text-xs text-[#8b92a5]">{products.length} products</p>
+      <div className="relative mb-8 h-48 overflow-hidden rounded-2xl border border-[#1e2435] sm:h-56">
+        {catImage && (
+          <Image
+            src={catImage}
+            alt={meta.label}
+            fill
+            priority
+            sizes="(max-width: 1280px) 100vw, 1280px"
+            className="object-cover"
+          />
         )}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: catImage
+              ? "linear-gradient(to right, rgba(10,14,26,0.90) 0%, rgba(10,14,26,0.55) 60%, rgba(10,14,26,0.2) 100%)"
+              : "none",
+            backgroundColor: catImage ? undefined : "#0d1117",
+          }}
+        />
+        <div className="relative z-10 flex h-full flex-col justify-center px-6 py-8">
+          <p className="mb-1 text-xs font-semibold tracking-widest text-[#f5a623] uppercase">
+            Category
+          </p>
+          <h1
+            className="mb-2 text-3xl font-bold text-white sm:text-4xl"
+            style={{ fontFamily: "var(--font-space-grotesk)" }}
+          >
+            {meta.label}
+          </h1>
+          <p className="text-sm text-[#8b92a5]">{meta.description}</p>
+          {products !== undefined && (
+            <p className="mt-3 text-xs text-[#8b92a5]">{products.length} products</p>
+          )}
+        </div>
       </div>
 
       {/* Toolbar */}
