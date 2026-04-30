@@ -56,7 +56,7 @@ export default async function RootLayout({
           "font-sans"
         )}
       >
-        <body className="bg-bg-base text-text-primary flex min-h-full flex-col">
+        <body className="bg-bg-base text-text-primary relative flex min-h-full flex-col">
           <Providers>{children}</Providers>
           <Toaster
             position="top-right"
