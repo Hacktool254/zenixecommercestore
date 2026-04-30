@@ -58,7 +58,10 @@ export default function CategoryClient() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const sortBy = (searchParams.get("sort") as "newest" | "price-asc" | "price-desc") ?? "newest";
+  const VALID_SORTS = ["newest", "price-asc", "price-desc"] as const;
+  type SortBy = (typeof VALID_SORTS)[number];
+  const rawSort = searchParams.get("sort");
+  const sortBy: SortBy = VALID_SORTS.includes(rawSort as SortBy) ? (rawSort as SortBy) : "newest";
 
   const products = useQuery(api.products.getAllProducts, { category, sortBy });
 
