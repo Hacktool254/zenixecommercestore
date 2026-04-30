@@ -1,28 +1,16 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { cloudinaryUrl } from "@/lib/utils";
 import type { Product } from "@/types";
 
-const LERP = 0.1;
 const CARD_H = 270;
-
-interface CardState {
-  curRotY: number;
-  tgtRotY: number;
-  curScale: number;
-  tgtScale: number;
-  curPX: number;
-  tgtPX: number;
-  curPY: number;
-  tgtPY: number;
-}
 
 function ArrivalCard({ product }: { product: Product }) {
   const discount =
@@ -34,7 +22,6 @@ function ArrivalCard({ product }: { product: Product }) {
     <Link
       href={`/shop/${product.category}/${product.slug}`}
       className="group relative flex h-full w-full flex-col overflow-hidden rounded-xl border border-[#1e2435] bg-[#0d1117]"
-      style={{ backfaceVisibility: "hidden" }}
     >
       <div className="relative flex-1 overflow-hidden">
         <Image
@@ -100,14 +87,52 @@ function ArrivalCard({ product }: { product: Product }) {
   );
 }
 
+function TiltArrivalCard({ product, index }: { product: Product; index: number }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+  const springRX = useSpring(rotateX, { stiffness: 200, damping: 22 });
+  const springRY = useSpring(rotateY, { stiffness: 200, damping: 22 });
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const el = cardRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      rotateY.set(((e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2)) * 8);
+      rotateX.set(-((e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2)) * 6);
+    },
+    [rotateX, rotateY]
+  );
+
+  const handleMouseLeave = useCallback(() => {
+    rotateX.set(0);
+    rotateY.set(0);
+  }, [rotateX, rotateY]);
+
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: Math.min(index * 0.03, 0.4) }}
+      style={{
+        height: CARD_H,
+        rotateX: springRX,
+        rotateY: springRY,
+        transformStyle: "preserve-3d",
+      }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      <ArrivalCard product={product} />
+    </motion.div>
+  );
+}
+
 export function NewArrivals() {
   const sectionRef = useRef<HTMLElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const states = useRef<CardState[]>([]);
-  const rafId = useRef(0);
 
-  // Scale down as HotDeals scrolls over the top — same mechanic as Hero
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
@@ -115,96 +140,7 @@ export function NewArrivals() {
   const scrollScale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
 
   const products = useQuery(api.products.getNewArrivals);
-  const allItems = (products ?? []) as Product[];
-  // 3 rows × 6 cols on desktop; all 18 cards reflow naturally on smaller screens
-  const items = allItems.slice(0, 18);
-  const count = items.length;
-
-  // Init card states
-  useEffect(() => {
-    if (count === 0) return;
-    states.current = Array.from({ length: count }, () => ({
-      curRotY: 0,
-      tgtRotY: 0,
-      curScale: 1,
-      tgtScale: 1,
-      curPX: 0,
-      tgtPX: 0,
-      curPY: 0,
-      tgtPY: 0,
-    }));
-    cardRefs.current = Array(count).fill(null);
-  }, [count]);
-
-  // rAF loop — desktop hover effects only
-  useEffect(() => {
-    if (count === 0) return;
-    const tick = () => {
-      states.current.forEach((s, i) => {
-        s.curRotY += (s.tgtRotY - s.curRotY) * LERP;
-        s.curScale += (s.tgtScale - s.curScale) * LERP;
-        s.curPX += (s.tgtPX - s.curPX) * LERP;
-        s.curPY += (s.tgtPY - s.curPY) * LERP;
-        const el = cardRefs.current[i];
-        if (!el) return;
-        el.style.transform = [
-          `perspective(600px)`,
-          `translate(${s.curPX}px, ${s.curPY}px)`,
-          `rotateY(${s.curRotY}deg)`,
-          `scale(${s.curScale})`,
-        ].join(" ");
-      });
-      rafId.current = requestAnimationFrame(tick);
-    };
-    rafId.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId.current);
-  }, [count]);
-
-  // Mouse events (desktop only)
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container || count === 0) return;
-
-    const onMove = (e: MouseEvent) => {
-      states.current.forEach((s, i) => {
-        const el = cardRefs.current[i];
-        if (!el) return;
-        const r = el.getBoundingClientRect();
-        const dx = e.clientX - (r.left + r.width / 2);
-        const dy = e.clientY - (r.top + r.height / 2);
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 220) {
-          const f = Math.max(0, 1 - dist / 110);
-          const angle = Math.atan2(dy, dx);
-          s.tgtRotY = 18 * f;
-          s.tgtScale = 1 + 0.08 * f;
-          s.tgtPX = -10 * f * Math.cos(angle);
-          s.tgtPY = -10 * f * Math.sin(angle);
-        } else {
-          s.tgtRotY = 0;
-          s.tgtScale = 1;
-          s.tgtPX = 0;
-          s.tgtPY = 0;
-        }
-      });
-    };
-
-    const onLeave = () => {
-      states.current.forEach((s) => {
-        s.tgtRotY = 0;
-        s.tgtScale = 1;
-        s.tgtPX = 0;
-        s.tgtPY = 0;
-      });
-    };
-
-    container.addEventListener("mousemove", onMove);
-    container.addEventListener("mouseleave", onLeave);
-    return () => {
-      container.removeEventListener("mousemove", onMove);
-      container.removeEventListener("mouseleave", onLeave);
-    };
-  }, [count]);
+  const items = ((products ?? []) as Product[]).slice(0, 18);
 
   return (
     <motion.section
@@ -212,7 +148,6 @@ export function NewArrivals() {
       style={{ scale: scrollScale, transformOrigin: "center top" }}
       className="sticky top-0 z-0 bg-[#0a0e1a] px-4 py-10 md:px-6 lg:px-10"
     >
-      {/* Ambient glow */}
       <div className="pointer-events-none absolute inset-0">
         <div
           className="absolute top-1/3 right-1/4 h-[400px] w-[400px] rounded-full blur-[160px]"
@@ -221,7 +156,6 @@ export function NewArrivals() {
       </div>
 
       <div className="relative z-10 mx-auto max-w-[1600px]">
-        {/* Header */}
         <div className="mb-5 flex items-end justify-between">
           <div>
             <p className="mb-1 text-xs font-semibold tracking-widest text-[#f5a623] uppercase">
@@ -242,10 +176,8 @@ export function NewArrivals() {
           </Link>
         </div>
 
-        {/* Always 6 cols × 3 rows — horizontal scroll on small screens */}
         <div className="overflow-x-auto">
           <div
-            ref={containerRef}
             className="grid gap-2"
             style={{
               gridTemplateColumns: "repeat(6, minmax(140px, 1fr))",
@@ -253,18 +185,7 @@ export function NewArrivals() {
             }}
           >
             {items.map((product, i) => (
-              <div
-                key={product._id}
-                ref={(el) => {
-                  cardRefs.current[i] = el;
-                }}
-                style={{
-                  height: CARD_H,
-                  willChange: "transform",
-                }}
-              >
-                <ArrivalCard product={product} />
-              </div>
+              <TiltArrivalCard key={product._id} product={product} index={i} />
             ))}
           </div>
         </div>

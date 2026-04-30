@@ -131,7 +131,7 @@ export function ProductCard({ product, showHotBadge, priority }: Props) {
       </div>
 
       {/* Info */}
-      <div className="flex flex-1 flex-col p-3">
+      <div className="flex min-h-[100px] flex-1 flex-col p-3">
         <p className="mb-0.5 text-[10px] font-medium tracking-widest text-[#8b92a5] uppercase">
           {product.category}
         </p>
