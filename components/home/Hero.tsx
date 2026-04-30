@@ -8,7 +8,18 @@ import { ArrowRight } from "lucide-react";
 import { WidgetCarousel } from "@/components/shared/WidgetCarousel";
 import type { WidgetItem } from "@/components/shared/WidgetCarousel";
 
-const HEADLINE_WORDS = ["Premium", "Electronics,", "Nairobi's", "Best."];
+const HEADLINE_WORDS = [
+  "Zenix",
+  "Electronics",
+  "—",
+  "Your",
+  "Go-To",
+  "for",
+  "All",
+  "Your",
+  "Electronic",
+  "Needs.",
+];
 
 const circuitPath =
   "M10 10 L50 10 L50 30 L90 30 M30 10 L30 50 L70 50 L70 70 L110 70 M70 30 L70 10 M90 70 L130 70 L130 50 M110 10 L110 50";
@@ -408,7 +419,7 @@ export function Hero() {
             >
               {HEADLINE_WORDS.map((word, wi) => (
                 <span key={word} className="mr-2 inline-block overflow-hidden align-bottom">
-                  <span className={wi === 0 || wi === 3 ? "text-[#f5a623]" : "text-white"}>
+                  <span className={wi === 0 || wi === 1 ? "text-[#f5a623]" : "text-white"}>
                     {word.split("").map((char, ci) => (
                       <motion.span
                         key={ci}
@@ -435,8 +446,8 @@ export function Hero() {
               transition={{ duration: 0.45, delay: 0.75 }}
               className="mb-6 text-sm leading-relaxed text-[#8b92a5]"
             >
-              iPhones, TVs, Soundbars, Starlinks, PlayStation &amp; more. Located at{" "}
-              <span className="text-[#cbd5e1]">Cookie House, Accra Road</span>.
+              iPhones, Samsung, MacBooks, PlayStation, TVs &amp; more. Located at{" "}
+              <span className="text-[#cbd5e1]">Cookie House, Accra Road, Nairobi</span>.
             </motion.p>
 
             <motion.div
@@ -449,7 +460,7 @@ export function Hero() {
                 href="/shop"
                 className="inline-flex items-center gap-2 rounded-xl bg-[#f5a623] px-5 py-2.5 text-sm font-semibold text-[#0a0e1a] transition-all hover:bg-[#ff9f1c] hover:shadow-[0_0_20px_rgba(245,166,35,0.4)] active:scale-95"
               >
-                Shop Now <ArrowRight className="h-4 w-4" />
+                Shop All <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href="/deals"
