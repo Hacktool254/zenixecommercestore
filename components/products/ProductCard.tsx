@@ -49,10 +49,10 @@ export function ProductCard({ product, showHotBadge, priority }: Props) {
   return (
     <Link
       href={`/shop/${product.category}/${product.slug}`}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-[#1e2435] bg-[#0d1117] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#f5a623]/30 hover:shadow-[0_8px_32px_rgba(245,166,35,0.12)]"
+      className="group relative flex h-[340px] flex-col overflow-hidden rounded-2xl border border-[#1e2435] bg-[#0d1117] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#f5a623]/30 hover:shadow-[0_8px_32px_rgba(245,166,35,0.12)]"
     >
       {/* Image */}
-      <div className="relative aspect-square overflow-hidden bg-[#111827]">
+      <div className="relative min-h-0 flex-1 overflow-hidden bg-[#111827]">
         <Image
           src={cloudinaryUrl(product.images[0] ?? "/logo.png")}
           alt={product.name}
@@ -131,7 +131,7 @@ export function ProductCard({ product, showHotBadge, priority }: Props) {
       </div>
 
       {/* Info */}
-      <div className="flex min-h-[100px] flex-1 flex-col p-3">
+      <div className="flex h-[112px] shrink-0 flex-col p-3">
         <p className="mb-0.5 text-[10px] font-medium tracking-widest text-[#8b92a5] uppercase">
           {product.category}
         </p>
