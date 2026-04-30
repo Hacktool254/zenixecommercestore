@@ -148,6 +148,7 @@ export function NewArrivals() {
         const el = cardRefs.current[i];
         if (!el) return;
         el.style.transform = [
+          `perspective(600px)`,
           `translate(${s.curPX}px, ${s.curPY}px)`,
           `rotateY(${s.curRotY}deg)`,
           `scale(${s.curScale})`,
@@ -172,13 +173,13 @@ export function NewArrivals() {
         const dx = e.clientX - (r.left + r.width / 2);
         const dy = e.clientY - (r.top + r.height / 2);
         const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 260) {
-          const f = Math.max(0, 1 - dist / 130);
+        if (dist < 220) {
+          const f = Math.max(0, 1 - dist / 110);
           const angle = Math.atan2(dy, dx);
-          s.tgtRotY = 60 * f;
-          s.tgtScale = 1 + 0.28 * f;
-          s.tgtPX = -38 * f * Math.cos(angle);
-          s.tgtPY = -38 * f * Math.sin(angle);
+          s.tgtRotY = 18 * f;
+          s.tgtScale = 1 + 0.08 * f;
+          s.tgtPX = -10 * f * Math.cos(angle);
+          s.tgtPY = -10 * f * Math.sin(angle);
         } else {
           s.tgtRotY = 0;
           s.tgtScale = 1;
@@ -249,8 +250,6 @@ export function NewArrivals() {
             style={{
               gridTemplateColumns: "repeat(6, minmax(140px, 1fr))",
               minWidth: 900,
-              perspective: "1200px",
-              perspectiveOrigin: "50% 50%",
             }}
           >
             {items.map((product, i) => (
@@ -262,8 +261,6 @@ export function NewArrivals() {
                 style={{
                   height: CARD_H,
                   willChange: "transform",
-                  transformStyle: "preserve-3d",
-                  perspective: "800px",
                 }}
               >
                 <ArrivalCard product={product} />
