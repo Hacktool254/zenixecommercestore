@@ -418,7 +418,7 @@ export function Hero() {
               style={{ fontFamily: "var(--font-space-grotesk)" }}
             >
               {HEADLINE_WORDS.map((word, wi) => (
-                <span key={word} className="mr-2 inline-block overflow-hidden align-bottom">
+                <span key={wi} className="mr-2 inline-block overflow-hidden align-bottom">
                   <span className={wi === 0 || wi === 1 ? "text-[#f5a623]" : "text-white"}>
                     {word.split("").map((char, ci) => (
                       <motion.span

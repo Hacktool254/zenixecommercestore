@@ -13,6 +13,7 @@ import type { WidgetItem } from "@/components/shared/WidgetCarousel";
 const CHIP_LABELS: Record<string, (v: string) => string> = {
   category: (v) => v.charAt(0).toUpperCase() + v.slice(1),
   condition: (v) => (v === "brand-new" ? "Brand New" : v === "ex-uk" ? "Ex UK" : "Ex USA"),
+  brand: (v) => v,
   maxPrice: (v) => `Max KES ${Number(v).toLocaleString()}`,
   inStock: () => "In Stock Only",
 };
@@ -84,6 +85,7 @@ export default function ShopPage() {
   const category = searchParams.get("category") ?? undefined;
   const condition =
     (searchParams.get("condition") as "brand-new" | "ex-uk" | "ex-usa" | null) ?? undefined;
+  const brand = searchParams.get("brand") ?? undefined;
   const maxPrice = searchParams.get("maxPrice") ? Number(searchParams.get("maxPrice")) : undefined;
   const inStockOnly = searchParams.get("inStock") === "1" ? true : undefined;
   const sortBy =
@@ -92,6 +94,7 @@ export default function ShopPage() {
   const products = useQuery(api.products.getAllProducts, {
     category,
     condition,
+    brand,
     maxPrice,
     inStockOnly,
     sortBy: sortBy === "featured" ? undefined : sortBy,
@@ -109,7 +112,7 @@ export default function ShopPage() {
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  const activeChips = ["category", "condition", "maxPrice", "inStock"].filter((k) =>
+  const activeChips = ["category", "condition", "brand", "maxPrice", "inStock"].filter((k) =>
     searchParams.get(k)
   );
 
