@@ -36,15 +36,25 @@ function ArrivalCard({ product }: { product: Product }) {
       className="relative flex h-full w-full flex-col overflow-hidden rounded-xl border border-[#1e2435] bg-[#0d1117]"
       style={{ backfaceVisibility: "hidden" }}
     >
-      <div className="relative flex-1 overflow-hidden">
+      <div className="group/card relative flex-1 overflow-hidden">
         <Image
           src={cloudinaryUrl(product.images[0] ?? "/logo.png")}
           alt={product.name}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
           loading="lazy"
-          className="object-cover"
+          className={`object-cover transition-all duration-500 group-hover/card:scale-105 ${product.images[1] ? "group-hover/card:opacity-0" : ""}`}
         />
+        {product.images[1] && (
+          <Image
+            src={cloudinaryUrl(product.images[1])}
+            alt={product.name}
+            fill
+            loading="lazy"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
+            className="object-cover opacity-0 transition-all duration-500 group-hover/card:scale-105 group-hover/card:opacity-100"
+          />
+        )}
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0d1117] via-[#0d1117]/50 to-transparent px-2 pt-8 pb-2">
           <p
             className="text-[10px] font-bold text-[#f5a623]"
