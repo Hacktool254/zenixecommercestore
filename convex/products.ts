@@ -11,7 +11,12 @@ export const getAllProducts = query({
     maxPrice: v.optional(v.number()),
     inStockOnly: v.optional(v.boolean()),
     sortBy: v.optional(
-      v.union(v.literal("newest"), v.literal("price-asc"), v.literal("price-desc"))
+      v.union(
+        v.literal("featured"),
+        v.literal("newest"),
+        v.literal("price-asc"),
+        v.literal("price-desc")
+      )
     ),
   },
   handler: async (ctx, args) => {
@@ -43,7 +48,10 @@ export const getAllProducts = query({
       products.sort((a, b) => a.price - b.price);
     } else if (args.sortBy === "price-desc") {
       products.sort((a, b) => b.price - a.price);
+    } else if (args.sortBy === "newest") {
+      products.sort((a, b) => b._creationTime - a._creationTime);
     } else {
+      // "featured" or default — use displayOrder
       products.sort((a, b) => {
         const ao = a.displayOrder ?? 9999;
         const bo = b.displayOrder ?? 9999;

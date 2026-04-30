@@ -86,14 +86,15 @@ export default function ShopPage() {
     (searchParams.get("condition") as "brand-new" | "ex-uk" | "ex-usa" | null) ?? undefined;
   const maxPrice = searchParams.get("maxPrice") ? Number(searchParams.get("maxPrice")) : undefined;
   const inStockOnly = searchParams.get("inStock") === "1" ? true : undefined;
-  const sortBy = (searchParams.get("sort") as "newest" | "price-asc" | "price-desc") ?? "newest";
+  const sortBy =
+    (searchParams.get("sort") as "featured" | "newest" | "price-asc" | "price-desc") ?? "featured";
 
   const products = useQuery(api.products.getAllProducts, {
     category,
     condition,
     maxPrice,
     inStockOnly,
-    sortBy,
+    sortBy: sortBy === "featured" ? undefined : sortBy,
   });
 
   const removeFilter = (key: string) => {

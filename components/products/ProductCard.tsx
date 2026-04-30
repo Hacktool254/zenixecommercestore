@@ -132,9 +132,6 @@ export function ProductCard({ product, showHotBadge, priority }: Props) {
 
       {/* Info */}
       <div className="flex h-[112px] shrink-0 flex-col p-3">
-        <p className="mb-0.5 text-[10px] font-medium tracking-widest text-[#8b92a5] uppercase">
-          {product.category}
-        </p>
         <h3 className="mb-2 line-clamp-2 text-sm leading-snug font-semibold text-white transition-colors duration-150 group-hover:text-[#f5a623]">
           {product.name}
         </h3>

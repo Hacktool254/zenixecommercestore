@@ -143,9 +143,12 @@ export function Header() {
 
           {/* Featured Products — fixed-width block pinned to right edge, directly above carousel */}
           <div className="hidden w-[200px] shrink-0 items-center justify-start pl-4 lg:flex lg:w-[230px]">
-            <span className="text-[10px] font-semibold tracking-widest text-[#f5a623] uppercase select-none">
+            <Link
+              href="/shop?sort=featured"
+              className="text-[10px] font-semibold tracking-widest text-[#f5a623] uppercase transition-opacity hover:opacity-70"
+            >
               Featured Products
-            </span>
+            </Link>
           </div>
         </div>
       </header>
