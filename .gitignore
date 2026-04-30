@@ -44,3 +44,9 @@ next-env.d.ts
 .playwright-mcp/
 .claude/
 components.json
+
+# temp screenshots / reference images
+*.png
+*.jpg
+!public/**/*.png
+!public/**/*.jpg
