@@ -66,7 +66,7 @@ const CATEGORIES: Category[] = [
     icon: Watch,
     color: "#34d399",
     glow: "rgba(52,211,153,0.10)",
-    image: "/categories/wearables.png",
+    image: "/categories/wearables.jpg",
   },
   {
     label: "Audio",

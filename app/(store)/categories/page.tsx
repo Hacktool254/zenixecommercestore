@@ -70,7 +70,7 @@ const CATEGORIES = [
     color: "#34d399",
     bg: "rgba(52,211,153,0.08)",
     border: "rgba(52,211,153,0.15)",
-    image: "/categories/wearables.png",
+    image: "/categories/wearables.jpg",
   },
   {
     value: "audio",

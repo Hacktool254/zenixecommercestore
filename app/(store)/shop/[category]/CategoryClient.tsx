@@ -14,7 +14,7 @@ const CATEGORY_IMAGE: Record<string, string> = {
   samsung: "/categories/samsung.jpg",
   ipad: "/categories/ipad.jpg",
   mac: "/categories/mac.jpg",
-  wearables: "/categories/wearables.png",
+  wearables: "/categories/wearables.jpg",
   audio: "/categories/audio.jpg",
   televisions: "/categories/televisions.jpg",
   gaming: "/categories/gaming.jpg",
