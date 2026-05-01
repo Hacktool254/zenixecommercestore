@@ -50,3 +50,5 @@ components.json
 *.jpg
 !public/**/*.png
 !public/**/*.jpg
+!app/*.png
+!app/*.ico
