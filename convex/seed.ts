@@ -1628,7 +1628,9 @@ export const clearAndSeed = mutation({
   handler: async (ctx) => {
     const existing = await ctx.db.query("products").collect();
     await Promise.all(existing.map((p) => ctx.db.delete(p._id)));
-    const ids = await Promise.all(products.map((p) => ctx.db.insert("products", p)));
+    const ids = await Promise.all(
+      products.map((p, i) => ctx.db.insert("products", { ...p, displayOrder: i }))
+    );
     return { cleared: existing.length, seeded: ids.length };
   },
 });
@@ -1640,7 +1642,9 @@ export const seedProducts = mutation({
     if (existing.length > 0) {
       return { message: "Already seeded — run clearAndSeed to replace", count: existing.length };
     }
-    const ids = await Promise.all(products.map((p) => ctx.db.insert("products", p)));
+    const ids = await Promise.all(
+      products.map((p, i) => ctx.db.insert("products", { ...p, displayOrder: i }))
+    );
     return { message: "Seeded successfully", count: ids.length };
   },
 });
