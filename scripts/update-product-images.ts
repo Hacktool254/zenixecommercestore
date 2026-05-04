@@ -21,7 +21,11 @@ const updateProductImages = "products:updateProductImages" as any;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: join(__dirname, "../.env.local") });
 
-const CONVEX_URL = process.env.NEXT_PUBLIC_CONVEX_URL;
+// Allow overriding the URL via --url flag, e.g. --url https://reliable-salamander-205.convex.cloud
+const urlFlagIdx = process.argv.indexOf("--url");
+const urlOverride = urlFlagIdx !== -1 ? process.argv.splice(urlFlagIdx, 2)[1] : undefined;
+
+const CONVEX_URL = urlOverride ?? process.env.NEXT_PUBLIC_CONVEX_URL;
 if (!CONVEX_URL) {
   console.error("Missing NEXT_PUBLIC_CONVEX_URL in .env.local");
   process.exit(1);
