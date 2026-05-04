@@ -149,7 +149,7 @@ export default function AdminOrdersPage() {
               Logistics & Fulfilment
             </p>
           </div>
-          <h1 className="text-4xl leading-none font-black tracking-tighter text-white">
+          <h1 className="text-3xl leading-none font-black tracking-tighter text-white md:text-4xl">
             ORDER <span className="font-normal text-[#f5a623] italic">Stream</span>
           </h1>
         </div>
@@ -195,10 +195,10 @@ export default function AdminOrdersPage() {
 
       {/* Split panel */}
       <div className="flex items-start gap-6">
-        {/* Order table */}
+        {/* Order table — always full-width on mobile; shrinks on lg when detail open */}
         <div
           className={cn(
-            "flex-1 overflow-hidden rounded-2xl border border-[#f5a623]/10 bg-[#0d1117] transition-all",
+            "min-w-0 flex-1 overflow-hidden rounded-2xl border border-[#f5a623]/10 bg-[#0d1117] transition-all",
             selectedId ? "lg:w-[58%]" : "w-full"
           )}
         >
@@ -267,161 +267,172 @@ export default function AdminOrdersPage() {
           )}
         </div>
 
-        {/* Detail flyout */}
+        {/* Detail flyout — modal on mobile, side panel on lg */}
         {selectedOrder && (
-          <div className="sticky top-6 max-h-[calc(100vh-160px)] w-full shrink-0 overflow-y-auto rounded-2xl border border-[#f5a623]/10 bg-[#0d1117] p-6 lg:w-[40%]">
-            {/* Flyout header */}
-            <div className="mb-6 flex items-center justify-between border-b border-[#f5a623]/10 pb-5">
-              <div>
-                <p className="mb-1 text-[9px] font-black tracking-[0.3em] text-[#f5a623]/50 uppercase">
-                  Order Detail
-                </p>
-                <p className="font-mono text-sm font-black tracking-widest text-white uppercase">
-                  {selectedOrder.orderNumber}
-                </p>
-              </div>
-              <button
-                onClick={() => setSelectedId(null)}
-                className="text-[#8b92a5] transition hover:text-white"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </button>
-            </div>
-
-            <div className="space-y-6">
-              {/* Status + date */}
-              <div className="flex flex-wrap gap-3">
-                <StatusBadge status={selectedOrder.status} />
-                <span className="inline-flex items-center rounded-full border border-[#f5a623]/10 bg-[#f5a623]/5 px-3 py-1 text-[9px] font-bold tracking-widest text-[#8b92a5] uppercase">
-                  {format(selectedOrder._creationTime, "MMM d, yyyy")}
-                </span>
+          <>
+            {/* Mobile backdrop */}
+            <div
+              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+              onClick={() => setSelectedId(null)}
+            />
+            <div className="fixed inset-x-0 bottom-0 z-50 max-h-[88vh] overflow-y-auto rounded-t-2xl border border-[#f5a623]/10 bg-[#0d1117] p-5 lg:static lg:sticky lg:top-6 lg:max-h-[calc(100vh-160px)] lg:w-[40%] lg:shrink-0 lg:rounded-2xl lg:p-6">
+              {/* Flyout header */}
+              <div className="mb-6 flex items-center justify-between border-b border-[#f5a623]/10 pb-5">
+                <div>
+                  <p className="mb-1 text-[9px] font-black tracking-[0.3em] text-[#f5a623]/50 uppercase">
+                    Order Detail
+                  </p>
+                  <p className="font-mono text-sm font-black tracking-widest text-white uppercase">
+                    {selectedOrder.orderNumber}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setSelectedId(null)}
+                  className="text-[#8b92a5] transition hover:text-white"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </button>
               </div>
 
-              {/* Items */}
-              <div>
-                <p className="mb-3 text-[9px] font-black tracking-[0.3em] text-[#8b92a5]/50 uppercase">
-                  Items
-                </p>
-                <div className="space-y-3">
-                  {selectedOrder.items.map((item, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-3 rounded-xl border border-[#f5a623]/5 bg-[#080c16] p-3"
-                    >
-                      <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-[#1e2435]">
-                        <Image
-                          src={item.image || "/logo.png"}
-                          alt={item.name}
-                          fill
-                          className="object-contain p-1"
-                          sizes="48px"
-                        />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-bold text-white">{item.name}</p>
-                        <p className="text-[10px] tracking-wider text-[#8b92a5]/50 uppercase">
-                          {item.condition} · Qty {item.quantity}
+              <div className="space-y-6">
+                {/* Status + date */}
+                <div className="flex flex-wrap gap-3">
+                  <StatusBadge status={selectedOrder.status} />
+                  <span className="inline-flex items-center rounded-full border border-[#f5a623]/10 bg-[#f5a623]/5 px-3 py-1 text-[9px] font-bold tracking-widest text-[#8b92a5] uppercase">
+                    {format(selectedOrder._creationTime, "MMM d, yyyy")}
+                  </span>
+                </div>
+
+                {/* Items */}
+                <div>
+                  <p className="mb-3 text-[9px] font-black tracking-[0.3em] text-[#8b92a5]/50 uppercase">
+                    Items
+                  </p>
+                  <div className="space-y-3">
+                    {selectedOrder.items.map((item, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center gap-3 rounded-xl border border-[#f5a623]/5 bg-[#080c16] p-3"
+                      >
+                        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-[#1e2435]">
+                          <Image
+                            src={item.image || "/logo.png"}
+                            alt={item.name}
+                            fill
+                            className="object-contain p-1"
+                            sizes="48px"
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-bold text-white">{item.name}</p>
+                          <p className="text-[10px] tracking-wider text-[#8b92a5]/50 uppercase">
+                            {item.condition} · Qty {item.quantity}
+                          </p>
+                        </div>
+                        <p className="shrink-0 text-sm font-black text-[#f5a623]">
+                          KES {(item.price * item.quantity).toLocaleString()}
                         </p>
                       </div>
-                      <p className="shrink-0 text-sm font-black text-[#f5a623]">
-                        KES {(item.price * item.quantity).toLocaleString()}
-                      </p>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              {/* Totals */}
-              <div className="space-y-2 rounded-xl border border-[#f5a623]/10 bg-[#080c16] p-4">
-                <div className="flex justify-between text-sm">
-                  <span className="text-[#8b92a5]">Subtotal</span>
-                  <span className="text-white">KES {selectedOrder.subtotal.toLocaleString()}</span>
+                {/* Totals */}
+                <div className="space-y-2 rounded-xl border border-[#f5a623]/10 bg-[#080c16] p-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#8b92a5]">Subtotal</span>
+                    <span className="text-white">
+                      KES {selectedOrder.subtotal.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#8b92a5]">Delivery</span>
+                    <span className="text-white">
+                      KES {selectedOrder.deliveryFee.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between border-t border-[#f5a623]/10 pt-2 font-black">
+                    <span className="text-white">Total</span>
+                    <span className="text-[#f5a623]">
+                      KES {selectedOrder.total.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between pt-1 text-xs">
+                    <span className="text-[#8b92a5]">Payment</span>
+                    <span
+                      className={cn(
+                        "font-bold capitalize",
+                        selectedOrder.paymentStatus === "paid"
+                          ? "text-emerald-400"
+                          : selectedOrder.paymentStatus === "failed"
+                            ? "text-red-400"
+                            : "text-amber-400"
+                      )}
+                    >
+                      {selectedOrder.paymentStatus}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-[#8b92a5]">Delivery</span>
-                  <span className="text-white">
-                    KES {selectedOrder.deliveryFee.toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between border-t border-[#f5a623]/10 pt-2 font-black">
-                  <span className="text-white">Total</span>
-                  <span className="text-[#f5a623]">KES {selectedOrder.total.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between pt-1 text-xs">
-                  <span className="text-[#8b92a5]">Payment</span>
-                  <span
-                    className={cn(
-                      "font-bold capitalize",
-                      selectedOrder.paymentStatus === "paid"
-                        ? "text-emerald-400"
-                        : selectedOrder.paymentStatus === "failed"
-                          ? "text-red-400"
-                          : "text-amber-400"
-                    )}
-                  >
-                    {selectedOrder.paymentStatus}
-                  </span>
-                </div>
-              </div>
 
-              {/* Delivery address */}
-              <div className="rounded-xl border border-[#f5a623]/20 bg-[#f5a623]/5 p-4">
-                <p className="mb-3 text-[9px] font-black tracking-[0.3em] text-[#f5a623]/60 uppercase">
-                  Shipping
-                </p>
-                <p className="font-bold text-white">{selectedOrder.address.name}</p>
-                <p className="text-sm text-[#8b92a5]">{selectedOrder.address.phone}</p>
-                <p className="text-sm text-[#8b92a5]">
-                  {selectedOrder.address.street}, {selectedOrder.address.city}
-                </p>
-                {selectedOrder.address.notes && (
-                  <p className="mt-1 text-xs text-[#8b92a5]/60 italic">
-                    {selectedOrder.address.notes}
+                {/* Delivery address */}
+                <div className="rounded-xl border border-[#f5a623]/20 bg-[#f5a623]/5 p-4">
+                  <p className="mb-3 text-[9px] font-black tracking-[0.3em] text-[#f5a623]/60 uppercase">
+                    Shipping
                   </p>
-                )}
-              </div>
+                  <p className="font-bold text-white">{selectedOrder.address.name}</p>
+                  <p className="text-sm text-[#8b92a5]">{selectedOrder.address.phone}</p>
+                  <p className="text-sm text-[#8b92a5]">
+                    {selectedOrder.address.street}, {selectedOrder.address.city}
+                  </p>
+                  {selectedOrder.address.notes && (
+                    <p className="mt-1 text-xs text-[#8b92a5]/60 italic">
+                      {selectedOrder.address.notes}
+                    </p>
+                  )}
+                </div>
 
-              {/* Status actions */}
-              <div>
-                <p className="mb-3 text-[9px] font-black tracking-[0.3em] text-[#8b92a5]/50 uppercase">
-                  Update Status
-                </p>
-                <div className="grid grid-cols-2 gap-2">
-                  {(["processing", "shipped", "delivered"] as const).map((s) => (
+                {/* Status actions */}
+                <div>
+                  <p className="mb-3 text-[9px] font-black tracking-[0.3em] text-[#8b92a5]/50 uppercase">
+                    Update Status
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {(["processing", "shipped", "delivered"] as const).map((s) => (
+                      <button
+                        key={s}
+                        disabled={
+                          updatingId === selectedOrder._id ||
+                          selectedOrder.status === s ||
+                          selectedOrder.status === "cancelled" ||
+                          selectedOrder.status === "delivered"
+                        }
+                        onClick={() => handleStatusChange(selectedOrder._id, s)}
+                        className="rounded-xl border border-[#f5a623]/10 bg-[#080c16] py-2.5 text-[10px] font-black tracking-widest text-[#8b92a5] capitalize uppercase transition hover:border-[#f5a623]/30 hover:text-[#f5a623] disabled:cursor-not-allowed disabled:opacity-30"
+                      >
+                        {s}
+                      </button>
+                    ))}
                     <button
-                      key={s}
                       disabled={
                         updatingId === selectedOrder._id ||
-                        selectedOrder.status === s ||
                         selectedOrder.status === "cancelled" ||
                         selectedOrder.status === "delivered"
                       }
-                      onClick={() => handleStatusChange(selectedOrder._id, s)}
-                      className="rounded-xl border border-[#f5a623]/10 bg-[#080c16] py-2.5 text-[10px] font-black tracking-widest text-[#8b92a5] capitalize uppercase transition hover:border-[#f5a623]/30 hover:text-[#f5a623] disabled:cursor-not-allowed disabled:opacity-30"
+                      onClick={() => handleStatusChange(selectedOrder._id, "cancelled")}
+                      className="rounded-xl border border-red-500/20 bg-red-500/5 py-2.5 text-[10px] font-black tracking-widest text-red-400 uppercase transition hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-30"
                     >
-                      {s}
+                      Cancel
                     </button>
-                  ))}
-                  <button
-                    disabled={
-                      updatingId === selectedOrder._id ||
-                      selectedOrder.status === "cancelled" ||
-                      selectedOrder.status === "delivered"
-                    }
-                    onClick={() => handleStatusChange(selectedOrder._id, "cancelled")}
-                    className="rounded-xl border border-red-500/20 bg-red-500/5 py-2.5 text-[10px] font-black tracking-widest text-red-400 uppercase transition hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-30"
-                  >
-                    Cancel
-                  </button>
-                </div>
-                {updatingId === selectedOrder._id && (
-                  <div className="mt-2 flex items-center gap-2 text-xs text-[#f5a623]/60">
-                    <Loader2 className="h-3 w-3 animate-spin" /> Updating...
                   </div>
-                )}
+                  {updatingId === selectedOrder._id && (
+                    <div className="mt-2 flex items-center gap-2 text-xs text-[#f5a623]/60">
+                      <Loader2 className="h-3 w-3 animate-spin" /> Updating...
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
     </div>

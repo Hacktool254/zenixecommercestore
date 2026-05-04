@@ -98,7 +98,7 @@ export default function AdminInventoryPage() {
               Stock Management
             </p>
           </div>
-          <h1 className="text-4xl leading-none font-black tracking-tighter text-white">
+          <h1 className="text-3xl leading-none font-black tracking-tighter text-white md:text-4xl">
             INVENTORY <span className="font-normal text-[#f5a623] italic">Control</span>
           </h1>
         </div>
@@ -188,12 +188,22 @@ export default function AdminInventoryPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[#f5a623]/10">
-                  {["Product", "Category", "Price", "Stock", "Status", "Update"].map((h) => (
+                  {[
+                    { label: "Product", cls: "" },
+                    { label: "Category", cls: "hidden md:table-cell" },
+                    { label: "Price", cls: "hidden sm:table-cell" },
+                    { label: "Stock", cls: "" },
+                    { label: "Status", cls: "hidden sm:table-cell" },
+                    { label: "Update", cls: "" },
+                  ].map(({ label, cls }) => (
                     <th
-                      key={h}
-                      className="px-5 py-4 text-left text-[9px] font-black tracking-[0.25em] text-[#8b92a5]/50 uppercase"
+                      key={label}
+                      className={cn(
+                        "px-5 py-4 text-left text-[9px] font-black tracking-[0.25em] text-[#8b92a5]/50 uppercase",
+                        cls
+                      )}
                     >
-                      {h}
+                      {label}
                     </th>
                   ))}
                 </tr>
@@ -225,12 +235,12 @@ export default function AdminInventoryPage() {
                           <p className="max-w-[180px] truncate font-bold text-white">{p.name}</p>
                         </div>
                       </td>
-                      <td className="px-5 py-4">
+                      <td className="hidden px-5 py-4 md:table-cell">
                         <p className="text-[10px] font-black tracking-wider text-[#8b92a5] uppercase">
                           {p.category}
                         </p>
                       </td>
-                      <td className="px-5 py-4 font-black text-[#f5a623]">
+                      <td className="hidden px-5 py-4 font-black text-[#f5a623] sm:table-cell">
                         KES {p.price.toLocaleString()}
                       </td>
                       <td className="px-5 py-4">
@@ -243,7 +253,7 @@ export default function AdminInventoryPage() {
                           {p.stock}
                         </span>
                       </td>
-                      <td className="px-5 py-4">
+                      <td className="hidden px-5 py-4 sm:table-cell">
                         <StockBadge stock={p.stock} />
                       </td>
                       <td className="px-5 py-4">

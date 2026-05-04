@@ -82,19 +82,19 @@ export default function AdminProductsPage() {
                   <th className="px-5 py-3 text-xs font-semibold tracking-widest text-[#8b92a5] uppercase">
                     Product
                   </th>
-                  <th className="px-5 py-3 text-xs font-semibold tracking-widest text-[#8b92a5] uppercase">
+                  <th className="hidden px-5 py-3 text-xs font-semibold tracking-widest text-[#8b92a5] uppercase md:table-cell">
                     Category
                   </th>
-                  <th className="px-5 py-3 text-xs font-semibold tracking-widest text-[#8b92a5] uppercase">
+                  <th className="hidden px-5 py-3 text-xs font-semibold tracking-widest text-[#8b92a5] uppercase lg:table-cell">
                     Condition
                   </th>
                   <th className="px-5 py-3 text-xs font-semibold tracking-widest text-[#8b92a5] uppercase">
                     Price
                   </th>
-                  <th className="px-5 py-3 text-xs font-semibold tracking-widest text-[#8b92a5] uppercase">
+                  <th className="hidden px-5 py-3 text-xs font-semibold tracking-widest text-[#8b92a5] uppercase sm:table-cell">
                     Stock
                   </th>
-                  <th className="px-5 py-3 text-xs font-semibold tracking-widest text-[#8b92a5] uppercase">
+                  <th className="hidden px-5 py-3 text-xs font-semibold tracking-widest text-[#8b92a5] uppercase sm:table-cell">
                     Status
                   </th>
                   <th className="px-5 py-3 text-xs font-semibold tracking-widest text-[#8b92a5] uppercase">
@@ -121,22 +121,24 @@ export default function AdminProductsPage() {
                         </span>
                       </div>
                     </td>
-                    <td className="px-5 py-3 text-[#8b92a5] capitalize">{p.category}</td>
-                    <td className="px-5 py-3">
+                    <td className="hidden px-5 py-3 text-[#8b92a5] capitalize md:table-cell">
+                      {p.category}
+                    </td>
+                    <td className="hidden px-5 py-3 lg:table-cell">
                       {p.condition === "brand-new" ? (
                         <span className="rounded-md bg-[#22c55e]/15 px-2 py-0.5 text-xs font-semibold text-[#22c55e]">
                           Brand New
                         </span>
                       ) : (
                         <span className="rounded-md bg-[#38bdf8]/15 px-2 py-0.5 text-xs font-semibold text-[#38bdf8]">
-                          Ex UK
+                          {p.condition === "ex-uk" ? "Ex UK" : "Ex USA"}
                         </span>
                       )}
                     </td>
                     <td className="px-5 py-3 font-semibold text-[#f5a623]">
                       KES {p.price.toLocaleString()}
                     </td>
-                    <td className="px-5 py-3">
+                    <td className="hidden px-5 py-3 sm:table-cell">
                       <span
                         className={`font-semibold ${
                           p.stock === 0
@@ -149,7 +151,7 @@ export default function AdminProductsPage() {
                         {p.stock}
                       </span>
                     </td>
-                    <td className="px-5 py-3">
+                    <td className="hidden px-5 py-3 sm:table-cell">
                       <span
                         className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
                           p.isActive

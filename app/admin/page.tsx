@@ -120,7 +120,7 @@ export default function AdminDashboard() {
               Operational Intelligence
             </p>
           </div>
-          <h1 className="text-5xl leading-none font-black tracking-tighter text-white">
+          <h1 className="text-3xl leading-none font-black tracking-tighter text-white md:text-5xl">
             REVENUE <span className="font-normal text-[#f5a623] italic">Stream</span>
           </h1>
           <p className="text-sm text-[#8b92a5]">
@@ -128,9 +128,10 @@ export default function AdminDashboard() {
           </p>
         </div>
         <Link href="/admin/products/new">
-          <button className="flex items-center gap-3 rounded-2xl bg-[#f5a623] px-8 py-4 text-xs font-black tracking-[0.2em] text-[#0a0e1a] uppercase shadow-lg shadow-[#f5a623]/20 transition hover:scale-[1.02] active:scale-95">
+          <button className="flex items-center gap-2 rounded-2xl bg-[#f5a623] px-5 py-3 text-xs font-black tracking-[0.2em] text-[#0a0e1a] uppercase shadow-lg shadow-[#f5a623]/20 transition hover:scale-[1.02] active:scale-95 md:gap-3 md:px-8 md:py-4">
             <Plus className="h-4 w-4" />
-            Add Product
+            <span className="hidden sm:inline">Add Product</span>
+            <span className="sm:hidden">Add</span>
           </button>
         </Link>
       </div>
@@ -170,7 +171,7 @@ export default function AdminDashboard() {
       {/* Charts row */}
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Revenue area chart */}
-        <div className="flex h-[400px] flex-col rounded-2xl border border-[#f5a623]/10 bg-[#0d1117] p-6 lg:col-span-2">
+        <div className="flex h-[300px] flex-col rounded-2xl border border-[#f5a623]/10 bg-[#0d1117] p-4 md:h-[400px] md:p-6 lg:col-span-2">
           <div className="mb-6">
             <h3 className="font-black tracking-tight text-white">Revenue Stream</h3>
             <p className="mt-1 text-xs text-[#8b92a5]/60 italic">Monthly revenue vs order volume</p>
@@ -254,7 +255,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Category donut */}
-        <div className="flex h-[400px] flex-col rounded-2xl border border-[#f5a623]/10 bg-[#0d1117] p-6">
+        <div className="flex h-[300px] flex-col rounded-2xl border border-[#f5a623]/10 bg-[#0d1117] p-4 md:h-[400px] md:p-6">
           <div className="mb-4">
             <h3 className="font-black tracking-tight text-white">By Category</h3>
             <p className="mt-1 text-xs text-[#8b92a5]/60 italic">Revenue distribution</p>
