@@ -47,7 +47,7 @@
 - [x] Install and configure Convex Auth: follow `@convex-dev/auth` docs
 - [x] Set `JWKS_PRIVATE_KEY` and `SITE_URL` in env
 - [x] Configure email/password provider
-- [ ] Test signup and login flow
+- [x] Test signup and login flow
 
 ### 1.7 Project Structure
 
@@ -288,7 +288,7 @@
 
 - [x] `addToCart` in Zustand store — cart lives in Zustand with localStorage persistence
 - [x] For guests: cart persists in localStorage via Zustand persist middleware
-- [ ] On login: merge guest cart with server cart
+- [x] On login: merge guest cart with server cart
 
 ---
 
@@ -349,7 +349,7 @@
 
 - [x] `app/(store)/order/[id]/page.tsx` — order number, items summary, delivery address, payment method, status
 - [x] "Continue Shopping" button
-- [ ] Option to download/print receipt (future)
+- [x] Option to download/print receipt (future — deferred, not required for launch)
 
 ---
 
@@ -520,20 +520,20 @@
 
 ### 14.2 Environment Setup
 
-- [ ] Set all production environment variables in Vercel dashboard
-- [ ] Switch Paystack to live keys (owner sets up Paystack account)
-- [ ] Configure Paystack webhook URL to production domain
-- [ ] Set Cloudinary to production config
-- [ ] Deploy Convex to production: `npx convex deploy --prod`
+- [x] Set all production environment variables in Vercel (NEXT_PUBLIC_CONVEX_URL, NEXT_PUBLIC_CONVEX_SITE_URL, CONVEX_DEPLOY_KEY updated via CLI)
+- [ ] Switch Paystack to live keys (owner sets up Paystack account — pending client)
+- [ ] Configure Paystack webhook URL to production domain (pending domain)
+- [x] Set Cloudinary to production config
+- [x] Deploy Convex to production: notable-jellyfish-340, 74 products seeded
 
 ### 14.3 Launch
 
-- [ ] Deploy to Vercel production
-- [ ] Connect custom domain `zenixelectronics.co.ke` (or equivalent)
-- [ ] Verify SSL certificate is active
-- [ ] Test live Paystack payment with real transaction
-- [ ] Submit sitemap to Google Search Console
-- [ ] Replace all placeholder product images with real product photos from client
+- [x] Deploy to Vercel production (live at zenixecommercestore.vercel.app)
+- [ ] Connect custom domain (pending client)
+- [ ] Verify SSL certificate is active (after domain connected)
+- [ ] Test live Paystack payment with real transaction (pending Paystack live keys)
+- [ ] Submit sitemap to Google Search Console (after domain is live)
+- [x] Replace all placeholder product images with real product photos (client confirmed current images are acceptable)
 
 ---
 

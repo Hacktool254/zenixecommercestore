@@ -89,6 +89,9 @@ function ElectricCard({
           "linear-gradient(-30deg, rgba(245,166,35,0.10) 0%, transparent 50%, rgba(245,166,35,0.10) 100%), #0d1117",
       }}
     >
+      <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5 rounded-full bg-[#f5a623] px-3 py-1 text-[11px] font-bold text-[#0a0e1a] shadow-[0_2px_12px_rgba(245,166,35,0.5)]">
+        🔥 Hot Deal
+      </div>
       <ProductCard product={product} priority={priority} />
     </motion.div>
   );
