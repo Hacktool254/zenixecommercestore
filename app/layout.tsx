@@ -29,12 +29,43 @@ export const metadata: Metadata = {
     template: "%s | Zenix Electronics",
   },
   description:
-    "Shop brand new and Ex UK electronics in Nairobi. iPhones, TVs, Soundbars, Starlinks, PlayStation, MacMini, AirPods Max and more. Located at Accra Road, Cookie House.",
-  keywords: ["electronics", "nairobi", "iphone", "tv", "starlink", "ex uk", "brand new", "kenya"],
+    "Shop brand new and Ex UK electronics in Nairobi. iPhones, Samsung, MacBooks, TVs, Soundbars, Starlinks, PlayStation, AirPods Max and more. Located at Cookie House, Accra Road, Nairobi CBD.",
+  keywords: [
+    "electronics nairobi",
+    "iphone nairobi",
+    "buy iphone kenya",
+    "samsung nairobi",
+    "macbook nairobi",
+    "ex uk phones nairobi",
+    "brand new iphone kenya",
+    "starlink kenya",
+    "ps5 nairobi",
+    "tv nairobi",
+    "airpods nairobi",
+    "electronics accra road",
+    "cookie house nairobi",
+    "cheap electronics nairobi",
+    "zenix electronics",
+    "ex uk macbook",
+    "ipad nairobi",
+    "gaming nairobi",
+  ],
   openGraph: {
     type: "website",
     locale: "en_KE",
     siteName: "Zenix Electronics",
+    images: [
+      {
+        url: "/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Zenix Electronics — Premium Electronics in Nairobi",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/opengraph-image.png"],
   },
 };
 

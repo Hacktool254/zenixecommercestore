@@ -21,26 +21,6 @@ const HEADLINE = [
   "door.",
 ];
 
-const SUBTITLE = [
-  "From",
-  "brand-new",
-  "iPhones",
-  "to",
-  "Ex-UK",
-  "MacBooks",
-  "—",
-  "every",
-  "device",
-  "verified,",
-  "sealed,",
-  "and",
-  "backed",
-  "by",
-  "our",
-  "quality",
-  "guarantee.",
-];
-
 const TESTI_LINES = [
   { text: "WHAT'S", gold: false },
   { text: "NAIROBI", gold: true },
@@ -232,16 +212,6 @@ export function VideoExpandSection() {
           {/* Why Zenix text — Hero-style character reveal on viewport entry */}
           <div className="absolute inset-0 flex items-center px-6 md:px-12 lg:px-20">
             <div className="relative z-10 max-w-5xl">
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className="mb-6 text-xs font-semibold tracking-[0.25em] text-[#f5a623] uppercase"
-              >
-                Why Zenix
-              </motion.p>
-
               <h2
                 className="mb-8 leading-[1.05] font-black uppercase"
                 style={{

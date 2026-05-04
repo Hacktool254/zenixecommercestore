@@ -6,13 +6,14 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://zenixecommercestor
 
 const CATEGORIES = [
   "iphones",
+  "samsung",
   "mac",
+  "ipad",
+  "wearables",
   "audio",
   "accessories",
-  "tvs",
+  "televisions",
   "gaming",
-  "connectivity",
-  "power",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -36,6 +37,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.6,
+    },
+    {
+      url: `${BASE_URL}/deals`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+    {
+      url: `${BASE_URL}/contact`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${BASE_URL}/returns`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
     },
   ];
 

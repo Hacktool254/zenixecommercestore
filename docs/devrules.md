@@ -357,27 +357,27 @@
 
 ### 9.1 Account Layout & Profile
 
-- [ ] `app/account/layout.tsx` — sidebar with nav links
-- [ ] `app/account/page.tsx` — profile info (name, email, phone), edit form
+- [x] `app/account/layout.tsx` — sidebar with nav links
+- [x] `app/account/page.tsx` — profile info (name, email, phone), edit form
 
 ### 9.2 Orders History
 
-- [ ] `app/account/orders/page.tsx` — list of all user orders
-- [ ] Order card: order number, date, total, status badge, item thumbnails
-- [ ] Click → order detail view
+- [x] `app/account/orders/page.tsx` — list of all user orders
+- [x] Order card: order number, date, total, status badge, item thumbnails
+- [x] Click → order detail view
 
 ### 9.3 Wishlist
 
-- [ ] `app/account/wishlist/page.tsx` — product grid of wishlisted items
-- [ ] Remove from wishlist button on each card
-- [ ] Add to cart directly from wishlist
+- [x] `app/account/wishlist/page.tsx` — product grid of wishlisted items
+- [x] Remove from wishlist button on each card
+- [x] Add to cart directly from wishlist
 
 ### 9.4 Addresses
 
-- [ ] `app/account/addresses/page.tsx` — list of saved addresses
-- [ ] Add new address form (React Hook Form)
-- [ ] Set default address
-- [ ] Delete address
+- [x] `app/account/addresses/page.tsx` — list of saved addresses
+- [x] Add new address form (React Hook Form)
+- [x] Set default address
+- [x] Delete address
 
 ---
 
@@ -461,6 +461,8 @@
 - [x] Zenix story, location, contact info
 - [x] Google Maps embed for Accra Road, Nairobi
 - [x] Contact form (sends WhatsApp or email)
+- [x] `app/(store)/contact/page.tsx` — dedicated contact page (footer link)
+- [x] `app/(store)/returns/page.tsx` — returns & refunds policy (footer link)
 
 ---
 
@@ -471,8 +473,11 @@
 - [x] Root layout metadata (title template, description, OG image)
 - [x] `generateMetadata` for product pages (name, description, price, image)
 - [x] `generateMetadata` for category pages
-- [x] Sitemap: `app/sitemap.ts` — generates URLs for all products and categories
+- [x] Sitemap: `app/sitemap.ts` — generates URLs for all products and categories (fixed: correct category slugs, added /deals, /contact, /returns)
 - [x] Robots: `app/robots.ts`
+- [x] OG image wired into root layout (`/opengraph-image.png`, 1200×630)
+- [x] Twitter card (`summary_large_image`) in root layout
+- [x] SEO keywords expanded with Nairobi-specific long-tail terms
 
 ### 13.2 Structured Data
 

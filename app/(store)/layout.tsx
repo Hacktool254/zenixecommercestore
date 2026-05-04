@@ -5,6 +5,7 @@ import { WhatsAppFAB } from "@/components/shared/WhatsAppFAB";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { FluidCursor } from "@/components/shared/cursors/FluidCursor";
 import { ComparisonBar } from "@/components/shared/ComparisonBar";
+import { SearchModal } from "@/components/shared/SearchModal";
 
 export default function StoreLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -17,6 +18,7 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
       <WhatsAppFAB />
       <CartDrawer />
       <ComparisonBar />
+      <SearchModal />
     </>
   );
 }
