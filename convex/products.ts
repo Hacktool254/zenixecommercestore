@@ -84,22 +84,24 @@ export const getProductById = query({
 export const getFeaturedProducts = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db
+    const products = await ctx.db
       .query("products")
       .withIndex("isActive", (q) => q.eq("isActive", true))
       .filter((q) => q.eq(q.field("isFeatured"), true))
-      .take(8);
+      .collect();
+    return products.sort((a, b) => (a.displayOrder ?? 9999) - (b.displayOrder ?? 9999)).slice(0, 8);
   },
 });
 
 export const getHotDeals = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db
+    const products = await ctx.db
       .query("products")
       .withIndex("isHotDeal", (q) => q.eq("isHotDeal", true))
       .filter((q) => q.eq(q.field("isActive"), true))
-      .take(8);
+      .collect();
+    return products.sort((a, b) => (a.displayOrder ?? 9999) - (b.displayOrder ?? 9999)).slice(0, 8);
   },
 });
 
@@ -117,10 +119,9 @@ export const getDealsProducts = query({
     );
 
     deals.sort((a, b) => {
-      // hot deals first
       if (a.isHotDeal && !b.isHotDeal) return -1;
       if (!a.isHotDeal && b.isHotDeal) return 1;
-      return b._creationTime - a._creationTime;
+      return (a.displayOrder ?? 9999) - (b.displayOrder ?? 9999);
     });
 
     return deals;
@@ -130,11 +131,12 @@ export const getDealsProducts = query({
 export const getNewArrivals = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db
+    const products = await ctx.db
       .query("products")
       .withIndex("isNewArrival", (q) => q.eq("isNewArrival", true))
       .filter((q) => q.eq(q.field("isActive"), true))
-      .take(50);
+      .collect();
+    return products.sort((a, b) => (a.displayOrder ?? 9999) - (b.displayOrder ?? 9999));
   },
 });
 
