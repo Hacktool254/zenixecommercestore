@@ -190,7 +190,7 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
-          <div className="-ml-2 flex-1">
+          <div className="-ml-2 min-h-0 flex-1">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={stats.months}>
                 <defs>
@@ -260,7 +260,7 @@ export default function AdminDashboard() {
             <h3 className="font-black tracking-tight text-white">By Category</h3>
             <p className="mt-1 text-xs text-[#8b92a5]/60 italic">Revenue distribution</p>
           </div>
-          <div className="flex-1">
+          <div className="min-h-0 flex-1">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -341,7 +341,7 @@ export default function AdminDashboard() {
         <div className="flex h-[300px] flex-col rounded-2xl border border-[#f5a623]/10 bg-[#0d1117] p-6">
           <h3 className="mb-1 font-black tracking-tight text-white">Monthly Revenue</h3>
           <p className="mb-4 text-xs text-[#8b92a5]/60 italic">Bar view</p>
-          <div className="-ml-2 flex-1">
+          <div className="-ml-2 min-h-0 flex-1">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={stats.months}>
                 <XAxis

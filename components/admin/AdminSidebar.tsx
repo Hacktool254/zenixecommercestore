@@ -51,7 +51,7 @@ export function AdminSidebar({ isOpen, onClose }: Props) {
 
       <aside
         className={cn(
-          "fixed top-0 left-0 z-50 flex h-full w-64 shrink-0 flex-col border-r border-[#f5a623]/10 bg-[#080c16] transition-transform duration-300 lg:static lg:z-auto lg:translate-x-0",
+          "fixed top-0 left-0 z-50 flex h-screen w-64 shrink-0 flex-col border-r border-[#f5a623]/10 bg-[#080c16] transition-transform duration-300 lg:static lg:z-auto lg:h-full lg:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
