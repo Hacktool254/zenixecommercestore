@@ -93,8 +93,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     src={viewer.image}
                     alt={viewer.name ?? "Admin"}
                     fill
-                    sizes="28px"
-                    priority
                     className="object-cover"
                   />
                 ) : (
