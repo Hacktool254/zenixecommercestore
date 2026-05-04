@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { MapPin, Phone, Mail } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 const SHOP_LINKS = [
   { label: "iPhones", href: "/shop/iphones" },
@@ -53,20 +54,25 @@ const SOCIALS = [
 ];
 
 export function Footer() {
+  const pathname = usePathname();
+  const showVideo = pathname !== "/";
+
   return (
     <footer className="mt-auto border-t border-[#1e2435] bg-[#0d1117]">
-      {/* Video banner */}
-      <div className="relative h-48 overflow-hidden md:h-64">
-        <video
-          src="/circle-reveal.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 h-full w-full object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-[#0d1117]/70" />
-      </div>
+      {/* Video banner — shown on all pages except home (home has it in WhatsAppBanner) */}
+      {showVideo && (
+        <div className="relative h-48 overflow-hidden md:h-64">
+          <video
+            src="/circle-reveal.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 h-full w-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-[#0d1117]/70" />
+        </div>
+      )}
 
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-6">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-3">

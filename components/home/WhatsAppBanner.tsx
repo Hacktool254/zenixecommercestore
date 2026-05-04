@@ -14,14 +14,26 @@ export function WhatsAppBanner() {
   return (
     <section
       ref={ref}
-      className="relative z-40 -mt-12 rounded-t-[2.5rem] bg-[#0a0e1a] px-4 py-10 shadow-[0_-32px_80px_rgba(0,0,0,0.7)] md:px-6"
+      className="relative z-40 -mt-12 overflow-hidden rounded-t-[2.5rem] px-4 py-16 shadow-[0_-32px_80px_rgba(0,0,0,0.7)] md:px-6"
     >
+      {/* Background video */}
+      <video
+        src="/circle-reveal.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 h-full w-full object-cover object-center"
+      />
+      {/* Dark scrim so card pops */}
+      <div className="absolute inset-0 bg-[#0a0e1a]/70" />
+
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.5 }}
-        className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-[#1e2435] bg-[#0d1117] p-8 text-center"
-        style={{ boxShadow: "0 4px 32px rgba(0,0,0,0.4)" }}
+        className="relative mx-auto max-w-3xl overflow-hidden rounded-2xl border border-white/10 bg-[#0d1117]/50 p-8 text-center backdrop-blur-xl"
+        style={{ boxShadow: "0 4px 48px rgba(0,0,0,0.5)" }}
       >
         {/* Icon */}
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#25d366]/15">
