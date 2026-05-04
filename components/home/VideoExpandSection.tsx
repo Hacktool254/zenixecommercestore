@@ -128,25 +128,24 @@ export function VideoExpandSection() {
             className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-5 px-6 pb-20 text-center"
           >
             <p className="text-xs font-semibold tracking-[0.25em] text-[#f5a623] uppercase">
-              Now Available
+              Why Zenix
             </p>
             <h2
               className="max-w-2xl text-4xl leading-tight font-bold text-white md:text-6xl lg:text-7xl"
               style={{ fontFamily: "var(--font-space-grotesk)" }}
             >
-              iPhone 17 <span className="text-[#f5a623]">Pro Max</span>
+              Kenya&apos;s Most Trusted <span className="text-[#f5a623]">Electronics Store</span>
             </h2>
             <p className="max-w-md text-sm leading-relaxed text-[#8b92a5] md:text-base">
-              Desert Titanium · 1TB · From{" "}
-              <span className="font-semibold text-[#cbd5e1]">KES 189,999</span>
-              <br />
-              Cookie House, Accra Road, Nairobi
+              Brand new iPhones, Ex-UK MacBooks, Starlinks &amp; more — every device{" "}
+              <span className="font-semibold text-[#cbd5e1]">verified, sealed</span>, and backed by
+              our quality guarantee.
             </p>
             <Link
-              href="/shop/iphones"
+              href="/shop"
               className="inline-flex items-center gap-2 rounded-xl bg-[#f5a623] px-6 py-3 text-sm font-semibold text-[#0a0e1a] transition-all hover:bg-[#ff9f1c] hover:shadow-[0_0_24px_rgba(245,166,35,0.5)] active:scale-95"
             >
-              Shop iPhones <ArrowRight className="h-4 w-4" />
+              Shop Now <ArrowRight className="h-4 w-4" />
             </Link>
           </motion.div>
         </motion.div>

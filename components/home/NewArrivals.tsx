@@ -145,7 +145,7 @@ export function NewArrivals() {
     <motion.section
       ref={sectionRef}
       style={{ scale: scrollScale, transformOrigin: "center top" }}
-      className="sticky top-0 z-0 bg-[#0a0e1a] px-4 py-10 md:px-6 lg:px-10"
+      className="top-0 z-0 bg-[#0a0e1a] px-4 py-10 md:px-6 lg:sticky lg:px-10"
     >
       <div className="pointer-events-none absolute inset-0">
         <div

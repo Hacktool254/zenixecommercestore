@@ -55,6 +55,19 @@ const SOCIALS = [
 export function Footer() {
   return (
     <footer className="mt-auto border-t border-[#1e2435] bg-[#0d1117]">
+      {/* Video banner */}
+      <div className="relative h-48 overflow-hidden md:h-64">
+        <video
+          src="/circle-reveal.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-[#0d1117]/70" />
+      </div>
+
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-6">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
           {/* Col 1 — Brand */}
