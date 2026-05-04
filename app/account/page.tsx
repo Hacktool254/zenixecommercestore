@@ -268,16 +268,13 @@ export default function OverviewPage() {
   return (
     <div className="flex flex-col gap-6">
       {/* Mobile header */}
-      <div className="flex items-center justify-between md:hidden">
+      <div className="flex items-center justify-between pt-4 md:hidden">
         <div>
-          <p className="text-xs font-semibold tracking-widest text-[#8b92a5] uppercase">
-            Welcome back
-          </p>
           <h1
             className="text-xl font-bold text-white"
             style={{ fontFamily: "var(--font-space-grotesk)" }}
           >
-            {viewer?.name ?? "—"}
+            Welcome back, {viewer?.name?.split(" ")[0] ?? "—"}
           </h1>
         </div>
         <Link
