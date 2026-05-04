@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuthActions } from "@convex-dev/auth/react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -84,6 +86,8 @@ function LoginForm({ onSwitch }: { onSwitch: () => void }) {
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") ?? "/account";
   const [serverError, setServerError] = useState<string | null>(null);
+  const [justLoggedIn, setJustLoggedIn] = useState(false);
+  const viewer = useQuery(api.users.viewer);
 
   const {
     register,
@@ -91,11 +95,20 @@ function LoginForm({ onSwitch }: { onSwitch: () => void }) {
     formState: { errors, isSubmitting },
   } = useForm<LoginData>({ resolver: zodResolver(loginSchema) });
 
+  useEffect(() => {
+    if (!justLoggedIn || viewer === undefined) return;
+    if (viewer?.role === "admin") {
+      router.replace("/admin");
+    } else {
+      router.push(redirect);
+    }
+  }, [justLoggedIn, viewer, router, redirect]);
+
   const onSubmit = async (data: LoginData) => {
     setServerError(null);
     try {
       await signIn("password", { email: data.email, password: data.password, flow: "signIn" });
-      router.push(redirect);
+      setJustLoggedIn(true);
     } catch {
       setServerError("Invalid email or password. Please try again.");
     }

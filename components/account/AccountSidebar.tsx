@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
@@ -34,6 +34,12 @@ export function AccountSidebar() {
   const { signOut } = useAuthActions();
   const viewer = useQuery(api.users.viewer);
   const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    if (viewer?.role === "admin") {
+      router.replace("/admin");
+    }
+  }, [viewer, router]);
 
   const initials = viewer?.name
     ? viewer.name
