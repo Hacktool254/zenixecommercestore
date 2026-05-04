@@ -45,6 +45,31 @@ export const updateAvatar = mutation({
   },
 });
 
+export const updateEmail = mutation({
+  args: { email: v.string() },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    const email = args.email.trim().toLowerCase();
+    const existing = await ctx.db
+      .query("users")
+      .withIndex("email", (q) => q.eq("email", email))
+      .unique();
+    if (existing && existing._id !== userId) throw new Error("Email already in use");
+    await ctx.db.patch(userId, { email });
+    // Also update the authAccounts table so login still works
+    const accounts = await ctx.db
+      .query("authAccounts")
+      .filter((q) => q.eq(q.field("userId"), userId))
+      .collect();
+    for (const acc of accounts) {
+      if (acc.provider === "password") {
+        await ctx.db.patch(acc._id, { providerAccountId: email });
+      }
+    }
+  },
+});
+
 export const promoteToAdmin = mutation({
   args: { email: v.string() },
   handler: async (ctx, args) => {

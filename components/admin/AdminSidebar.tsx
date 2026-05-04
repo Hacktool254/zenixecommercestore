@@ -12,6 +12,7 @@ import {
   LogOut,
   Zap,
   X,
+  Settings,
 } from "lucide-react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { cn } from "@/lib/utils";
@@ -22,6 +23,7 @@ const NAV = [
   { label: "Orders", href: "/admin/orders", icon: ShoppingBag },
   { label: "Customers", href: "/admin/customers", icon: Users },
   { label: "Inventory", href: "/admin/inventory", icon: Warehouse },
+  { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
 interface Props {
