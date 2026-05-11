@@ -9,14 +9,17 @@ import { WhatsAppBanner } from "@/components/home/WhatsAppBanner";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const metadata: Metadata = {
-  title: "Zenix Electronics — Premium Electronics in Nairobi",
+  title: "Zenix Electronics — Buy iPhones, MacBooks & More in Nairobi",
   description:
-    "Shop brand new and Ex UK electronics in Nairobi. iPhones, TVs, Soundbars, Starlinks, PlayStation, MacMini, AirPods Max and more. Located at Accra Road, Cookie House.",
+    "Shop brand new and Ex UK electronics in Nairobi. iPhones, Samsung, MacBooks, Starlinks, PlayStation, TVs, AirPods Max and more. Cookie House, Accra Road, Nairobi CBD. Same-day delivery.",
   openGraph: {
-    title: "Zenix Electronics — Premium Electronics in Nairobi",
+    title: "Zenix Electronics — Buy iPhones, MacBooks & More in Nairobi",
     description:
-      "Brand new and Ex UK iPhones, TVs, Soundbars, Starlinks & more. Cookie House, Accra Road, Nairobi.",
-    images: ["/logo.png"],
+      "Brand new and Ex UK iPhones, MacBooks, TVs, Starlinks & more. Cookie House, Accra Road, Nairobi. Same-day delivery.",
+    images: [{ url: "/opengraph-image.png", width: 1200, height: 630, alt: "Zenix Electronics" }],
+  },
+  alternates: {
+    canonical: "/",
   },
 };
 
@@ -43,9 +46,57 @@ function SectionSkeleton() {
   );
 }
 
+const localBusinessJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ElectronicsStore",
+  name: "Zenix Electronics",
+  description:
+    "Nairobi's trusted electronics store. Brand new and Ex UK iPhones, MacBooks, Samsung, Starlinks, PlayStation, TVs and more.",
+  url: "https://zenixelectronics.co.ke",
+  telephone: "+254703659956",
+  email: "info@zenixelectronics.co.ke",
+  image: "https://zenixelectronics.co.ke/opengraph-image.png",
+  logo: "https://zenixelectronics.co.ke/logo.png",
+  priceRange: "KES",
+  currenciesAccepted: "KES",
+  paymentAccepted: "Cash, M-Pesa, Card",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Cookie House, Accra Road",
+    addressLocality: "Nairobi",
+    addressRegion: "Nairobi County",
+    postalCode: "00100",
+    addressCountry: "KE",
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: -1.2836,
+    longitude: 36.8222,
+  },
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      opens: "08:00",
+      closes: "19:00",
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Sunday"],
+      opens: "10:00",
+      closes: "17:00",
+    },
+  ],
+  sameAs: ["https://wa.me/254703659956"],
+};
+
 export default function HomePage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+      />
       <Hero />
       <CategoryStrip />
       <Suspense fallback={<SectionSkeleton />}>

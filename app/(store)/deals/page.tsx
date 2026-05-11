@@ -2,13 +2,21 @@ import type { Metadata } from "next";
 import { DealsClient } from "./DealsClient";
 
 export const metadata: Metadata = {
-  title: "Hot Deals — Zenix Electronics",
+  title: "Hot Deals on Electronics in Nairobi — Zenix Electronics",
   description:
-    "Best deals on iPhones, Samsung, TVs, PlayStation and more. Limited time prices at Zenix Electronics, Accra Road, Nairobi.",
+    "Limited time deals on iPhones, Samsung, MacBooks, TVs, PlayStation and more at Zenix Electronics, Nairobi. Best prices guaranteed.",
   openGraph: {
-    title: "Hot Deals — Zenix Electronics",
-    description: "Limited time deals on premium electronics in Nairobi.",
-    images: ["/logo.png"],
+    title: "Hot Deals on Electronics — Zenix Electronics Nairobi",
+    description: "Limited time deals on premium electronics in Nairobi. Best prices guaranteed.",
+    images: [{ url: "/opengraph-image.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Hot Deals on Electronics — Zenix Electronics Nairobi",
+    description: "Limited time deals on iPhones, Samsung, MacBooks, TVs, PlayStation and more.",
+  },
+  alternates: {
+    canonical: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://zenixelectronics.co.ke"}/deals`,
   },
 };
 

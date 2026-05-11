@@ -1,20 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { LayoutDashboard, ShoppingBag, MapPin, Heart, Settings } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { LayoutDashboard, ShoppingBag, Heart, Settings, LogOut } from "lucide-react";
+import { useAuthActions } from "@convex-dev/auth/react";
 import { cn } from "@/lib/utils";
 
 const NAV = [
   { label: "Overview", href: "/account", icon: LayoutDashboard, exact: true },
   { label: "Orders", href: "/account/orders", icon: ShoppingBag },
-  { label: "Addresses", href: "/account/addresses", icon: MapPin },
   { label: "Wishlist", href: "/account/wishlist", icon: Heart },
   { label: "Settings", href: "/account/settings", icon: Settings },
 ];
 
 export function MobileAccountNav() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { signOut } = useAuthActions();
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/");
+  };
 
   return (
     <nav className="pb-safe fixed right-0 bottom-0 left-0 z-40 flex items-center justify-around border-t border-[#1e2435] bg-[#080b14]/95 px-2 pt-2 backdrop-blur-xl md:hidden">
@@ -52,6 +59,17 @@ export function MobileAccountNav() {
           </Link>
         );
       })}
+
+      {/* Sign out */}
+      <button
+        onClick={handleSignOut}
+        className="flex flex-1 flex-col items-center gap-1 rounded-xl py-1.5 transition-colors"
+      >
+        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-transparent">
+          <LogOut className="h-4 w-4 text-[#4b5563] transition-colors hover:text-red-400" />
+        </span>
+        <span className="text-[10px] font-semibold tracking-wide text-[#4b5563]">Sign Out</span>
+      </button>
     </nav>
   );
 }

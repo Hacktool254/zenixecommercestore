@@ -9,6 +9,10 @@ export const metadata: Metadata = {
     title: "Returns & Refunds Policy — Zenix Electronics",
     description:
       "Zenix Electronics returns and refunds policy. 90-day quality guarantee on all devices.",
+    images: [{ url: "/opengraph-image.png", width: 1200, height: 630 }],
+  },
+  alternates: {
+    canonical: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://zenixelectronics.co.ke"}/returns`,
   },
 };
 

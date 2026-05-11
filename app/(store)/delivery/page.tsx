@@ -2,9 +2,17 @@ import { MapPin, Clock, Truck, Package, Phone } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Delivery & Shipping — Zenix Electronics",
+  title: "Delivery & Shipping in Nairobi — Zenix Electronics",
   description:
-    "Delivery coverage, times, and fees for Zenix Electronics. Same-day delivery across Nairobi. Free pickup at Accra Road, Cookie House.",
+    "Same-day delivery across Nairobi from Zenix Electronics. Free pickup at Cookie House, Accra Road. Next-day delivery countrywide.",
+  openGraph: {
+    title: "Delivery & Shipping — Zenix Electronics Nairobi",
+    description: "Same-day delivery across Nairobi. Free pickup at Cookie House, Accra Road.",
+    images: [{ url: "/opengraph-image.png", width: 1200, height: 630 }],
+  },
+  alternates: {
+    canonical: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://zenixelectronics.co.ke"}/delivery`,
+  },
 };
 
 const NAIROBI_ZONES = [

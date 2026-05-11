@@ -52,9 +52,8 @@ function Input({
 
 function PasswordInput({
   error,
-  label,
   ...props
-}: React.InputHTMLAttributes<HTMLInputElement> & { error?: string; label?: string }) {
+}: React.InputHTMLAttributes<HTMLInputElement> & { error?: string }) {
   const [show, setShow] = useState(false);
   return (
     <div className="w-full">
@@ -193,6 +192,7 @@ function RegisterForm({ onSwitch }: { onSwitch: () => void }) {
 
   const onSubmit = async (data: RegisterData) => {
     setServerError(null);
+    let success = false;
     try {
       await signIn("password", {
         name: data.name,
@@ -200,10 +200,11 @@ function RegisterForm({ onSwitch }: { onSwitch: () => void }) {
         password: data.password,
         flow: "signUp",
       });
-      router.push("/account");
+      success = true;
     } catch {
       setServerError("Could not create account. That email may already be in use.");
     }
+    if (success) router.push("/account");
   };
 
   return (
