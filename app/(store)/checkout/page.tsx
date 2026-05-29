@@ -89,7 +89,8 @@ export default function CheckoutPage() {
     : null;
 
   const handleSaveNewAddress = async (data: AddressForm) => {
-    const id = await addAddress({ ...data, isDefault: !addresses?.length });
+    const { notes: _notes, ...addressData } = data;
+    const id = await addAddress({ ...addressData, isDefault: !addresses?.length });
     setSelectedAddressId(id);
     setShowNewAddressForm(false);
     reset();
