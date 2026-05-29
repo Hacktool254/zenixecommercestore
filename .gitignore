@@ -52,3 +52,4 @@ components.json
 !public/**/*.jpg
 !app/*.png
 !app/*.ico
+mpesa-setup.md

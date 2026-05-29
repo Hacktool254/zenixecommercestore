@@ -17,9 +17,9 @@ import {
   CreditCard,
   Loader2,
   Plus,
+  Phone,
 } from "lucide-react";
 import type { Id } from "@/convex/_generated/dataModel";
-import PaystackPop from "@paystack/inline-js";
 
 const DELIVERY_FEE = 300;
 
@@ -55,6 +55,10 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<"mpesa" | "card">("mpesa");
   const [paying, setPaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mpesaPhone, setMpesaPhone] = useState("");
+  const [stkSent, setStkSent] = useState(false);
+  const [messageReference, setMessageReference] = useState<string | null>(null);
+  const [polling, setPolling] = useState(false);
 
   const total = subtotal() + DELIVERY_FEE;
 
@@ -136,9 +140,42 @@ export default function CheckoutPage() {
   };
 
   const handlePay = async () => {
-    if (!orderId || !orderNumber || !viewer?.email) return;
-    setPaying(true);
+    if (!orderId || !orderNumber) return;
     setError(null);
+
+    if (paymentMethod === "mpesa") {
+      if (!mpesaPhone.trim()) {
+        setError("Enter your M-Pesa phone number.");
+        return;
+      }
+      setPaying(true);
+      try {
+        const res = await fetch("/api/mpesa/stk", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone: mpesaPhone, amount: total, orderId, orderNumber }),
+        });
+        const data = (await res.json()) as {
+          success?: boolean;
+          messageReference?: string;
+          error?: string;
+        };
+        if (!res.ok || !data.success) throw new Error(data.error ?? "STK push failed");
+        setMessageReference(data.messageReference ?? null);
+        setStkSent(true);
+        setPaying(false);
+        // Start polling for payment status
+        pollPaymentStatus(data.messageReference!);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Payment failed. Please try again.");
+        setPaying(false);
+      }
+      return;
+    }
+
+    // Card via Paystack (kept for card option)
+    if (!viewer?.email) return;
+    setPaying(true);
     try {
       const res = await fetch("/api/paystack/initialize", {
         method: "POST",
@@ -149,6 +186,7 @@ export default function CheckoutPage() {
       if (!res.ok || !data.accessCode)
         throw new Error(data.error ?? "Failed to initialize payment");
 
+      const { default: PaystackPop } = await import("@paystack/inline-js");
       const popup = new PaystackPop();
       popup.resumeTransaction(data.accessCode, {
         onSuccess: async (transaction: { reference: string }) => {
@@ -169,6 +207,42 @@ export default function CheckoutPage() {
       setError(err instanceof Error ? err.message : "Payment failed. Please try again.");
       setPaying(false);
     }
+  };
+
+  const pollPaymentStatus = (ref: string) => {
+    setPolling(true);
+    let attempts = 0;
+    const MAX_ATTEMPTS = 24; // 2 min at 5s intervals
+
+    const interval = setInterval(async () => {
+      attempts++;
+      try {
+        const res = await fetch("/api/mpesa/status", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messageReference: ref }),
+        });
+        const data = (await res.json()) as { status: "pending" | "paid" | "failed" };
+
+        if (data.status === "paid") {
+          clearInterval(interval);
+          setPolling(false);
+          clearCart();
+          router.push(`/order/${orderId}`);
+        } else if (data.status === "failed") {
+          clearInterval(interval);
+          setPolling(false);
+          setStkSent(false);
+          setError("Payment failed or was cancelled. Please try again.");
+        } else if (attempts >= MAX_ATTEMPTS) {
+          clearInterval(interval);
+          setPolling(false);
+          setError("Payment confirmation is taking too long. If you completed the payment, please contact us.");
+        }
+      } catch {
+        // silent — keep polling
+      }
+    }, 5000);
   };
 
   return (
@@ -454,21 +528,59 @@ export default function CheckoutPage() {
             </div>
           </div>
 
+          {/* M-Pesa phone input */}
+          {paymentMethod === "mpesa" && !stkSent && (
+            <div className="w-full">
+              <label className="mb-1.5 block text-left text-xs font-medium text-[#8b92a5]">
+                M-Pesa phone number
+              </label>
+              <div className="relative">
+                <Phone className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#8b92a5]" />
+                <input
+                  type="tel"
+                  value={mpesaPhone}
+                  onChange={(e) => setMpesaPhone(e.target.value)}
+                  placeholder="07XX XXX XXX"
+                  className="w-full rounded-xl border border-[#1e2435] bg-[#0a0e1a] py-3 pr-4 pl-9 text-sm text-white placeholder-[#8b92a5] outline-none transition focus:border-[#f5a623] focus:ring-1 focus:ring-[#f5a623]"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* STK Push sent — waiting for PIN */}
+          {stkSent && (
+            <div className="w-full rounded-2xl border border-[#f5a623]/20 bg-[#f5a623]/5 p-5 text-center">
+              <Loader2 className="mx-auto mb-3 h-6 w-6 animate-spin text-[#f5a623]" />
+              <p className="font-semibold text-white">Check your phone</p>
+              <p className="mt-1 text-sm text-[#8b92a5]">
+                An M-Pesa prompt has been sent to <span className="text-white">{mpesaPhone}</span>.
+                Enter your PIN to complete the payment.
+              </p>
+              {polling && (
+                <p className="mt-3 text-xs text-[#8b92a5]">Waiting for confirmation…</p>
+              )}
+            </div>
+          )}
+
           {error && (
             <p className="w-full rounded-lg bg-red-500/10 px-4 py-2.5 text-xs text-red-400">
               {error}
             </p>
           )}
 
-          <button
-            onClick={handlePay}
-            disabled={paying}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#f5a623] py-3 text-sm font-bold text-[#0a0e1a] hover:bg-[#ff9f1c] hover:shadow-[0_0_20px_rgba(245,166,35,0.35)] disabled:opacity-60"
-          >
-            {paying && <Loader2 className="h-4 w-4 animate-spin" />}
-            Pay KES {total.toLocaleString()}
-          </button>
-          <p className="text-xs text-[#8b92a5]">Secured by Paystack · M-Pesa & Card accepted</p>
+          {!stkSent && (
+            <button
+              onClick={handlePay}
+              disabled={paying}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#f5a623] py-3 text-sm font-bold text-[#0a0e1a] hover:bg-[#ff9f1c] hover:shadow-[0_0_20px_rgba(245,166,35,0.35)] disabled:opacity-60"
+            >
+              {paying && <Loader2 className="h-4 w-4 animate-spin" />}
+              {paymentMethod === "mpesa" ? "Send M-Pesa Prompt" : `Pay KES ${total.toLocaleString()}`}
+            </button>
+          )}
+          <p className="text-xs text-[#8b92a5]">
+            {paymentMethod === "mpesa" ? "Secured by Co-op Bank · M-Pesa STK Push" : "Secured by Paystack · Card accepted"}
+          </p>
         </div>
       )}
     </div>
