@@ -14,6 +14,9 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
+
+const MERCHANT_ID = "5804859197";
 
 const STATUS_CONFIG = {
   pending: { label: "Pending", color: "text-amber-400", bg: "bg-amber-400/10", Icon: Clock },
@@ -63,6 +66,44 @@ export default function OrderPage() {
   const statusCfg = STATUS_CONFIG[order.status] ?? STATUS_CONFIG.pending;
   const paymentCfg = PAYMENT_CONFIG[order.paymentStatus] ?? PAYMENT_CONFIG.pending;
   const StatusIcon = statusCfg.Icon;
+
+  // Google Customer Reviews opt-in — fires once when paid order loads
+  useEffect(() => {
+    if (order.paymentStatus !== "paid") return;
+
+    const script = document.createElement("script");
+    script.src = "https://apis.google.com/js/platform.js?onload=renderOptIn";
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+
+    // Delivery date = today + 2 days
+    const deliveryDate = new Date();
+    deliveryDate.setDate(deliveryDate.getDate() + 2);
+    const estimatedDelivery = deliveryDate.toISOString().split("T")[0];
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any)["renderOptIn"] = function () {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const gapi = (window as any)["gapi"] as {
+        load: (name: string, cb: () => void) => void;
+        surveyoptin: { render: (opts: Record<string, unknown>) => void };
+      };
+      gapi.load("surveyoptin", function () {
+        gapi.surveyoptin.render({
+          merchant_id: MERCHANT_ID,
+          order_id: order.orderNumber,
+          email: "",
+          delivery_country: "KE",
+          estimated_delivery_date: estimatedDelivery,
+        });
+      });
+    };
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, [order.paymentStatus, order.orderNumber]);
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 md:px-6">
