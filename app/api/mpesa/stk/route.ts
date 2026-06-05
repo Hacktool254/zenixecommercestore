@@ -1,29 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
+import axios from "axios";
 
 const TOKEN_URL = "https://openapi.co-opbank.co.ke/token";
 const STK_URL = "https://openapi.co-opbank.co.ke/FT/stk/1.0.0";
+
+function getProxyConfig() {
+  const fixieUrl = process.env.FIXIE_URL;
+  if (!fixieUrl) return undefined;
+  const parsed = new URL(fixieUrl);
+  return {
+    protocol: "http" as const,
+    host: parsed.hostname,
+    port: parseInt(parsed.port || "80"),
+    auth: {
+      username: parsed.username,
+      password: parsed.password,
+    },
+  };
+}
 
 async function getToken(): Promise<string> {
   const key = process.env.COOPBANK_CONSUMER_KEY!;
   const secret = process.env.COOPBANK_CONSUMER_SECRET!;
   const credentials = Buffer.from(`${key}:${secret}`).toString("base64");
 
-  const res = await fetch(TOKEN_URL, {
-    method: "POST",
+  const res = await axios.post(TOKEN_URL, "grant_type=client_credentials", {
     headers: {
       Authorization: `Basic ${credentials}`,
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: "grant_type=client_credentials",
+    proxy: getProxyConfig(),
   });
 
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Token fetch failed: ${res.status} ${text}`);
-  }
-
-  const data = (await res.json()) as { access_token: string };
-  return data.access_token;
+  return res.data.access_token as string;
 }
 
 export async function POST(request: NextRequest) {
@@ -39,7 +48,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // Normalize phone: strip leading 0 or +, ensure starts with 254
+    // Normalize phone: strip spaces/+, ensure starts with 254
     const normalized = phone.replace(/\s+/g, "").replace(/^\+/, "").replace(/^0/, "254");
     if (!/^254\d{9}$/.test(normalized)) {
       return NextResponse.json(
@@ -65,22 +74,21 @@ export async function POST(request: NextRequest) {
       OtherDetails: [{ Name: "OrderId", Value: orderId }],
     };
 
-    const stkRes = await fetch(STK_URL, {
-      method: "POST",
+    const stkRes = await axios.post(STK_URL, body, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(body),
+      proxy: getProxyConfig(),
     });
 
-    const stkData = (await stkRes.json()) as {
+    const stkData = stkRes.data as {
       ResponseCode?: string;
       ResponseMessage?: string;
       MessageReference?: string;
     };
 
-    if (!stkRes.ok || (stkData.ResponseCode && stkData.ResponseCode !== "0")) {
+    if (stkData.ResponseCode && stkData.ResponseCode !== "0") {
       return NextResponse.json(
         { error: stkData.ResponseMessage ?? "STK push failed" },
         { status: 502 }
@@ -94,6 +102,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (err) {
     console.error("[mpesa/stk]", err);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    const message = err instanceof Error ? err.message : "Internal server error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

@@ -1,25 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
+import axios from "axios";
 
 const TOKEN_URL = "https://openapi.co-opbank.co.ke/token";
 const STATUS_URL = "https://openapi.co-opbank.co.ke/Enquiry/STK/1.0.0/";
+
+function getProxyConfig() {
+  const fixieUrl = process.env.FIXIE_URL;
+  if (!fixieUrl) return undefined;
+  const parsed = new URL(fixieUrl);
+  return {
+    protocol: "http" as const,
+    host: parsed.hostname,
+    port: parseInt(parsed.port || "80"),
+    auth: {
+      username: parsed.username,
+      password: parsed.password,
+    },
+  };
+}
 
 async function getToken(): Promise<string> {
   const key = process.env.COOPBANK_CONSUMER_KEY!;
   const secret = process.env.COOPBANK_CONSUMER_SECRET!;
   const credentials = Buffer.from(`${key}:${secret}`).toString("base64");
 
-  const res = await fetch(TOKEN_URL, {
-    method: "POST",
+  const res = await axios.post(TOKEN_URL, "grant_type=client_credentials", {
     headers: {
       Authorization: `Basic ${credentials}`,
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: "grant_type=client_credentials",
+    proxy: getProxyConfig(),
   });
 
-  if (!res.ok) throw new Error(`Token fetch failed: ${res.status}`);
-  const data = (await res.json()) as { access_token: string };
-  return data.access_token;
+  return res.data.access_token as string;
 }
 
 export async function POST(request: NextRequest) {
@@ -32,23 +45,24 @@ export async function POST(request: NextRequest) {
 
     const token = await getToken();
 
-    const res = await fetch(STATUS_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ MessageReference: messageReference }),
-    });
+    const res = await axios.post(
+      STATUS_URL,
+      { MessageReference: messageReference },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        proxy: getProxyConfig(),
+      }
+    );
 
-    const data = (await res.json()) as {
+    const data = res.data as {
       ResponseCode?: string;
       ResponseMessage?: string;
-      // Co-op Bank status values
       TransactionStatus?: string;
     };
 
-    // Map Co-op Bank status to our simplified status
     const raw = (data.TransactionStatus ?? "").toLowerCase();
     let status: "pending" | "paid" | "failed" = "pending";
     if (raw === "success" || raw === "completed" || data.ResponseCode === "0") {
