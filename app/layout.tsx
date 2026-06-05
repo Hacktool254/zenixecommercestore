@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import { Providers } from "./providers";
 import { Toaster } from "sonner";
+import { GoogleReviewsBadge } from "@/components/GoogleReviewsBadge";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -117,6 +118,9 @@ gtag('config', 'GT-KD782FTB');`,
         </head>
         <body className="bg-bg-base text-text-primary relative flex min-h-full flex-col">
           <Providers>{children}</Providers>
+          {/* Google Customer Reviews badge */}
+          <script id="merchantWidgetScript" src="https://www.gstatic.com/shopping/merchant/merchantwidget.js" defer />
+          <GoogleReviewsBadge />
           <Toaster
             position="top-right"
             toastOptions={{
