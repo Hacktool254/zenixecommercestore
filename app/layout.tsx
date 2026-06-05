@@ -103,6 +103,18 @@ export default async function RootLayout({
           "font-sans"
         )}
       >
+        <head>
+          {/* Google tag (gtag.js) */}
+          <script async src="https://www.googletagmanager.com/gtag/js?id=GT-KD782FTB" />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'GT-KD782FTB');`,
+            }}
+          />
+        </head>
         <body className="bg-bg-base text-text-primary relative flex min-h-full flex-col">
           <Providers>{children}</Providers>
           <Toaster
