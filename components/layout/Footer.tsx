@@ -21,6 +21,8 @@ const INFO_LINKS = [
   { label: "Deals", href: "/deals" },
   { label: "Track Order", href: "/account/orders" },
   { label: "Contact Us", href: "/contact" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms of Service", href: "/terms" },
 ];
 
 const SOCIALS = [
