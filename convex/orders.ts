@@ -78,11 +78,14 @@ export const getUserOrders = query({
     const userId = await getAuthUserId(ctx);
     if (!userId) return [];
 
-    return await ctx.db
+    const orders = await ctx.db
       .query("orders")
       .withIndex("userId", (q) => q.eq("userId", userId))
       .order("desc")
       .collect();
+
+    // Only show orders that have been paid — hide abandoned/unpaid pending orders
+    return orders.filter((o) => o.paymentStatus === "paid" || o.paymentStatus === "failed");
   },
 });
 
