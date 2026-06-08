@@ -565,8 +565,9 @@
 - [x] Deploy to Vercel production
 - [x] Custom domain zenixelectronics.co.ke connected and live
 - [x] SSL certificate active (HTTPS working)
-- [ ] Test live M-Pesa payment (pending Co-op Bank IP whitelist from Melvin)
-- [ ] Test live card payment (pending Paystack live keys)
+- [x] Co-op Bank M-Pesa STK Push — IP whitelist confirmed, integration live
+- [ ] Test live M-Pesa payment end-to-end (whitelist done — needs real transaction test)
+- [x] Card payment via Paystack — removed. Paystack application denied. Co-op Bank card integration to be added when available.
 - [x] Sitemap submitted to Google Search Console — 93 pages, Success
 - [x] Google Merchant Center product feed submitted
 - [x] Google Business Profile set up (client confirmed)
@@ -579,7 +580,7 @@
 - [x] Google Customer Reviews — opt-in on order confirmation + badge on all pages
 - [x] Google Analytics / GA4 — tag GT-KD782FTB on all pages
 - [x] Structured data warnings fixed (aggregateRating, review, shippingDetails, hasMerchantReturnPolicy)
-- [ ] Co-op Bank IP whitelist — pending Melvin's confirmation (IPs: 54.217.142.99, 54.195.3.54)
+- [x] Co-op Bank IP whitelist confirmed — IPs 54.217.142.99 and 54.195.3.54 whitelisted by Melvin
 
 ---
 

@@ -210,7 +210,7 @@ export default function OrderPage() {
           </div>
           {order.paystackReference && (
             <div className="mt-1 flex justify-between text-xs">
-              <span className="text-[#8b92a5]">Reference</span>
+              <span className="text-[#8b92a5]">Ref</span>
               <span className="font-mono text-[#8b92a5]">{order.paystackReference}</span>
             </div>
           )}

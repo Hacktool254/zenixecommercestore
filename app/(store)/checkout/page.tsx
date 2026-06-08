@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { api } from "@/convex/_generated/api";
 import { useCartStore } from "@/stores/cart.store";
-import { useViewer } from "@/lib/useViewer";
 import {
   CheckCircle,
   ChevronRight,
@@ -41,7 +40,6 @@ const STEPS: { n: Step; label: string; Icon: React.ElementType }[] = [
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const viewer = useViewer();
   const { items, subtotal, clearCart } = useCartStore();
   const addresses = useQuery(api.addresses.getUserAddresses);
   const createOrder = useMutation(api.orders.createOrder);
@@ -52,7 +50,6 @@ export default function CheckoutPage() {
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<"mpesa" | "card">("mpesa");
   const [paying, setPaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mpesaPhone, setMpesaPhone] = useState("");
@@ -130,7 +127,7 @@ export default function CheckoutPage() {
           street: selectedAddress.street,
           city: selectedAddress.city,
         },
-        paymentMethod,
+        paymentMethod: "mpesa" as const,
       });
       setOrderId(result.orderId);
       setOrderNumber(result.orderNumber);
@@ -144,66 +141,27 @@ export default function CheckoutPage() {
     if (!orderId || !orderNumber) return;
     setError(null);
 
-    if (paymentMethod === "mpesa") {
-      if (!mpesaPhone.trim()) {
-        setError("Enter your M-Pesa phone number.");
-        return;
-      }
-      setPaying(true);
-      try {
-        const res = await fetch("/api/mpesa/stk", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ phone: mpesaPhone, amount: total, orderId, orderNumber }),
-        });
-        const data = (await res.json()) as {
-          success?: boolean;
-          messageReference?: string;
-          error?: string;
-        };
-        if (!res.ok || !data.success) throw new Error(data.error ?? "STK push failed");
-        setMessageReference(data.messageReference ?? null);
-        setStkSent(true);
-        setPaying(false);
-        // Start polling for payment status
-        pollPaymentStatus(data.messageReference!);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Payment failed. Please try again.");
-        setPaying(false);
-      }
+    if (!mpesaPhone.trim()) {
+      setError("Enter your M-Pesa phone number.");
       return;
     }
-
-    // Card via Paystack (kept for card option)
-    if (!viewer?.email) return;
     setPaying(true);
     try {
-      const res = await fetch("/api/paystack/initialize", {
+      const res = await fetch("/api/mpesa/stk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId, orderNumber, email: viewer.email, amount: total }),
+        body: JSON.stringify({ phone: mpesaPhone, amount: total, orderId, orderNumber }),
       });
-      const data = (await res.json()) as { accessCode?: string; error?: string };
-      if (!res.ok || !data.accessCode)
-        throw new Error(data.error ?? "Failed to initialize payment");
-
-      const { default: PaystackPop } = await import("@paystack/inline-js");
-      const popup = new PaystackPop();
-      popup.resumeTransaction(data.accessCode, {
-        onSuccess: async (transaction: { reference: string }) => {
-          await fetch("/api/paystack/verify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ reference: transaction.reference, orderId }),
-          });
-          clearCart();
-          router.push(`/order/${orderId}`);
-        },
-        onCancel: () => {
-          setPaying(false);
-          setError("Payment was cancelled. You can try again.");
-        },
-      });
+      const data = (await res.json()) as {
+        success?: boolean;
+        messageReference?: string;
+        error?: string;
+      };
+      if (!res.ok || !data.success) throw new Error(data.error ?? "STK push failed");
+      setMessageReference(data.messageReference ?? null);
+      setStkSent(true);
+      setPaying(false);
+      pollPaymentStatus(data.messageReference!);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Payment failed. Please try again.");
       setPaying(false);
@@ -452,21 +410,9 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          <div>
-            <p className="mb-3 text-xs font-semibold tracking-widest text-[#8b92a5] uppercase">
-              Payment method
-            </p>
-            <div className="flex gap-3">
-              {(["mpesa", "card"] as const).map((method) => (
-                <button
-                  key={method}
-                  onClick={() => setPaymentMethod(method)}
-                  className={`flex-1 rounded-xl border py-3 text-sm font-medium transition ${paymentMethod === method ? "border-[#f5a623] bg-[#f5a623]/5 text-[#f5a623]" : "border-[#1e2435] text-[#8b92a5] hover:border-[#f5a623]/40"}`}
-                >
-                  {method === "mpesa" ? "M-Pesa" : "Card"}
-                </button>
-              ))}
-            </div>
+          <div className="flex items-center gap-2 rounded-xl border border-[#1e2435] bg-[#0d1117] px-4 py-3">
+            <span className="text-xs font-semibold tracking-widest text-[#8b92a5] uppercase">Payment</span>
+            <span className="ml-auto text-sm font-medium text-white">M-Pesa</span>
           </div>
 
           {error && (
@@ -515,9 +461,7 @@ export default function CheckoutPage() {
             </p>
             <div className="mb-1 flex justify-between text-sm">
               <span className="text-[#8b92a5]">Payment via</span>
-              <span className="font-medium text-white">
-                {paymentMethod === "mpesa" ? "M-Pesa" : "Card"}
-              </span>
+              <span className="font-medium text-white">M-Pesa</span>
             </div>
             <div className="mb-1 flex justify-between text-sm">
               <span className="text-[#8b92a5]">Items</span>
@@ -530,7 +474,7 @@ export default function CheckoutPage() {
           </div>
 
           {/* M-Pesa phone input */}
-          {paymentMethod === "mpesa" && !stkSent && (
+          {!stkSent && (
             <div className="w-full">
               <label className="mb-1.5 block text-left text-xs font-medium text-[#8b92a5]">
                 M-Pesa phone number
@@ -576,12 +520,10 @@ export default function CheckoutPage() {
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#f5a623] py-3 text-sm font-bold text-[#0a0e1a] hover:bg-[#ff9f1c] hover:shadow-[0_0_20px_rgba(245,166,35,0.35)] disabled:opacity-60"
             >
               {paying && <Loader2 className="h-4 w-4 animate-spin" />}
-              {paymentMethod === "mpesa" ? "Send M-Pesa Prompt" : `Pay KES ${total.toLocaleString()}`}
+              Send M-Pesa Prompt
             </button>
           )}
-          <p className="text-xs text-[#8b92a5]">
-            {paymentMethod === "mpesa" ? "Secured by Co-op Bank · M-Pesa STK Push" : "Secured by Paystack · Card accepted"}
-          </p>
+          <p className="text-xs text-[#8b92a5]">Secured by Co-op Bank · M-Pesa STK Push</p>
         </div>
       )}
     </div>
