@@ -44,32 +44,9 @@ export default function OrderPage() {
 
   const order = useQuery(api.orders.getOrderById, { id: id as Id<"orders"> });
 
-  if (order === undefined) {
-    return (
-      <div className="mx-auto flex max-w-3xl flex-1 flex-col items-center justify-center px-4 py-32">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#f5a623] border-t-transparent" />
-      </div>
-    );
-  }
-
-  if (!order) {
-    return (
-      <div className="mx-auto flex max-w-3xl flex-1 flex-col items-center justify-center px-4 py-32 text-center">
-        <p className="text-[#8b92a5]">Order not found.</p>
-        <Link href="/shop" className="mt-4 text-sm font-medium text-[#f5a623] hover:underline">
-          Continue shopping
-        </Link>
-      </div>
-    );
-  }
-
-  const statusCfg = STATUS_CONFIG[order.status] ?? STATUS_CONFIG.pending;
-  const paymentCfg = PAYMENT_CONFIG[order.paymentStatus] ?? PAYMENT_CONFIG.pending;
-  const StatusIcon = statusCfg.Icon;
-
-  // Google Customer Reviews opt-in — fires once when paid order loads
+  // Google Customer Reviews opt-in — must be before any conditional returns (rules of hooks)
   useEffect(() => {
-    if (order.paymentStatus !== "paid") return;
+    if (!order || order.paymentStatus !== "paid") return;
 
     const script = document.createElement("script");
     script.src = "https://apis.google.com/js/platform.js?onload=renderOptIn";
@@ -77,7 +54,6 @@ export default function OrderPage() {
     script.defer = true;
     document.head.appendChild(script);
 
-    // Delivery date = today + 2 days
     const deliveryDate = new Date();
     deliveryDate.setDate(deliveryDate.getDate() + 2);
     const estimatedDelivery = deliveryDate.toISOString().split("T")[0];
@@ -101,9 +77,32 @@ export default function OrderPage() {
     };
 
     return () => {
-      document.head.removeChild(script);
+      if (document.head.contains(script)) document.head.removeChild(script);
     };
-  }, [order.paymentStatus, order.orderNumber]);
+  }, [order?.paymentStatus, order?.orderNumber]);
+
+  if (order === undefined) {
+    return (
+      <div className="mx-auto flex max-w-3xl flex-1 flex-col items-center justify-center px-4 py-32">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#f5a623] border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (!order) {
+    return (
+      <div className="mx-auto flex max-w-3xl flex-1 flex-col items-center justify-center px-4 py-32 text-center">
+        <p className="text-[#8b92a5]">Order not found.</p>
+        <Link href="/shop" className="mt-4 text-sm font-medium text-[#f5a623] hover:underline">
+          Continue shopping
+        </Link>
+      </div>
+    );
+  }
+
+  const statusCfg = STATUS_CONFIG[order.status] ?? STATUS_CONFIG.pending;
+  const paymentCfg = PAYMENT_CONFIG[order.paymentStatus] ?? PAYMENT_CONFIG.pending;
+  const StatusIcon = statusCfg.Icon;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 md:px-6">
