@@ -13,6 +13,15 @@ export const generateUploadUrl = mutation({
   },
 });
 
+export const getStorageUrl = mutation({
+  args: { storageId: v.id("_storage") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    return ctx.storage.getUrl(args.storageId);
+  },
+});
+
 export const viewer = query({
   args: {},
   handler: async (ctx) => {

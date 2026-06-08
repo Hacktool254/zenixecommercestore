@@ -75,6 +75,7 @@ export function ProductForm({ defaultValues, defaultImages = [], onSubmit, submi
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const generateUploadUrl = useMutation(api.users.generateUploadUrl);
+  const getStorageUrl = useMutation(api.users.getStorageUrl);
 
   const {
     register,
@@ -119,10 +120,8 @@ export function ProductForm({ defaultValues, defaultImages = [], onSubmit, submi
           body: file,
         });
         const { storageId } = (await res.json()) as { storageId: string };
-        // Resolve permanent URL via a dedicated helper (reuse updateAvatar pattern)
-        const url = `https://${process.env.NEXT_PUBLIC_CONVEX_URL?.replace("https://", "").replace(".convex.cloud", "")}.convex.cloud/api/storage/${storageId}`;
-        setImages((prev) => [...prev, storageId as Id<"_storage"> as unknown as string]);
-        void url; // URL resolved server-side by updateAvatar; we store the storageId and let the admin page resolve it
+        const url = await getStorageUrl({ storageId: storageId as Id<"_storage"> });
+        if (url) setImages((prev) => [...prev, url]);
       }
     } finally {
       setUploading(false);
