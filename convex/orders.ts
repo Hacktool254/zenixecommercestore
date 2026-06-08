@@ -316,3 +316,31 @@ export const updatePaymentStatus = mutation({
     }
   },
 });
+
+export const getAbandonedOrders = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    const user = await ctx.db.get(userId);
+    if (!user || user.role !== "admin") throw new Error("Admin only");
+
+    const orders = await ctx.db
+      .query("orders")
+      .filter((q) => q.eq(q.field("paymentStatus"), "pending"))
+      .order("desc")
+      .collect();
+
+    // Enrich with user info
+    return await Promise.all(
+      orders.map(async (order) => {
+        const customer = await ctx.db.get(order.userId);
+        return {
+          ...order,
+          customerName: customer?.name ?? "Unknown",
+          customerEmail: customer?.email ?? "",
+        };
+      })
+    );
+  },
+});
