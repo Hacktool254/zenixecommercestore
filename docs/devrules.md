@@ -331,7 +331,7 @@
 - [x] Step 2: Order review (items, address, totals)
 - [x] Step 3: Payment (Paystack)
 
-### 8.2 Paystack Integration
+### 8.2 Paystack Integration (Card payments)
 
 - [x] `lib/paystack.ts` — initialize transaction, verify transaction functions
 - [x] Install Paystack inline JS: `@paystack/inline-js` or use redirect
@@ -344,6 +344,16 @@
 - [x] `app/api/paystack/webhook/route.ts` — verify HMAC signature
 - [x] Handle `charge.success` event → call `updatePaymentStatus` in Convex
 - [x] Handle `charge.failed` event → update order accordingly
+
+### 8.5 Co-op Bank M-Pesa STK Push Integration
+
+- [x] `app/api/mpesa/stk/route.ts` — fetches OAuth token from Co-op Bank, sends STK push via Fixie static IP proxy
+- [x] `app/api/mpesa/status/route.ts` — polls transaction status by MessageReference
+- [x] `app/api/mpesa/callback/route.ts` — receives Co-op Bank callback, updates order paymentStatus in Convex
+- [x] Checkout page updated: M-Pesa flow collects phone number, sends STK push, polls for confirmation every 5s
+- [x] Fixie static IP proxy configured (FIXIE_URL env var) — required because Co-op Bank whitelists IPs
+- [x] Co-op Bank outbound IPs (54.217.142.99, 54.195.3.54) shared with bank for whitelisting
+- [ ] Bank IP whitelist confirmation pending from Melvin (mmelvin@co-opbank.co.ke)
 
 ### 8.4 Order Confirmation Page
 
@@ -437,7 +447,17 @@
 - [x] Click row → order detail modal
 - [x] Status dropdown to update order status inline
 
-### 11.6 Inventory
+### 11.6 Abandoned Carts
+
+- [x] `app/admin/abandoned-carts/page.tsx` — orders with pending payment status
+- [x] Shows customer name, email, phone, items, total value, creation time
+- [x] One-click WhatsApp recovery message (pre-filled with customer name + product + price)
+- [x] Email and Call buttons per abandoned cart
+- [x] Stats: total abandoned count, avg order value, potential revenue
+- [x] `getAbandonedOrders` Convex query (admin only)
+- [x] getUserOrders updated to hide pending payment orders from customer My Orders view
+
+### 11.7 Inventory
 
 - [x] `app/admin/inventory/page.tsx` — all products with stock levels
 - [x] Visual indicator: green (≥10), amber (1-9), red (0 - Out of Stock)
@@ -481,8 +501,18 @@
 
 ### 13.2 Structured Data
 
-- [x] Product JSON-LD schema on all product detail pages (name, price, availability, image)
+- [x] Product JSON-LD schema on all product detail pages (name, price, availability, image, condition)
 - [x] BreadcrumbList JSON-LD on product and category pages
+- [x] LocalBusiness / ElectronicsStore JSON-LD on homepage (address, geo, hours, phone)
+- [x] aggregateRating + review fields added (fixes Google Search Console Product snippets warnings)
+- [x] shippingDetails + hasMerchantReturnPolicy added (fixes Merchant listings warnings)
+- [x] Privacy Policy page at /privacy-policy
+- [x] Terms of Service page at /terms
+- [x] Google Merchant Center product feed at /api/merchant-feed (auto-updates every 24h)
+- [x] Google tag GT-KD782FTB added to layout (all pages)
+- [x] Google Customer Reviews opt-in on order confirmation page (merchant ID 5804859197)
+- [x] Google Customer Reviews badge added to all pages (bottom right)
+- [x] Sitemap submitted to Google Search Console — 93 pages, status: Success
 
 ### 13.3 Performance
 
@@ -507,33 +537,49 @@
 
 ### 14.1 Manual Testing Checklist
 
-- [ ] Full purchase flow: browse → add to cart → checkout → M-Pesa payment → order confirmation
+- [ ] Full purchase flow: browse → add to cart → checkout → M-Pesa STK push → order confirmation (pending Co-op Bank IP whitelist)
 - [ ] Full purchase flow: browse → add to cart → checkout → card payment → order confirmation
-- [ ] User registration → login → wishlist → account orders
+- [x] User registration → login → wishlist → account orders (tested, fixed false error bug)
+- [x] Save address at checkout (fixed — notes field was causing Convex validation error)
 - [ ] Admin: add product → verify appears on site
 - [ ] Admin: update order status → verify user sees update
+- [x] Admin: abandoned carts visible with WhatsApp/email/call recovery actions
 - [ ] Product comparison with 3 products
 - [ ] All filters: category, condition, price range
 - [ ] Search: find product by name
 - [ ] Mobile: test all pages on 375px viewport
-- [ ] WhatsApp FAB: verify correct number and opens chat
+- [x] Mobile: sign out button added to mobile account nav
+- [x] WhatsApp FAB: verified correct number and opens chat
 
 ### 14.2 Environment Setup
 
-- [x] Set all production environment variables in Vercel (NEXT_PUBLIC_CONVEX_URL, NEXT_PUBLIC_CONVEX_SITE_URL, CONVEX_DEPLOY_KEY updated via CLI)
+- [x] Set all production environment variables in Vercel (NEXT_PUBLIC_CONVEX_URL, NEXT_PUBLIC_CONVEX_SITE_URL, CONVEX_DEPLOY_KEY, COOPBANK_*, FIXIE_URL, COOPBANK_CALLBACK_URL)
 - [ ] Switch Paystack to live keys (owner sets up Paystack account — pending client)
-- [ ] Configure Paystack webhook URL to production domain (pending domain)
+- [ ] Configure Paystack webhook URL to production domain (pending client)
 - [x] Set Cloudinary to production config
-- [x] Deploy Convex to production: notable-jellyfish-340, 74 products seeded
+- [x] Deploy Convex to production: reliable-salamander-205
+- [x] NEXT_PUBLIC_SITE_URL set to https://zenixelectronics.co.ke on Vercel
 
 ### 14.3 Launch
 
-- [x] Deploy to Vercel production (live at zenixecommercestore.vercel.app)
-- [ ] Connect custom domain (pending client)
-- [ ] Verify SSL certificate is active (after domain connected)
-- [ ] Test live Paystack payment with real transaction (pending Paystack live keys)
-- [ ] Submit sitemap to Google Search Console (after domain is live)
+- [x] Deploy to Vercel production
+- [x] Custom domain zenixelectronics.co.ke connected and live
+- [x] SSL certificate active (HTTPS working)
+- [ ] Test live M-Pesa payment (pending Co-op Bank IP whitelist from Melvin)
+- [ ] Test live card payment (pending Paystack live keys)
+- [x] Sitemap submitted to Google Search Console — 93 pages, Success
+- [x] Google Merchant Center product feed submitted
+- [x] Google Business Profile set up (client confirmed)
 - [x] Replace all placeholder product images with real product photos (client confirmed current images are acceptable)
+
+### 14.4 Post-Launch SEO & Integrations
+
+- [x] Google Search Console — sitemap submitted, 93 pages indexed
+- [x] Google Merchant Center — product feed live at /api/merchant-feed
+- [x] Google Customer Reviews — opt-in on order confirmation + badge on all pages
+- [x] Google Analytics / GA4 — tag GT-KD782FTB on all pages
+- [x] Structured data warnings fixed (aggregateRating, review, shippingDetails, hasMerchantReturnPolicy)
+- [ ] Co-op Bank IP whitelist — pending Melvin's confirmation (IPs: 54.217.142.99, 54.195.3.54)
 
 ---
 
