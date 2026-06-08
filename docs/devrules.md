@@ -353,7 +353,7 @@
 - [x] Checkout page updated: M-Pesa flow collects phone number, sends STK push, polls for confirmation every 5s
 - [x] Fixie static IP proxy configured (FIXIE_URL env var) — required because Co-op Bank whitelists IPs
 - [x] Co-op Bank outbound IPs (54.217.142.99, 54.195.3.54) shared with bank for whitelisting
-- [ ] Bank IP whitelist confirmation pending from Melvin (mmelvin@co-opbank.co.ke)
+- [x] Bank IP whitelist confirmed by Melvin (IPs: 54.217.142.99, 54.195.3.54)
 
 ### 8.4 Order Confirmation Page
 
@@ -537,8 +537,8 @@
 
 ### 14.1 Manual Testing Checklist
 
-- [ ] Full purchase flow: browse → add to cart → checkout → M-Pesa STK push → order confirmation (pending Co-op Bank IP whitelist)
-- [ ] Full purchase flow: browse → add to cart → checkout → card payment → order confirmation
+- [ ] Full purchase flow: browse → add to cart → checkout → M-Pesa STK push → order confirmation (STK push confirmed working, needs KES 1 test to verify callback + order status)
+- [x] Card payment removed — Paystack application denied, Co-op Bank card integration planned
 - [x] User registration → login → wishlist → account orders (tested, fixed false error bug)
 - [x] Save address at checkout (fixed — notes field was causing Convex validation error)
 - [ ] Admin: add product → verify appears on site
@@ -554,8 +554,7 @@
 ### 14.2 Environment Setup
 
 - [x] Set all production environment variables in Vercel (NEXT_PUBLIC_CONVEX_URL, NEXT_PUBLIC_CONVEX_SITE_URL, CONVEX_DEPLOY_KEY, COOPBANK_*, FIXIE_URL, COOPBANK_CALLBACK_URL)
-- [ ] Switch Paystack to live keys (owner sets up Paystack account — pending client)
-- [ ] Configure Paystack webhook URL to production domain (pending client)
+- [x] Paystack removed — M-Pesa via Co-op Bank is the sole payment method
 - [x] Set Cloudinary to production config
 - [x] Deploy Convex to production: reliable-salamander-205
 - [x] NEXT_PUBLIC_SITE_URL set to https://zenixelectronics.co.ke on Vercel
