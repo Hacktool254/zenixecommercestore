@@ -285,6 +285,20 @@ export default function CheckoutPage() {
               className="flex flex-col gap-4 rounded-xl border border-[#1e2435] bg-[#0d1117] p-5"
             >
               <h3 className="font-semibold text-white">New address</h3>
+
+              {/* Google Address Selection widget */}
+              <div className="overflow-hidden rounded-xl border border-[#1e2435]" style={{ height: 180 }}>
+                <iframe
+                  src="https://storage.googleapis.com/maps-solutions-u1ah8swhb7/address-selection/x5yg/address-selection.html"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  title="Address search"
+                />
+              </div>
+              <p className="text-xs text-[#8b92a5]">Search your address above, then confirm the fields below.</p>
+
               {(
                 [
                   { field: "name", label: "Full name", placeholder: "Jane Doe" },
