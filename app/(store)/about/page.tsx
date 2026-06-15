@@ -163,16 +163,15 @@ export default function AboutPage() {
         <div className="border-b border-[#1e2435] px-5 py-4">
           <h2 className="font-semibold text-white">Find Us</h2>
         </div>
-        {/* Google Maps embed */}
-        <div className="relative h-60 w-full">
+        {/* Google Maps Platform Locator */}
+        <div className="relative h-72 w-full md:h-96">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8183!2d36.8222!3d-1.2836!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10d9a3c78d2f%3A0x0!2sCookie%20House%2C%20Accra%20Road%2C%20Nairobi!5e0!3m2!1sen!2ske!4v1"
+            src="https://storage.googleapis.com/maps-solutions-u1ah8swhb7/locator-plus/o4yg/locator-plus.html"
             width="100%"
             height="100%"
             style={{ border: 0 }}
             allowFullScreen
             loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
             title="Zenix Electronics location"
           />
         </div>
